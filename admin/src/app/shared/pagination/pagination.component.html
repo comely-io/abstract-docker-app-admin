@@ -1,26 +1,39 @@
-<nav>
-  <ul
-    class="pagination{{shapeCircle ? ' pagination-circle' : ''}}{{size ? ' pagination-' + size : ''}} justify-content-{{align}}">
-    <li class="page-item{{firstBtnDisabled ? ' disabled' : ' cursor-pointer'}}" *ngIf="boundaryLinks">
-      <a class="page-link" (click)="onPageChange(1)">{{firstBtnLabel}}</a>
-    </li>
-    <li class="page-item{{!prevBtnPageNum ? ' disabled' : ' cursor-pointer'}}" *ngIf="boundaryLinks">
-      <a class="page-link" (click)="onPageChange(prevBtnPageNum)">{{prevBtnLabel}}</a>
-    </li>
-    <li class="page-item cursor-pointer" *ngFor="let prevPage of prevPages">
-      <a class="page-link" (click)="onPageChange(prevPage)">{{prevPage}}</a>
-    </li>
-    <li class="page-item active">
-      <a class="page-link">{{currentPage}}</a>
-    </li>
-    <li class="page-item cursor-pointer" *ngFor="let nextPage of nextPages">
-      <a class="page-link" (click)="onPageChange(nextPage)">{{nextPage}}</a>
-    </li>
-    <li class="page-item{{!nextBtnPageNum ? ' disabled' : ' cursor-pointer'}}" *ngIf="boundaryLinks">
-      <a class="page-link" (click)="onPageChange(nextBtnPageNum)">{{nextBtnLabel}}</a>
-    </li>
-    <li class="page-item{{!lastBtnPageNum ? ' disabled' : ' cursor-pointer'}}" *ngIf="boundaryLinks">
-      <a class="page-link" (click)="onPageChange(lastBtnPageNum)">{{lastBtnLabel}}</a>
-    </li>
-  </ul>
-</nav>
+<div class="row justify-content-between">
+  <div class="col-lg-6">
+    <nav>
+      <ul
+        class="pagination{{shapeCircle ? ' pagination-circle' : ''}}{{size ? ' pagination-' + size : ''}} justify-content-{{align}}">
+        <li class="page-item{{firstBtnDisabled ? ' disabled' : ' cursor-pointer'}}" *ngIf="boundaryLinks">
+          <a class="page-link" (click)="onPageChange(1)">{{firstBtnLabel}}</a>
+        </li>
+        <li class="page-item{{!prevBtnPageNum ? ' disabled' : ' cursor-pointer'}}" *ngIf="boundaryLinks">
+          <a class="page-link" (click)="onPageChange(prevBtnPageNum)">{{prevBtnLabel}}</a>
+        </li>
+        <li class="page-item cursor-pointer" *ngFor="let prevPage of prevPages">
+          <a class="page-link" (click)="onPageChange(prevPage)">{{prevPage}}</a>
+        </li>
+        <li class="page-item active">
+          <a class="page-link">{{currentPage}}</a>
+        </li>
+        <li class="page-item cursor-pointer" *ngFor="let nextPage of nextPages">
+          <a class="page-link" (click)="onPageChange(nextPage)">{{nextPage}}</a>
+        </li>
+        <li class="page-item{{!nextBtnPageNum ? ' disabled' : ' cursor-pointer'}}" *ngIf="boundaryLinks">
+          <a class="page-link" (click)="onPageChange(nextBtnPageNum)">{{nextBtnLabel}}</a>
+        </li>
+        <li class="page-item{{!lastBtnPageNum ? ' disabled' : ' cursor-pointer'}}" *ngIf="boundaryLinks">
+          <a class="page-link" (click)="onPageChange(lastBtnPageNum)">{{lastBtnLabel}}</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+  <div class="col-auto col-lg-2 text-end" *ngIf="perPageOpts">
+    <mdb-form-control>
+      <mdb-select [formControl]="searchPerPage" (ngModelChange)="onPerPageChange($event)"
+                  [disabled]="disabled">
+        <mdb-option *ngFor="let opt of perPageOpts" [value]="opt">{{opt}}</mdb-option>
+      </mdb-select>
+      <label mdbLabel class="form-label text-muted"><small>Per Page</small></label>
+    </mdb-form-control>
+  </div>
+</div>

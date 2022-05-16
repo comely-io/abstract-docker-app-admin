@@ -104,8 +104,6 @@ export class AppService {
       errorMsg = error.error;
     }
 
-    // Todo: handle warnings
-
     // Has callback method? (for any alternative method of displaying error message)
     if (options.callback) {
       options.callback(errorMsg);

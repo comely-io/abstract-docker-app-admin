@@ -57,6 +57,10 @@ $badge-font-weight: 300;
   }
 }
 
+option, .option {
+  font-weight: 300 !important;
+}
+
 .table-inherit {
   font-size: 1.1rem !important;
 }

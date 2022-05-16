@@ -1,15 +1,111 @@
 <section class="mt-5 mb-3">
   <div class="container">
-    <div class="row">
+    <div class="row mb-5">
       <div class="col-12">
-        <div class="card card-classic mb-4">
-          <div class="card-header">
-            <h5 class="card-title mb-0"><i class="fal fa-search me-2"></i>Administration Activity</h5>
+        <form [formGroup]="searchLogsForm" (ngSubmit)="submitSearchForm()">
+          <div class="card card-classic">
+            <div class="card-header">
+              <h5 class="card-title mb-0"><i class="fal fa-search me-2"></i>Administration Activity</h5>
+            </div>
+            <div class="card-body">
+              <mdb-form-control>
+                <mdb-select [disabled]="searchIsDisabled" formControlName="adminId">
+                  <mdb-option value="0">(any)</mdb-option>
+                  <mdb-option *ngFor="let staff of staffList" [value]="staff.id">{{staff.email}}</mdb-option>
+                </mdb-select>
+                <label mdbLabel class="form-label ">Administrator</label>
+              </mdb-form-control>
+              <mdb-form-control class="mt-3">
+                <input mdbInput mdbValidate type="text" formControlName="flags" id="flags"
+                       maxlength="32"
+                       [readonly]="searchIsDisabled" placeholder="something1, something 2"
+                       class="form-control mb-0" autofocus/>
+                <label mdbLabel class="form-label " for="flags">Search in Flags</label>
+              </mdb-form-control>
+              <app-form-field-error [formField]="searchLogsForm.controls.flags"></app-form-field-error>
+              <mdb-form-control class="mt-3">
+                <input mdbInput mdbValidate type="text" formControlName="filter" id="filter"
+                       maxlength="128"
+                       [readonly]="searchIsDisabled" placeholder="match something"
+                       class="form-control mb-0" autofocus/>
+                <label mdbLabel class="form-label " for="flags">Message Filter</label>
+              </mdb-form-control>
+              <app-form-field-error [formField]="searchLogsForm.controls.filter"></app-form-field-error>
+            </div>
+            <div class="card-footer">
+              <button class="btn btn-outline-danger" type="submit" *ngIf="!searchIsLoading"
+                      [disabled]="searchIsDisabled"><i class="fal fa-search me-1"></i>Apply
+                Filters
+              </button>
+              <app-button-loader [btnClass]="'btn-outline-danger'" [spinnerClass]="'text-danger'"
+                                 *ngIf="searchIsLoading"></app-button-loader>
+            </div>
           </div>
-          <div class="card-body">
-            <app-pagination [totalRows]="totalRows" [currentPage]="currentPage" [perPage]="perPage"
+        </form>
+      </div>
+    </div>
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="card card-classic">
+          <div class="card-header">
+            <app-pagination [totalRows]="paginationFilters.totalRows" [currentPage]="paginationFilters.currentPage"
+                            [perPage]="paginationFilters.perPage"
                             [pagesDisplayLimit]="2"
-                            [shapeCircle]="false" (changePage)="changePage($event)"></app-pagination>
+                            [perPageOpts]="[25,50,100]"
+                            [defaultPerPageOpt]="this.searchLogs.perPage"
+                            [shapeCircle]="false" (changePage)="changePage($event)"
+                            (changePerPage)="changePerPage($event)"></app-pagination>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-sm table-striped table-hover table-inherit">
+              <thead class="table-dark">
+              <tr>
+                <th scope="row" class="text-center">Timestamp</th>
+                <th scope="row" class="text-center">Administrator</th>
+                <th scope="row" class="text-center">Activity</th>
+                <th scope="row" class="text-center">Flags</th>
+                <th scope="row" class="text-center">Controller</th>
+                <th scope="row" class="text-center">IP Address</th>
+              </tr>
+              </thead>
+              <tbody>
+              <ng-container *ngIf="this.retrievedLogs">
+                <ng-container *ngFor="let log of retrievedLogs">
+                  <tr>
+                    <td class="text-end">
+                      <app-timestamp-display [epoch]="log.timeStamp" cssClasses="text-end"></app-timestamp-display>
+                    </td>
+                    <td class="text-center">
+                      <a href="javascript:void(0)" (click)="selectAdminId(log.admin)"
+                         *ngIf="log.adminEmail">{{log.adminEmail}}</a>
+                      <span class="text-warning" *ngIf="!log.adminEmail">undefined</span>
+                    </td>
+                    <td class="text-start">{{log.log}}</td>
+                    <td class="text-center">
+                      <ng-container *ngIf="log.flags">
+                        <span class="badge bg-primary me-2" *ngFor="let flag of log.flags">{{flag}}</span>
+                      </ng-container>
+                      <span *ngIf="!log.flags" class="text-muted">n/a</span>
+                    </td>
+                    <td class="text-center">
+                  <span class="text-info" [mdbTooltip]="log.controller" *ngIf="log.controller">
+                    <i class="fab fa-flag"></i>
+                  </span>
+                      <span class="text-muted" *ngIf="!log.controller"><i class="fal fa-flag"></i></span>
+                    </td>
+                    <td class="text-end">
+                      {{log.ipAddress}}
+                    </td>
+                  </tr>
+                </ng-container>
+              </ng-container>
+              <ng-container *ngIf="!this.retrievedLogs || this.retrievedLogs.length < 1">
+                <tr>
+                  <td colspan="6" class="text-muted">There are no activity logs matching search criteria</td>
+                </tr>
+              </ng-container>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

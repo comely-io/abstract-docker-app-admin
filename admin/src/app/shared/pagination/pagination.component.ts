@@ -1,14 +1,21 @@
 import {Component, EventEmitter, Input, OnInit, Output, OnChanges} from '@angular/core';
+import {FormControl} from "@angular/forms";
 
 type paginationAlignment = "start" | "end" | "center";
 type paginationSize = undefined | "lg" | "sm";
+
+export interface paginationFilters {
+  currentPage: number,
+  perPage: number,
+  totalRows: number
+}
 
 @Component({
   selector: 'app-pagination',
   templateUrl: './pagination.component.html',
   styleUrls: ['./pagination.component.scss']
 })
-export class PaginationComponent implements OnInit {
+export class PaginationComponent implements OnInit, OnChanges {
   @Input() disabled: boolean = false;
   @Input() align: paginationAlignment = "start";
   @Input() size: paginationSize = undefined;
@@ -24,6 +31,7 @@ export class PaginationComponent implements OnInit {
   @Input() firstBtnLabel: string = "<<";
 
   @Output() changePage: EventEmitter<number> = new EventEmitter<number>();
+  @Output() changePerPage: EventEmitter<number> = new EventEmitter<number>();
 
   public prevPages: Array<number> = [];
   public nextPages: Array<number> = [];
@@ -32,6 +40,11 @@ export class PaginationComponent implements OnInit {
   public lastBtnPageNum?: number = undefined;
   public prevBtnPageNum?: number = undefined;
   public firstBtnDisabled: boolean = true;
+
+  @Input() perPageOpts?: Array<number>;
+  @Input() defaultPerPageOpt?: number;
+
+  public searchPerPage: FormControl = new FormControl();
 
   constructor() {
   }
@@ -48,6 +61,12 @@ export class PaginationComponent implements OnInit {
   public onPageChange(num?: number) {
     if (num) {
       this.changePage.emit(num);
+    }
+  }
+
+  public onPerPageChange(e: any) {
+    if (typeof e === "number") {
+      this.changePerPage.emit(e);
     }
   }
 
@@ -88,6 +107,7 @@ export class PaginationComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.searchPerPage.setValue(this.defaultPerPageOpt);
     this.refresh();
   }
 

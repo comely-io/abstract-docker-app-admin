@@ -48,12 +48,19 @@ import {DockerComponent} from './auth/app/docker/docker.component';
 import {AuthAppComponent} from './auth/app/app.component';
 import {SpinnerIconComponent} from './shared/spinner-icon/spinner-icon.component';
 import {AccountComponent} from './auth/account/account.component';
-import { LogComponent } from './auth/staff/log/log.component';
-import { StaffComponent } from './auth/staff/staff.component';
-import { PaginationComponent } from './shared/pagination/pagination.component';
+import {LogComponent} from './auth/staff/log/log.component';
+import {StaffComponent} from './auth/staff/staff.component';
+import {PaginationComponent} from './shared/pagination/pagination.component';
+import {ListComponent} from './auth/staff/list/list.component';
+import {momentPipe, momentRelativePipe} from "../pipes/momentPipe";
+import {time2StrPipe} from "../pipes/time2StrPipe";
+import {TimestampDisplayComponent} from './shared/timestamp-display/timestamp-display.component';
 
 @NgModule({
   declarations: [
+    time2StrPipe,
+    momentPipe,
+    momentRelativePipe,
     AppComponent,
     SigninComponent,
     FormFieldErrorComponent,
@@ -67,6 +74,8 @@ import { PaginationComponent } from './shared/pagination/pagination.component';
     LogComponent,
     StaffComponent,
     PaginationComponent,
+    ListComponent,
+    TimestampDisplayComponent,
   ],
   imports: [
     BrowserModule,

@@ -83,7 +83,7 @@
                     <td class="text-start">{{log.log}}</td>
                     <td class="text-center">
                       <ng-container *ngIf="log.flags">
-                        <span class="badge bg-primary me-2" *ngFor="let flag of log.flags">{{flag}}</span>
+                        <span class="badge bg-primary me-1" *ngFor="let flag of log.flags">{{flag}}</span>
                       </ng-container>
                       <span *ngIf="!log.flags" class="text-muted">n/a</span>
                     </td>

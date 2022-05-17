@@ -1,1 +1,76 @@
-<p>list works!</p>
+<section class="mt-5 mb-3">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <div class="card card-classic">
+          <div class="card-header cursor-default noselect">
+            <h5 class="card-title mb-0">
+              <i class="fal fa-user-cowboy me-2"></i>List of Administrators</h5>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-striped table-sm table-hover table-inherit">
+              <thead class="table-dark">
+              <tr>
+                <th scope="row" class="text-center fw-light">E-mail Addr</th>
+                <th scope="row" class="text-center fw-light">Root Privilege</th>
+                <th scope="row" class="text-center fw-light">Checksum</th>
+                <th scope="row" class="text-center fw-light">Status</th>
+                <th scope="row" class="text-center fw-light">
+                  <i class="fal fa-mobile me-2"></i>Phone No
+                </th>
+                <th scope="row" class="text-center fw-light">Actions</th>
+              </tr>
+              </thead>
+              <tbody>
+              <ng-container *ngIf="!staffListLoading">
+                <ng-container *ngFor="let staff of this.staffList">
+                  <tr>
+                    <td class="">
+                      <a href="javascript: void(0)"><u>{{staff.email}}</u></a>
+                    </td>
+                    <td class="text-center">
+                      <span class="text-warning" mdbTooltip="Is root administrator" *ngIf="staff.isRoot"><i
+                        class="fas fa-star"></i></span>
+                      <span class="text-muted" mdbTooltip="Normal administrator" *ngIf="!staff.isRoot"><i
+                        class="fal fa-star"></i></span>
+                    </td>
+                    <td class="text-center">
+                      <span class="text-danger" *ngIf="!staff.checksum">Error</span>
+                      <span class="text-success" *ngIf="staff.checksum" mdbTooltip="Checksum pass"><i
+                        class="fal fa-check"></i></span>
+                    </td>
+                    <td class="text-center">
+                      <span class="text-success" *ngIf="staff.status">Enabled</span>
+                      <span class="text-danger" *ngIf="!staff.status">Disabled</span>
+                    </td>
+                    <td class="text-end">
+                      <span class="" *ngIf="staff.phone">{{staff.phone}}</span>
+                      <span class="text-muted" *ngIf="!staff.phone">n/a</span>
+                    </td>
+                    <td class="text-end">
+                      ...
+                    </td>
+                  </tr>
+                </ng-container>
+                <ng-container *ngIf="!this.staffList">
+                  <tr>
+                    <td colspan="6" class="text-muted">Could not retrieve list of staff members</td>
+                  </tr>
+                </ng-container>
+              </ng-container>
+              <ng-container *ngIf="staffListLoading">
+                <tr>
+                  <td colspan="6" class="noselect">
+                    <app-spinner-icon spinnerClass="text-primary"></app-spinner-icon>
+                    <span class="text-primary ms-2">Loading...</span>
+                  </td>
+                </tr>
+              </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

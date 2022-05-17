@@ -1,4 +1,6 @@
 import {Component, OnInit} from '@angular/core';
+import {ApiQueryFail, ApiSuccess} from "../../../../services/apiService";
+import {AppService} from "../../../../services/appService";
 
 export interface staffMember {
   id: number,
@@ -15,11 +17,26 @@ export interface staffMember {
   styleUrls: ['./list.component.scss']
 })
 export class ListComponent implements OnInit {
+  public staffList: Array<staffMember> = [];
+  public staffListLoading: boolean = false;
+  public isRootAdmin: boolean = false;
 
-  constructor() {
+  constructor(private app: AppService) {
+  }
+
+  public async refreshStaffList() {
+    this.staffListLoading = true;
+    await this.app.api.callServer("get", "/auth/staff", {}).then((success: ApiSuccess) => {
+      this.staffList = success.result.staff;
+    }).catch((error: ApiQueryFail) => {
+      this.app.handleAPIError(error);
+    });
+
+    this.staffListLoading = false;
   }
 
   ngOnInit(): void {
+    this.isRootAdmin = this.app.auth.session().admin.isRoot;
+    this.refreshStaffList().then();
   }
-
 }

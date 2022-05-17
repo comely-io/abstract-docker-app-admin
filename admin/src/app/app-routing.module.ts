@@ -9,6 +9,7 @@ import {DockerComponent} from "./auth/app/docker/docker.component";
 import {AccountComponent} from "./auth/account/account.component";
 import {LogComponent} from "./auth/staff/log/log.component";
 import {StaffComponent} from "./auth/staff/staff.component";
+import {ListComponent} from "./auth/staff/list/list.component";
 
 const routes: Routes = [
   {path: '', component: SigninComponent},
@@ -33,7 +34,8 @@ const routes: Routes = [
         path: 'staff',
         component: StaffComponent,
         children: [
-          {path: '', redirectTo: 'log', pathMatch: 'full'},
+          {path: '', redirectTo: 'list', pathMatch: 'full'},
+          {path: 'list', component: ListComponent},
           {path: 'log', component: LogComponent}
         ]
       }

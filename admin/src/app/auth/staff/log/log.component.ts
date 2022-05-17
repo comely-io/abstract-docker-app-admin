@@ -4,6 +4,7 @@ import {ApiErrorHandleOpts, AppService} from "../../../../services/appService";
 import {ApiQueryFail, ApiSuccess} from "../../../../services/apiService";
 import {staffMember} from "../list/list.component";
 import {paginationFilters} from "../../../shared/pagination/pagination.component";
+import {AdminPanelService} from "../../../../services/adminPanelService";
 
 interface searchResult {
   totalRows: number,
@@ -62,7 +63,7 @@ export class LogComponent implements OnInit {
     filter: new FormControl()
   });
 
-  constructor(private app: AppService) {
+  constructor(private app: AppService, private adminPanel: AdminPanelService) {
   }
 
   public getStaffEmail(id: number): string | undefined {
@@ -142,7 +143,7 @@ export class LogComponent implements OnInit {
 
     this.searchLogs.admin = adminId;
     this.searchLogs.flags = flags;
-    this.searchLogs.filter  = filter;
+    this.searchLogs.filter = filter;
     this.searchLogs.page = 1;
     this.queryActivityLog().then();
   }
@@ -200,5 +201,11 @@ export class LogComponent implements OnInit {
 
   ngOnInit(): void {
     this.getStaffList();
+
+    this.adminPanel.breadcrumbs.next([
+      {page: 'Staff Control', active: true},
+      {page: 'Activity Log', active: true, icon: 'fal fa-users-crown'}
+    ]);
+    this.adminPanel.titleChange.next(["Activity Log", "Staff"]);
   }
 }

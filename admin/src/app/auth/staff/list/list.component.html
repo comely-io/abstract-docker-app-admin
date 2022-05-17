@@ -1,22 +1,27 @@
-<section class="mt-5 mb-3">
+<section class="vh-100 bg-inner-page">
   <div class="container">
-    <div class="row">
-      <div class="col-12">
-        <div class="card card-classic">
+    <div class="row d-flex justify-content-center">
+      <div class="col-12 col-md-10">
+        <div class="card card-classic my-5">
           <div class="card-header cursor-default noselect">
-            <h5 class="card-title mb-0">
+            <h5 class="card-title float-start mb-0">
               <i class="fal fa-user-cowboy me-2"></i>List of Administrators</h5>
+            <a class="btn btn-danger btn-sm float-end shadow-0 pull-end" mdbRipple rippleColor="danger"
+               *ngIf="this.isRootAdmin">
+              <i class="fal fa-user-plus me-2"></i>Insert
+            </a>
           </div>
           <div class="table-responsive">
             <table class="table table-striped table-sm table-hover table-inherit">
               <thead class="table-dark">
               <tr>
-                <th scope="row" class="text-center fw-light">E-mail Addr</th>
+                <th scope="row" class="text-center fw-light">ID</th>
+                <th scope="row" class="text-center fw-light">E-mail Address</th>
                 <th scope="row" class="text-center fw-light">Root Privilege</th>
                 <th scope="row" class="text-center fw-light">Checksum</th>
                 <th scope="row" class="text-center fw-light">Status</th>
                 <th scope="row" class="text-center fw-light">
-                  <i class="fal fa-mobile me-2"></i>Phone No
+                  <i class="fal fa-mobile me-2"></i>Phone No.
                 </th>
                 <th scope="row" class="text-center fw-light">Actions</th>
               </tr>
@@ -25,6 +30,7 @@
               <ng-container *ngIf="!staffListLoading">
                 <ng-container *ngFor="let staff of this.staffList">
                   <tr>
+                    <td class="text-end">{{staff.id}}</td>
                     <td class="">
                       <a href="javascript: void(0)"><u>{{staff.email}}</u></a>
                     </td>
@@ -48,19 +54,24 @@
                       <span class="text-muted" *ngIf="!staff.phone">n/a</span>
                     </td>
                     <td class="text-end">
-                      ...
+                      <div class="btn-group btn-group-sm shadow-0">
+                        <a class="btn btn-outline-primary" mdbRipple rippleColor="primary"
+                           mdbTooltip="Edit account & permissions"><i class="fal fa-pen"></i></a>
+                        <a class="btn btn-outline-primary" mdbRipple rippleColor="primary"
+                           mdbTooltip="Activity log"><i class="fal fa-book-open"></i></a>
+                      </div>
                     </td>
                   </tr>
                 </ng-container>
                 <ng-container *ngIf="!this.staffList">
                   <tr>
-                    <td colspan="6" class="text-muted">Could not retrieve list of staff members</td>
+                    <td colspan="7" class="text-muted">Could not retrieve list of staff members</td>
                   </tr>
                 </ng-container>
               </ng-container>
               <ng-container *ngIf="staffListLoading">
                 <tr>
-                  <td colspan="6" class="noselect">
+                  <td colspan="7" class="noselect">
                     <app-spinner-icon spinnerClass="text-primary"></app-spinner-icon>
                     <span class="text-primary ms-2">Loading...</span>
                   </td>

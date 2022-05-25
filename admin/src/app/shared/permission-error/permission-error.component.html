@@ -1,0 +1,6 @@
+<div class="alert alert-danger {{cssClasses}}">
+  <h4 class="alert-heading">
+    <i class="fal fa-bug me-2"></i>Permission Error</h4>
+  <p class="mb-0">You don't have privilege to access requested resource.<a *ngIf="goBackRouterLink" [routerLink]="goBackRouterLink"
+                                                              class="ms-2">Go back</a></p>
+</div>

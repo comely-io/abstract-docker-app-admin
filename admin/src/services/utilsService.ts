@@ -1,5 +1,30 @@
-
 export class UtilsService {
+  /**
+   * Generates a random password
+   * @param len
+   * @param allowQuotes
+   */
+  public static randomPassword(len: number = 12, allowQuotes: boolean = false): string {
+    if (len < 0) {
+      throw new Error('Invalid password length');
+    }
+
+    let password: string = "";
+    while (password.length < len) {
+      let chr = Math.floor(Math.random() * (126 - 33 + 1)) + 33;
+      if (!allowQuotes && [34, 39, 44, 96].indexOf(chr) > -1) {
+        continue;
+      }
+
+      password += String.fromCharCode(chr);
+    }
+    return password;
+  }
+
+  /**
+   * Convert timestamp to str
+   * @param unixTs
+   */
   public static time2str(unixTs: number | string) {
     if (typeof unixTs === "string") {
       unixTs = Math.floor((new Date(unixTs)).getTime() / 1000);

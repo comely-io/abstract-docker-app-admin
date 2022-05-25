@@ -5,6 +5,7 @@ import {ApiQueryFail, ApiSuccess} from "../../../../services/apiService";
 import {staffMember} from "../list/list.component";
 import {paginationFilters} from "../../../shared/pagination/pagination.component";
 import {AdminPanelService} from "../../../../services/adminPanelService";
+import {ActivatedRoute, Params} from "@angular/router";
 
 interface searchResult {
   totalRows: number,
@@ -63,7 +64,7 @@ export class LogComponent implements OnInit {
     filter: new FormControl()
   });
 
-  constructor(private app: AppService, private adminPanel: AdminPanelService) {
+  constructor(private app: AppService, private adminPanel: AdminPanelService, private route: ActivatedRoute) {
   }
 
   public getStaffEmail(id: number): string | undefined {
@@ -163,13 +164,23 @@ export class LogComponent implements OnInit {
     this.queryActivityLog().then();
   }
 
-  public getStaffList(): void {
-    this.app.api.callServer("get", "/auth/staff", {}).then((success: ApiSuccess) => {
+  public async getStaffList() {
+    await this.app.api.callServer("get", "/auth/staff", {}).then((success: ApiSuccess) => {
       this.staffList = success.result.staff;
       this.searchIsDisabled = false;
       this.queryActivityLog().then();
     }).catch((error: ApiQueryFail) => {
       this.app.handleAPIError(error);
+    });
+
+    // Selected admin?
+    this.route.queryParams.subscribe((params: Params) => {
+      if (params.hasOwnProperty("admin")) {
+        let selectedStaffId: number = parseInt(params["admin"]);
+        if (selectedStaffId > 0) {
+          this.selectAdminId(selectedStaffId);
+        }
+      }
     });
   }
 
@@ -200,7 +211,7 @@ export class LogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getStaffList();
+    this.getStaffList().then();
 
     this.adminPanel.breadcrumbs.next([
       {page: 'Staff Control', active: true},

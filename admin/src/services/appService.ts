@@ -13,7 +13,8 @@ export interface PlainObject {
 }
 
 export interface AppFlashMessages {
-  authSessionSignin?: string
+  authSessionSignin?: string,
+  staffRetrieveFail?: string
 }
 
 export interface ApiErrorHandleOpts {

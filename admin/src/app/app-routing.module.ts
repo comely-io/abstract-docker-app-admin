@@ -10,6 +10,8 @@ import {AccountComponent} from "./auth/account/account.component";
 import {LogComponent} from "./auth/staff/log/log.component";
 import {StaffComponent} from "./auth/staff/staff.component";
 import {ListComponent} from "./auth/staff/list/list.component";
+import {InsertAdminComponent} from "./auth/staff/insert-admin/insert-admin.component";
+import {EditAdminComponent} from "./auth/staff/edit-admin/edit-admin.component";
 
 const routes: Routes = [
   {path: '', component: SigninComponent},
@@ -36,6 +38,8 @@ const routes: Routes = [
         children: [
           {path: '', redirectTo: 'list', pathMatch: 'full'},
           {path: 'list', component: ListComponent},
+          {path: 'insert', component: InsertAdminComponent},
+          {path: 'edit', component: EditAdminComponent},
           {path: 'log', component: LogComponent}
         ]
       }

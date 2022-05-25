@@ -2,12 +2,15 @@
   <div class="container">
     <div class="row d-flex justify-content-center">
       <div class="col-12 col-md-10">
+        <div class="alert alert-danger mt-5 mb-n3" *ngIf="editFlashMessage">
+          <i class="fal fa-exclamation-circle me-2"></i>{{editFlashMessage}}
+        </div>
         <div class="card card-classic my-5">
           <div class="card-header cursor-default noselect">
             <h5 class="card-title float-start mb-0">
               <i class="fal fa-user-cowboy me-2"></i>List of Administrators</h5>
             <a class="btn btn-danger btn-sm float-end shadow-0 pull-end" mdbRipple rippleColor="danger"
-               *ngIf="this.isRootAdmin">
+               *ngIf="this.isRootAdmin" routerLink="/auth/staff/insert">
               <i class="fal fa-user-plus me-2"></i>Insert
             </a>
           </div>
@@ -55,9 +58,12 @@
                     </td>
                     <td class="text-end">
                       <div class="btn-group btn-group-sm shadow-0">
-                        <a class="btn btn-outline-primary" mdbRipple rippleColor="primary"
+                        <a class="btn btn-outline-primary" *ngIf="authAdminEmail !== staff.email"
+                           routerLink="/auth/staff/edit" [queryParams]="{admin: staff.id}"
+                           mdbRipple rippleColor="primary"
                            mdbTooltip="Edit account & permissions"><i class="fal fa-pen"></i></a>
                         <a class="btn btn-outline-primary" mdbRipple rippleColor="primary"
+                           routerLink="/auth/staff/log" [queryParams]="{admin: staff.id}"
                            mdbTooltip="Activity log"><i class="fal fa-book-open"></i></a>
                       </div>
                     </td>

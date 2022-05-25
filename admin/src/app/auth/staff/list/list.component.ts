@@ -21,8 +21,11 @@ export class ListComponent implements OnInit {
   public staffList: Array<staffMember> = [];
   public staffListLoading: boolean = false;
   public isRootAdmin: boolean = false;
+  public editFlashMessage?: string;
+  public authAdminEmail: string;
 
   constructor(private app: AppService, private adminPanel: AdminPanelService) {
+    this.authAdminEmail = app.auth.session().admin.email;
   }
 
   public async refreshStaffList() {
@@ -37,6 +40,9 @@ export class ListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.editFlashMessage = this.app.flash.staffRetrieveFail;
+    this.app.flash.staffRetrieveFail = undefined;
+
     this.isRootAdmin = this.app.auth.session().admin.isRoot;
     this.refreshStaffList().then();
     this.adminPanel.breadcrumbs.next([

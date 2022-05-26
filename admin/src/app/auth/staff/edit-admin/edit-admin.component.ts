@@ -12,7 +12,7 @@ import {staffMember} from "../list/list.component";
 })
 export class EditAdminComponent implements OnInit {
   private staffId!: number;
-  public staff?: staffMember;
+  public staff!: staffMember;
 
   constructor(private app: AppService, private aP: AdminPanelService, private route: ActivatedRoute) {
     this.route.queryParams.subscribe((params: Params) => {

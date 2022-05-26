@@ -1,1 +1,42 @@
-<p>edit-admin works!</p>
+<section class="vh-100 bg-inner-page">
+  <div class="container">
+    <div class="row d-flex justify-content-center">
+      <div class="col-12 col-md-10">
+        <div class="card card-classic my-5">
+          <div class="card-header noselect">
+            <div class="float-start">
+              <h3 class="card-title fw-light mb-0">
+                <i class="fal fa-user-cowboy me-2"></i>Administrator ID #
+                <strong>{{staff.id}}</strong>
+              </h3>
+              <p class="text-secondary mb-0">{{staff.email}}</p>
+            </div>
+            <a routerLink="/auth/staff/list" class="btn btn-sm btn-danger shadow-0 float-end">&laquo; Go Back</a>
+          </div>
+          <div class="card-body">
+            <mdb-tabs>
+              <mdb-tab>
+                <ng-template mdbTabTitle>
+                  <span><i class="fal fa-user-edit me-2"></i>Manage</span>
+                </ng-template>
+                Tab content 1
+              </mdb-tab>
+              <mdb-tab>
+                <ng-template mdbTabTitle>
+                  <span><i class="fal fa-stars me-2"></i>Permissions</span>
+                </ng-template>
+                Tab content 2
+              </mdb-tab>
+              <mdb-tab>
+                <ng-template mdbTabTitle>
+                  <span><i class="fal fa-cogs me-2"></i>Reset</span>
+                </ng-template>
+                Tab content 3
+              </mdb-tab>
+            </mdb-tabs>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

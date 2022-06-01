@@ -1,15 +1,15 @@
-<section class="vh-100 bg-inner-page">
+<section class="bg-inner-page" style="min-height: 100vh">
   <div class="container">
     <div class="row d-flex justify-content-center">
       <div class="col-12 col-md-10">
-        <div class="card card-classic my-5">
-          <div class="card-header noselect">
+        <div class="card shadow-0 my-5" *ngIf="this.staff">
+          <div class="card-header py-4 cursor-default noselect bg-secondary border-bottom text-white">
             <div class="float-start">
               <h3 class="card-title fw-light mb-0">
-                <i class="fal fa-user-cowboy me-2"></i>Administrator ID #
+                <i class="fas fa-user-cowboy me-2"></i>Administrator ID #
                 <strong>{{staff.id}}</strong>
               </h3>
-              <p class="text-secondary mb-0">{{staff.email}}</p>
+              <p class="mb-0">{{staff.email}}</p>
             </div>
             <a routerLink="/auth/staff/list" class="btn btn-sm btn-danger shadow-0 float-end">&laquo; Go Back</a>
           </div>
@@ -19,13 +19,155 @@
                 <ng-template mdbTabTitle>
                   <span><i class="fal fa-user-edit me-2"></i>Manage</span>
                 </ng-template>
-                Tab content 1
+                <form [formGroup]="editAccountForm">
+                  <div class="card card-classic mt-4 cursor-pointer">
+                    <div class="card-header noselect" (click)="editAccountCollapse.toggle()">
+                      <h5 class="card-title fw-light mb-0 float-start"><i class="fal fa-user-edit me-2"></i>Account
+                        Status &amp;
+                        E-mail</h5>
+                      <span class="float-end" *ngIf="editAccountCollapse.collapsed">&#9650;</span>
+                      <span class="float-end" *ngIf="!editAccountCollapse.collapsed">&#9660;</span>
+                    </div>
+                    <div mdbCollapse #editAccountCollapse="mdbCollapse">
+                      <div class="card-body">
+                        <mdb-form-control>
+                          <mdb-select [disabled]="formsAreDisabled" formControlName="status">
+                            <mdb-option value="0">Disabled</mdb-option>
+                            <mdb-option value="1">Enabled</mdb-option>
+                          </mdb-select>
+                          <label mdbLabel class="form-label">Status</label>
+                        </mdb-form-control>
+                        <app-form-field-error [formField]="editAccountForm.controls.status"></app-form-field-error>
+                        <mdb-form-control class="mt-3">
+                          <input mdbInput mdbValidate type="text" formControlName="email" id="editEmail"
+                                 maxlength="32"
+                                 [readonly]="formsAreDisabled" placeholder="{{staff.email}}"
+                                 class="form-control mb-0" autofocus/>
+                          <label mdbLabel class="form-label " for="editEmail">E-mail Address</label>
+                        </mdb-form-control>
+                        <app-form-field-error [formField]="editAccountForm.controls.email"></app-form-field-error>
+                      </div>
+                      <div class="card-body border-top rounded-0 bg-light">
+                        <mdb-form-control>
+                          <input mdbInput mdbValidate type="text" formControlName="totp" id="editAccTotp" maxlength="6"
+                                 autocomplete="off" [readonly]="formsAreDisabled" placeholder="000000"
+                                 (focus)="validator.focusTotpField($event)" (keyup)="editAccountTotpType($event)"
+                                 class="form-control mb-0" autofocus/>
+                          <label mdbLabel class="form-label " for="editAccTotp">TOTP Code</label>
+                        </mdb-form-control>
+                        <app-form-field-error [formField]="editAccountForm.controls.totp"></app-form-field-error>
+                      </div>
+                      <div class="card-footer text-right">
+                        <button class="btn btn-outline-primary" type="submit" *ngIf="!editAccountSubmit"
+                                [disabled]="formsAreDisabled">Save Changes
+                        </button>
+                        <app-button-loader [btnClass]="'btn-outline-primary'" [spinnerClass]="'text-primary'"
+                                           *ngIf="editAccountSubmit"></app-button-loader>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+                <form [formGroup]="changePasswordForm">
+                  <div class="card card-classic mt-4 cursor-pointer">
+                    <div class="card-header noselect" (click)="changePwCollapse.toggle()">
+                      <h5 class="card-title fw-light mb-0 float-start"><i class="fal fa-unlock-alt me-2"></i>Change
+                        Password</h5>
+                      <span class="float-end" *ngIf="changePwCollapse.collapsed">&#9650;</span>
+                      <span class="float-end" *ngIf="!changePwCollapse.collapsed">&#9660;</span>
+                    </div>
+                    <div mdbCollapse #changePwCollapse="mdbCollapse">
+                      <div class="card-body">
+                        <mdb-form-control>
+                          <input mdbInput mdbValidate type="text" formControlName="tempPassword" id="tempPassword"
+                                 maxlength="32"
+                                 [readonly]="formsAreDisabled" placeholder="********"
+                                 class="form-control mb-0" autofocus/>
+                          <label mdbLabel class="form-label " for="tempPassword">Temporary Password</label>
+                        </mdb-form-control>
+                        <app-form-field-error
+                          [formField]="changePasswordForm.controls.tempPassword"></app-form-field-error>
+                      </div>
+                      <div class="card-body border-top rounded-0 bg-light">
+                        <mdb-form-control>
+                          <input mdbInput mdbValidate type="text" formControlName="totp" id="changePwTotp" maxlength="6"
+                                 autocomplete="off" [readonly]="formsAreDisabled" placeholder="000000"
+                                 (focus)="validator.focusTotpField($event)" (keyup)="changePwTotpType($event)"
+                                 class="form-control mb-0" autofocus/>
+                          <label mdbLabel class="form-label " for="changePwTotp">TOTP Code</label>
+                        </mdb-form-control>
+                        <app-form-field-error [formField]="changePasswordForm.controls.totp"></app-form-field-error>
+                      </div>
+                      <div class="card-footer text-right">
+                        <button class="btn btn-outline-danger" type="submit" *ngIf="!changePwSubmit"
+                                [disabled]="formsAreDisabled">Change Password
+                        </button>
+                        <app-button-loader [btnClass]="'btn-outline-danger'" [spinnerClass]="'text-danger'"
+                                           *ngIf="changePwSubmit"></app-button-loader>
+                      </div>
+                    </div>
+                  </div>
+                </form>
               </mdb-tab>
               <mdb-tab>
                 <ng-template mdbTabTitle>
                   <span><i class="fal fa-stars me-2"></i>Permissions</span>
                 </ng-template>
-                Tab content 2
+                <div class="alert alert-warning" *ngIf="this.staff.isRoot">
+                  <i class="fal fa-exclamation-circle me-3"></i>This administrator has <strong>root</strong> level
+                  privileges.
+                </div>
+                <ng-template [ngIf]="!this.staff.isRoot">
+                  <div class="text-center my-4" *ngIf="!this.loadedPermissions">
+                    <app-spinner-icon spinnerClass="text-primary"></app-spinner-icon>
+                  </div>
+                  <div class="card card-classic my-4 cursor-pointer" *ngIf="this.loadedPermissions">
+                    <div class="card-header noselect" (click)="editAccountCollapse.toggle()">
+                      <h5 class="card-title fw-light mb-0 float-start"><i class="fal fa-stars me-2"></i>Change Permissions
+                      </h5>
+                    </div>
+                    <div class="table-responsive mb-0">
+                      <table class="table table-sm table-striped table-hover mb-0">
+                        <tbody>
+                        <ng-container *ngFor="let perm of loadedPermissions | keyvalue">
+                          <tr>
+                            <td>
+                              <div class="form-check form-switch">
+                                <input mdbCheckbox [disabled]="this.staff.isRoot" class="form-check-input me-3"
+                                       [checked]="perm.value.current"
+                                       (change)="togglePermission(perm.key)" type="checkbox"
+                                       id="priv_{{perm.key}}"/>
+                                <label class="form-check-label" [ngClass]="permissionColor(perm.value.type)"
+                                       for="priv_{{perm.key}}">{{perm.value.desc ?? perm.key}}<i
+                                  *ngIf="[1,2].indexOf(perm.value.type) > -1"
+                                  [ngClass]="permissionLegend(perm.value.type)"></i></label>
+                              </div>
+                            </td>
+                          </tr>
+                        </ng-container>
+                        </tbody>
+                      </table>
+                    </div>
+                    <form [formGroup]="editPermissionsForm">
+                      <div class="card-body border-top rounded-0 bg-light">
+                        <mdb-form-control>
+                          <input mdbInput mdbValidate type="text" formControlName="totp" id="editPermTotp" maxlength="6"
+                                 autocomplete="off" [readonly]="formsAreDisabled" placeholder="000000"
+                                 (focus)="validator.focusTotpField($event)" (keyup)="editPermTotpType($event)"
+                                 class="form-control mb-0" autofocus/>
+                          <label mdbLabel class="form-label " for="editPermTotp">TOTP Code</label>
+                        </mdb-form-control>
+                        <app-form-field-error [formField]="editPermissionsForm.controls.totp"></app-form-field-error>
+                      </div>
+                      <div class="card-footer text-right">
+                        <button class="btn btn-outline-danger" type="submit" *ngIf="!editPermSubmit"
+                                [disabled]="formsAreDisabled">Save Changes
+                        </button>
+                        <app-button-loader [btnClass]="'btn-outline-danger'" [spinnerClass]="'text-danger'"
+                                           *ngIf="editPermSubmit"></app-button-loader>
+                      </div>
+                    </form>
+                  </div>
+                </ng-template>
               </mdb-tab>
               <mdb-tab>
                 <ng-template mdbTabTitle>

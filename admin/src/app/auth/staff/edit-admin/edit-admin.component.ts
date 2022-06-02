@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {AppService} from "../../../../services/appService";
+import {ApiErrorHandleOpts, AppService} from "../../../../services/appService";
 import {AdminPanelService} from "../../../../services/adminPanelService";
 import {ActivatedRoute, Params} from "@angular/router";
 import {ApiQueryFail, ApiSuccess} from "../../../../services/apiService";
@@ -33,8 +33,11 @@ export class EditAdminComponent implements OnInit {
   public validator: ValidatorService;
   public formsAreDisabled: boolean = true;
   public editAccountSubmit: boolean = false;
+  public editAccountSuccess: boolean = false;
   public changePwSubmit: boolean = false;
+  public changePwSuccess: boolean = false;
   public editPermSubmit: boolean = false;
+  public editPermSuccess: boolean = false;
 
   public editAccountForm: FormGroup = new FormGroup({
     status: new FormControl(),
@@ -58,8 +61,64 @@ export class EditAdminComponent implements OnInit {
     });
   }
 
-  public editAccountTotpType(e: any) {
+  public async submitEditAccountForm() {
+    this.editAccountSuccess = false;
 
+    let inputErrors: number = 0;
+    let email: string = "",
+      status: string,
+      totp: string = "";
+
+    // Status
+    status = this.editAccountForm.get("status")?.value === "1" ? "true" : "false";
+
+    // E-mail address
+    try {
+      email = this.app.validator.validateEmail(this.editAccountForm.get("email")?.value);
+    } catch (e) {
+      this.editAccountForm.get("email")?.setErrors({message: e.message});
+      inputErrors++;
+    }
+
+    // Totp
+    try {
+      totp = this.app.validator.validateTotp(this.editAccountForm.get("totp")?.value);
+    } catch (e) {
+      this.editAccountForm.get("totp")?.setErrors({message: e.message});
+      inputErrors++;
+    }
+
+    // Errors?
+    if (inputErrors !== 0) {
+      return;
+    }
+
+    // Clear out TOTP code
+    this.editAccountForm.get("totp")?.setValue("");
+
+    this.editAccountSubmit = true;
+    this.formsAreDisabled = true;
+
+    await this.app.api.callServer("post", "/auth/staff/reset", {
+      id: this.staff.id,
+      action: "account",
+      enabled: status,
+      email: email,
+      totp: totp,
+    }).then(() => {
+      this.editAccountSuccess = true;
+    }).catch((error: ApiQueryFail) => {
+      this.app.handleAPIError(error, <ApiErrorHandleOpts>{formGroup: this.editAccountForm});
+    });
+
+    this.editAccountSubmit = false;
+    this.formsAreDisabled = false;
+  }
+
+  public editAccountTotpType(e: any) {
+    this.validator.parseTotpField(e, () => {
+      this.submitEditAccountForm().then();
+    });
   }
 
   public changePwTotpType(e: any) {

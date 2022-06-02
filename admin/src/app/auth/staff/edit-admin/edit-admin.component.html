@@ -19,7 +19,7 @@
                 <ng-template mdbTabTitle>
                   <span><i class="fal fa-user-edit me-2"></i>Manage</span>
                 </ng-template>
-                <form [formGroup]="editAccountForm">
+                <form [formGroup]="editAccountForm" (ngSubmit)="submitEditAccountForm()">
                   <div class="card card-classic mt-4 cursor-pointer">
                     <div class="card-header noselect" (click)="editAccountCollapse.toggle()">
                       <h5 class="card-title fw-light mb-0 float-start"><i class="fal fa-user-edit me-2"></i>Account
@@ -30,6 +30,9 @@
                     </div>
                     <div mdbCollapse #editAccountCollapse="mdbCollapse">
                       <div class="card-body">
+                        <div class="alert alert-success mb-4 py-2" *ngIf="editAccountSuccess">
+                          <i class="fal fa-check-circle me-2"></i>Your changes have been saved successfully!
+                        </div>
                         <mdb-form-control>
                           <mdb-select [disabled]="formsAreDisabled" formControlName="status">
                             <mdb-option value="0">Disabled</mdb-option>
@@ -77,6 +80,9 @@
                     </div>
                     <div mdbCollapse #changePwCollapse="mdbCollapse">
                       <div class="card-body">
+                        <div class="alert alert-success mb-4 py-2" *ngIf="changePwSuccess">
+                          <i class="fal fa-check-circle me-2"></i>Password has been updated successfully!
+                        </div>
                         <mdb-form-control>
                           <input mdbInput mdbValidate type="text" formControlName="tempPassword" id="tempPassword"
                                  maxlength="32"
@@ -122,7 +128,8 @@
                   </div>
                   <div class="card card-classic my-4 cursor-pointer" *ngIf="this.loadedPermissions">
                     <div class="card-header noselect" (click)="editAccountCollapse.toggle()">
-                      <h5 class="card-title fw-light mb-0 float-start"><i class="fal fa-stars me-2"></i>Change Permissions
+                      <h5 class="card-title fw-light mb-0 float-start"><i class="fal fa-stars me-2"></i>Change
+                        Permissions
                       </h5>
                     </div>
                     <div class="table-responsive mb-0">

@@ -89,6 +89,38 @@ export class ApiService {
     }
   }
 
+  /**
+   * RFC3986 compatible URI encoding
+   * @param params
+   * @param prefix
+   * @param excludeKeys
+   */
+  public queryEncode(params: any, prefix: string | undefined, excludeKeys: Array<string> | undefined = undefined): string {
+    let apiService = this;
+    let query: any = Object.keys(params).map((key: string) => {
+      if (excludeKeys) {
+        if (excludeKeys.indexOf(key.toLowerCase()) > -1) {
+          return;
+        }
+      }
+
+      let value = params[key];
+      if (params.constructor === Array) {
+        key = `${prefix}[]`;
+      } else if (params.constructor === Object) {
+        key = (prefix ? `${prefix}[${key}]` : key);
+      }
+
+      if (typeof value === "object") {
+        return apiService.queryEncode(value, key);
+      } else {
+        return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+      }
+    });
+
+    return [].concat.apply([], query).join("&");
+  }
+
   public callServer(method: HttpMethod, endpoint: string, data: ApiPayloadData, options?: ApiCallOptions): Promise<ApiSuccess> {
     return new Promise<ApiSuccess>((success, fail) => {
       let httpService = this.app.http;
@@ -144,16 +176,7 @@ export class ApiService {
         }
 
         // RFC3986 compatible URI encoding
-        let queryEncodedParts = Object.keys(data).map(function (key: string) {
-          if (hmacExcludeKeys.indexOf(key.toLowerCase()) > -1) {
-            return;
-          }
-
-          return httpService.encodeURIComponent(key) + "=" + httpService.encodeURIComponent(data[key]);
-        });
-        let queryStr = queryEncodedParts.filter(function (part: undefined | string) {
-          return !!part;
-        }).join("&");
+        let queryStr = this.queryEncode(data, undefined, hmacExcludeKeys);
 
         // Compute HMAC for payload as Signature
         let userSignature = crypto.HmacSHA512(queryStr, sessionMeta.hmacSecret).toString(crypto.enc.Hex);

@@ -20,8 +20,8 @@
                   <span><i class="fal fa-user-edit me-2"></i>Manage</span>
                 </ng-template>
                 <form [formGroup]="editAccountForm" (ngSubmit)="submitEditAccountForm()">
-                  <div class="card card-classic mt-4 cursor-pointer">
-                    <div class="card-header noselect" (click)="editAccountCollapse.toggle()">
+                  <div class="card card-classic mt-4">
+                    <div class="card-header noselect cursor-pointer" (click)="editAccountCollapse.toggle()">
                       <h5 class="card-title fw-light mb-0 float-start"><i class="fal fa-user-edit me-2"></i>Account
                         Status &amp;
                         E-mail</h5>
@@ -70,9 +70,9 @@
                     </div>
                   </div>
                 </form>
-                <form [formGroup]="changePasswordForm">
-                  <div class="card card-classic mt-4 cursor-pointer">
-                    <div class="card-header noselect" (click)="changePwCollapse.toggle()">
+                <form [formGroup]="changePasswordForm" (ngSubmit)="submitPasswordForm()">
+                  <div class="card card-classic mt-4">
+                    <div class="card-header noselect cursor-pointer" (click)="changePwCollapse.toggle()">
                       <h5 class="card-title fw-light mb-0 float-start"><i class="fal fa-unlock-alt me-2"></i>Change
                         Password</h5>
                       <span class="float-end" *ngIf="changePwCollapse.collapsed">&#9650;</span>
@@ -118,43 +118,46 @@
                 <ng-template mdbTabTitle>
                   <span><i class="fal fa-stars me-2"></i>Permissions</span>
                 </ng-template>
-                <div class="alert alert-warning" *ngIf="this.staff.isRoot">
+                <div class="alert alert-warning py-2" *ngIf="this.staff.isRoot">
                   <i class="fal fa-exclamation-circle me-3"></i>This administrator has <strong>root</strong> level
                   privileges.
+                </div>
+                <div class="alert alert-success mb-4 py-2" *ngIf="editPermSuccess">
+                  <i class="fal fa-check-circle me-2"></i>Your changes have been saved successfully!
                 </div>
                 <ng-template [ngIf]="!this.staff.isRoot">
                   <div class="text-center my-4" *ngIf="!this.loadedPermissions">
                     <app-spinner-icon spinnerClass="text-primary"></app-spinner-icon>
                   </div>
-                  <div class="card card-classic my-4 cursor-pointer" *ngIf="this.loadedPermissions">
-                    <div class="card-header noselect" (click)="editAccountCollapse.toggle()">
-                      <h5 class="card-title fw-light mb-0 float-start"><i class="fal fa-stars me-2"></i>Change
-                        Permissions
-                      </h5>
-                    </div>
-                    <div class="table-responsive mb-0">
-                      <table class="table table-sm table-striped table-hover mb-0">
-                        <tbody>
-                        <ng-container *ngFor="let perm of loadedPermissions | keyvalue">
-                          <tr>
-                            <td>
-                              <div class="form-check form-switch">
-                                <input mdbCheckbox [disabled]="this.staff.isRoot" class="form-check-input me-3"
-                                       [checked]="perm.value.current"
-                                       (change)="togglePermission(perm.key)" type="checkbox"
-                                       id="priv_{{perm.key}}"/>
-                                <label class="form-check-label" [ngClass]="permissionColor(perm.value.type)"
-                                       for="priv_{{perm.key}}">{{perm.value.desc ?? perm.key}}<i
-                                  *ngIf="[1,2].indexOf(perm.value.type) > -1"
-                                  [ngClass]="permissionLegend(perm.value.type)"></i></label>
-                              </div>
-                            </td>
-                          </tr>
-                        </ng-container>
-                        </tbody>
-                      </table>
-                    </div>
-                    <form [formGroup]="editPermissionsForm">
+                  <form [formGroup]="editPermissionsForm" (ngSubmit)="submitPrivilegesForm()">
+                    <div class="card card-classic my-4" *ngIf="this.loadedPermissions">
+                      <div class="card-header noselect cursor-pointer">
+                        <h5 class="card-title fw-light mb-0 float-start"><i class="fal fa-stars me-2"></i>Change
+                          Permissions
+                        </h5>
+                      </div>
+                      <div class="table-responsive mb-0">
+                        <table class="table table-sm table-striped table-hover mb-0">
+                          <tbody>
+                          <ng-container *ngFor="let perm of loadedPermissions | keyvalue">
+                            <tr>
+                              <td>
+                                <div class="form-check form-switch">
+                                  <input mdbCheckbox [disabled]="this.staff.isRoot" class="form-check-input me-3"
+                                         [checked]="perm.value.current"
+                                         (change)="togglePermission(perm.key)" type="checkbox"
+                                         id="priv_{{perm.key}}"/>
+                                  <label class="form-check-label" [ngClass]="permissionColor(perm.value.type)"
+                                         for="priv_{{perm.key}}">{{perm.value.desc ?? perm.key}}<i
+                                    *ngIf="[1,2].indexOf(perm.value.type) > -1"
+                                    [ngClass]="permissionLegend(perm.value.type)"></i></label>
+                                </div>
+                              </td>
+                            </tr>
+                          </ng-container>
+                          </tbody>
+                        </table>
+                      </div>
                       <div class="card-body border-top rounded-0 bg-light">
                         <mdb-form-control>
                           <input mdbInput mdbValidate type="text" formControlName="totp" id="editPermTotp" maxlength="6"
@@ -172,15 +175,57 @@
                         <app-button-loader [btnClass]="'btn-outline-danger'" [spinnerClass]="'text-danger'"
                                            *ngIf="editPermSubmit"></app-button-loader>
                       </div>
-                    </form>
-                  </div>
+                    </div>
+                  </form>
                 </ng-template>
               </mdb-tab>
               <mdb-tab>
                 <ng-template mdbTabTitle>
                   <span><i class="fal fa-cogs me-2"></i>Reset</span>
                 </ng-template>
-                Tab content 3
+                <form [formGroup]="resetAccountForm" (ngSubmit)="submitResetAccForm()">
+                  <div class="card card-classic mt-4">
+                    <div class="card-header noselect cursor-pointer">
+                      <h5 class="card-title fw-light mb-0 float-start">
+                        <i class="fal fa-unlock-alt me-2"></i>Reset Action</h5>
+                    </div>
+                    <div>
+                      <div class="card-body">
+                        <div class="alert alert-success mb-4 py-2" *ngIf="resetAccSuccess">
+                          <i class="fal fa-check-circle me-2"></i>{{resetAccSuccess}}
+                        </div>
+                        <mdb-form-control>
+                          <mdb-select [disabled]="formsAreDisabled" formControlName="action">
+                            <mdb-option value="">(select)</mdb-option>
+                            <mdb-option value="2fa">Remove 2FA GoogleAuth Seed</mdb-option>
+                            <mdb-option value="checksum">Recompute Checksum</mdb-option>
+                            <mdb-option value="privileges">Rebuild Privileges Object</mdb-option>
+                          </mdb-select>
+                          <label mdbLabel class="form-label ">Execute Command</label>
+                        </mdb-form-control>
+                        <app-form-field-error
+                          [formField]="resetAccountForm.controls.action"></app-form-field-error>
+                      </div>
+                      <div class="card-body border-top rounded-0 bg-light">
+                        <mdb-form-control>
+                          <input mdbInput mdbValidate type="text" formControlName="totp" id="resetAccTotp" maxlength="6"
+                                 autocomplete="off" [readonly]="formsAreDisabled" placeholder="000000"
+                                 (focus)="validator.focusTotpField($event)" (keyup)="resetAccTotpType($event)"
+                                 class="form-control mb-0" autofocus/>
+                          <label mdbLabel class="form-label " for="resetAccTotp">TOTP Code</label>
+                        </mdb-form-control>
+                        <app-form-field-error [formField]="resetAccountForm.controls.totp"></app-form-field-error>
+                      </div>
+                      <div class="card-footer text-right">
+                        <button class="btn btn-outline-danger" type="submit" *ngIf="!resetAccSubmit"
+                                [disabled]="formsAreDisabled">Execute
+                        </button>
+                        <app-button-loader [btnClass]="'btn-outline-danger'" [spinnerClass]="'text-danger'"
+                                           *ngIf="resetAccSubmit"></app-button-loader>
+                      </div>
+                    </div>
+                  </div>
+                </form>
               </mdb-tab>
             </mdb-tabs>
           </div>

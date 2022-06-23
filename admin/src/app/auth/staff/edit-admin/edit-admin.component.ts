@@ -38,7 +38,12 @@ export class EditAdminComponent implements OnInit {
   public changePwSuccess: boolean = false;
   public editPermSubmit: boolean = false;
   public editPermSuccess: boolean = false;
+  public resetAccSubmit: boolean = false;
+  public resetAccSuccess?: string;
 
+  /**
+   * FormGroups
+   */
   public editAccountForm: FormGroup = new FormGroup({
     status: new FormControl(),
     email: new FormControl(),
@@ -54,6 +59,17 @@ export class EditAdminComponent implements OnInit {
     totp: new FormControl()
   });
 
+  public resetAccountForm: FormGroup = new FormGroup({
+    action: new FormControl(),
+    totp: new FormControl()
+  });
+
+  /**
+   * Controller constructor
+   * @param app
+   * @param aP
+   * @param route
+   */
   constructor(private app: AppService, private aP: AdminPanelService, private route: ActivatedRoute) {
     this.validator = app.validator;
     this.route.queryParams.subscribe((params: Params) => {
@@ -61,6 +77,9 @@ export class EditAdminComponent implements OnInit {
     });
   }
 
+  /**
+   * Edit status & email address
+   */
   public async submitEditAccountForm() {
     this.editAccountSuccess = false;
 
@@ -121,14 +140,194 @@ export class EditAdminComponent implements OnInit {
     });
   }
 
-  public changePwTotpType(e: any) {
+  /**
+   * Edit administrators permissions
+   */
+  public async submitPrivilegesForm() {
+    this.editPermSuccess = false;
+    let inputErrors: number = 0;
+    let totp: string = "";
 
+    // Changed permissions
+    let permKeys = Object.keys(this.changePermissions);
+    if (!permKeys.length) {
+      this.app.notify.error('Privileges object was not loaded successfully');
+      return;
+    }
+
+    let newPermsObj: any = {};
+    permKeys.forEach((permKey: string) => {
+      newPermsObj[permKey] = this.changePermissions[permKey] ? 1 : 0;
+    });
+
+    // Totp
+    try {
+      totp = this.app.validator.validateTotp(this.editPermissionsForm.get("totp")?.value);
+    } catch (e) {
+      this.editPermissionsForm.get("totp")?.setErrors({message: e.message});
+      inputErrors++;
+    }
+
+    // Errors?
+    if (inputErrors !== 0) {
+      return;
+    }
+
+    // Clear out TOTP code
+    this.editPermissionsForm.get("totp")?.setValue("");
+
+    this.editPermSubmit = true;
+    this.formsAreDisabled = true;
+
+    await this.app.api.callServer("post", "/auth/staff/privileges", {
+      id: this.staff.id,
+      permissions: newPermsObj,
+      totp: totp,
+    }).then(() => {
+      this.editPermSuccess = true;
+    }).catch((error: ApiQueryFail) => {
+      this.app.handleAPIError(error, <ApiErrorHandleOpts>{formGroup: this.editPermissionsForm});
+    });
+
+    this.editPermSubmit = false;
+    this.formsAreDisabled = false;
   }
 
   public editPermTotpType(e: any) {
-
+    this.validator.parseTotpField(e, () => {
+      this.submitPrivilegesForm().then();
+    });
   }
 
+  public togglePermission(id: string): void {
+    this.changePermissions[id] = !(this.changePermissions.hasOwnProperty(id) && this.changePermissions[id]);
+  }
+
+  /**
+   * Edit account password
+   */
+  public async submitPasswordForm() {
+    this.changePwSuccess = false;
+    let inputErrors: number = 0;
+    let tempPassword: string = "",
+      totp: string = "";
+
+    // Password
+    try {
+      tempPassword = this.app.validator.validatePassword(this.changePasswordForm.get("tempPassword")?.value, "Temporary password")
+    } catch (e) {
+      this.changePasswordForm.get("tempPassword")?.setErrors({message: e.message});
+      inputErrors++;
+    }
+
+    // Totp
+    try {
+      totp = this.app.validator.validateTotp(this.changePasswordForm.get("totp")?.value);
+    } catch (e) {
+      this.changePasswordForm.get("totp")?.setErrors({message: e.message});
+      inputErrors++;
+    }
+
+    // Errors?
+    if (inputErrors !== 0) {
+      return;
+    }
+
+    // Clear out TOTP code
+    this.changePasswordForm.get("totp")?.setValue("");
+
+    this.changePwSubmit = true;
+    this.formsAreDisabled = true;
+
+    await this.app.api.callServer("post", "/auth/staff/reset", {
+      id: this.staff.id,
+      action: "password",
+      tempPassword: tempPassword,
+      totp: totp,
+    }).then(() => {
+      this.changePwSuccess = true;
+    }).catch((error: ApiQueryFail) => {
+      this.app.handleAPIError(error, <ApiErrorHandleOpts>{formGroup: this.changePasswordForm});
+    });
+
+    this.changePwSubmit = false;
+    this.formsAreDisabled = false;
+  }
+
+  public changePwTotpType(e: any) {
+    this.validator.parseTotpField(e, () => {
+      this.submitPasswordForm().then();
+    });
+  }
+
+  /**
+   * Reset account
+   */
+  public async submitResetAccForm() {
+    this.resetAccSuccess = undefined;
+    let inputErrors: number = 0;
+    let action: string | undefined | null,
+      totp: string = "";
+
+    // Action
+    try {
+      action = this.resetAccountForm.get("action")?.value;
+      if (typeof action !== "string" || ["2fa", "checksum", "privileges"].indexOf(action) <= -1) {
+        throw new Error('Invalid execute action');
+      }
+    } catch (e) {
+      this.resetAccountForm.get("action")?.setErrors({message: e.message});
+      inputErrors++;
+    }
+
+    // Totp
+    try {
+      totp = this.app.validator.validateTotp(this.resetAccountForm.get("totp")?.value);
+    } catch (e) {
+      this.resetAccountForm.get("totp")?.setErrors({message: e.message});
+      inputErrors++;
+    }
+
+    // Errors?
+    if (inputErrors !== 0) {
+      return;
+    }
+
+    // Clear out TOTP code
+    this.resetAccountForm.get("totp")?.setValue("");
+
+    this.resetAccSubmit = true;
+    this.formsAreDisabled = true;
+
+    await this.app.api.callServer("post", "/auth/staff/reset", {
+      id: this.staff.id,
+      action: action,
+      totp: totp,
+    }).then((result: ApiSuccess) => {
+      this.resetAccSuccess = "Command executed successfully!";
+      if (result.result.hasOwnProperty("success")) {
+        if (typeof result.result.success === "string" && result.result.success.length) {
+          this.resetAccSuccess = result.result.success;
+        }
+      }
+    }).catch((error: ApiQueryFail) => {
+      this.app.handleAPIError(error, <ApiErrorHandleOpts>{formGroup: this.resetAccountForm});
+    });
+
+    this.resetAccSubmit = false;
+    this.formsAreDisabled = false;
+  }
+
+  public resetAccTotpType(e: any) {
+    this.validator.parseTotpField(e, () => {
+      this.submitResetAccForm().then();
+    });
+  }
+
+  /**
+   * Load staff account and permissions
+   * @private
+   */
   private async loadStaffAccount() {
     if (!this.staffId) {
       this.app.router.navigate(["/auth/staff/list"]).then();
@@ -181,11 +380,9 @@ export class EditAdminComponent implements OnInit {
     }
   }
 
-  public togglePermission(id: string): void {
-    this.changePermissions[id] = !(this.changePermissions.hasOwnProperty(id) && this.changePermissions[id]);
-    console.log(this.changePermissions);
-  }
-
+  /**
+   * Permissions legend and display highlights
+   */
   public permissionLegend(type: number): string {
     if (type === 2) {
       return 'fal fa-exclamation-circle ms-2';
@@ -206,6 +403,9 @@ export class EditAdminComponent implements OnInit {
     return "";
   }
 
+  /**
+   * Controller initialize
+   */
   ngOnInit(): void {
     this.loadStaffAccount().then();
 
@@ -215,5 +415,4 @@ export class EditAdminComponent implements OnInit {
     ]);
     this.aP.titleChange.next(["Manage Account & Permissions", "Staff"]);
   }
-
 }

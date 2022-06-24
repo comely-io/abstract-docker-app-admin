@@ -55,9 +55,10 @@ import {ListComponent} from './auth/staff/list/list.component';
 import {momentPipe, momentRelativePipe} from "../pipes/momentPipe";
 import {time2StrPipe} from "../pipes/time2StrPipe";
 import {TimestampDisplayComponent} from './shared/timestamp-display/timestamp-display.component';
-import { InsertAdminComponent } from './auth/staff/insert-admin/insert-admin.component';
-import { EditAdminComponent } from './auth/staff/edit-admin/edit-admin.component';
-import { PermissionErrorComponent } from './shared/permission-error/permission-error.component';
+import {InsertAdminComponent} from './auth/staff/insert-admin/insert-admin.component';
+import {EditAdminComponent} from './auth/staff/edit-admin/edit-admin.component';
+import {PermissionErrorComponent} from './shared/permission-error/permission-error.component';
+import {AdminSessionsComponent} from './auth/staff/admin-sessions/admin-sessions.component';
 
 @NgModule({
   declarations: [
@@ -82,6 +83,7 @@ import { PermissionErrorComponent } from './shared/permission-error/permission-e
     InsertAdminComponent,
     EditAdminComponent,
     PermissionErrorComponent,
+    AdminSessionsComponent,
   ],
   imports: [
     BrowserModule,

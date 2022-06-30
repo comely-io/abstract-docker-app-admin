@@ -54,7 +54,7 @@ export class AppService {
     public readonly notify: NotifyService
   ) {
     this.validator = new ValidatorService(this);
-    this.events = new AppEvents(this);
+    this.events = new AppEvents();
     this.api = new ApiService(this);
     this.auth = new AuthService(this);
     this.flash = {};

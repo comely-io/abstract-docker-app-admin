@@ -1,1 +1,71 @@
-<p>user-groups works!</p>
+<section class="vh-100 bg-inner-blue">
+  <div class="container">
+    <div class="row d-flex justify-content-center">
+      <div class="col-12 col-md-8">
+        <div class="card card-classic my-5">
+          <div class="card-header">
+            <h5 class="card-title float-start"><i class="fal fa-object-group me-2"></i>User Groups</h5>
+            <a class="btn btn-danger btn-sm float-end shadow-0 pull-end" mdbRipple rippleColor="danger"
+               (click)="openCreateModal()">
+              <i class="fal fa-user-plus me-2"></i>Create New
+            </a>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-inherit table-sm table-hover">
+              <thead class="table-dark">
+              <tr>
+                <th scope="row" class="text-center fw-light">ID</th>
+                <th scope="row" class="text-center fw-light">Name</th>
+                <th scope="row" class="text-center fw-light">Users Count</th>
+                <th scope="row" class="text-center fw-light">Last Updated</th>
+                <th scope="row" class="text-center fw-light">Actions</th>
+              </tr>
+              </thead>
+              <tbody>
+              <ng-container *ngIf="!groupsFetching">
+                <ng-container *ngIf="usersGroups.length > 0">
+                  <ng-container *ngFor="let group of usersGroups">
+                    <tr>
+                      <td class="text-end">{{group.id}}</td>
+                      <td class="text-start">{{group.name}}</td>
+                      <td class="text-end">{{group.userCount}}</td>
+                      <td class="text-end">
+                        <app-timestamp-display [epoch]="group.updatedOn" cssClasses="text-end"></app-timestamp-display>
+                      </td>
+                      <td class="text-end">
+                        <div class="btn-group btn-group-sm shadow-0">
+                          <button type="button" class="btn btn-outline-primary" mdbTooltip="Edit">
+                            <i class="fal fa-edit"></i>
+                          </button>
+                          <button type="button" class="btn btn-outline-primary" mdbTooltip="Delete">
+                            <i class="fal fa-trash-alt"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  </ng-container>
+                </ng-container>
+                <ng-container *ngIf="!usersGroups.length">
+                  <tr>
+                    <td colspan="5" class="text-muted">
+                      There are no user groups registered
+                    </td>
+                  </tr>
+                </ng-container>
+              </ng-container>
+              <ng-container *ngIf="groupsFetching">
+                <tr>
+                  <td colspan="5" class="text-center">
+                    <app-spinner-icon spinnerClass="text-primary"></app-spinner-icon>
+                    <span class="text-primary ms-2">Loading...</span>
+                  </td>
+                </tr>
+              </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

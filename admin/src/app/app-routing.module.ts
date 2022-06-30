@@ -13,6 +13,9 @@ import {ListComponent} from "./auth/staff/list/list.component";
 import {InsertAdminComponent} from "./auth/staff/insert-admin/insert-admin.component";
 import {EditAdminComponent} from "./auth/staff/edit-admin/edit-admin.component";
 import {AdminSessionsComponent} from "./auth/staff/admin-sessions/admin-sessions.component";
+import {UsersComponent} from "./auth/users/users.component";
+import {SearchUsersComponent} from "./auth/users/search-users/search-users.component";
+import {UserGroupsComponent} from "./auth/users/user-groups/user-groups.component";
 
 const routes: Routes = [
   {path: '', component: SigninComponent},
@@ -31,6 +34,15 @@ const routes: Routes = [
         children: [
           {path: '', redirectTo: 'docker', pathMatch: 'full'},
           {path: 'docker', component: DockerComponent}
+        ]
+      },
+      {
+        path: 'users',
+        component: UsersComponent,
+        children: [
+          {path: '', redirectTo: 'search', pathMatch: 'full'},
+          {path: 'search', component: SearchUsersComponent},
+          {path: 'groups', component: UserGroupsComponent}
         ]
       },
       {

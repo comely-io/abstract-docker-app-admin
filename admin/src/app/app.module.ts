@@ -59,6 +59,9 @@ import {InsertAdminComponent} from './auth/staff/insert-admin/insert-admin.compo
 import {EditAdminComponent} from './auth/staff/edit-admin/edit-admin.component';
 import {PermissionErrorComponent} from './shared/permission-error/permission-error.component';
 import {AdminSessionsComponent} from './auth/staff/admin-sessions/admin-sessions.component';
+import {UserGroupsComponent} from './auth/users/user-groups/user-groups.component';
+import {UsersComponent} from './auth/users/users.component';
+import {SearchUsersComponent} from './auth/users/search-users/search-users.component';
 
 @NgModule({
   declarations: [
@@ -84,6 +87,9 @@ import {AdminSessionsComponent} from './auth/staff/admin-sessions/admin-sessions
     EditAdminComponent,
     PermissionErrorComponent,
     AdminSessionsComponent,
+    UserGroupsComponent,
+    UsersComponent,
+    SearchUsersComponent,
   ],
   imports: [
     BrowserModule,

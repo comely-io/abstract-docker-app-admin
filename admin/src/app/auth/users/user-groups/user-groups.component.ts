@@ -4,8 +4,9 @@ import {AdminPanelService} from "../../../../services/adminPanelService";
 import {ApiQueryFail, ApiSuccess} from "../../../../services/apiService";
 import {MdbModalRef, MdbModalService} from "mdb-angular-ui-kit/modal";
 import {CreateGroupComponent} from "./create-group/create-group.component";
+import {EditGroupComponent} from "./edit-group/edit-group.component";
 
-interface userGroup {
+export interface userGroup {
   id: number,
   name: string,
   userCount: number,
@@ -22,12 +23,42 @@ export class UserGroupsComponent implements OnInit, OnDestroy {
   public usersGroups: Array<userGroup> = [];
 
   public createGroupModal?: MdbModalRef<CreateGroupComponent> = undefined;
+  public editGroupModal?: MdbModalRef<EditGroupComponent> = undefined;
 
   constructor(private app: AppService, private aP: AdminPanelService, private modals: MdbModalService) {
   }
 
-  public openCreateModal() {
+  public openCreateModal(): void {
     this.createGroupModal = this.modals.open(CreateGroupComponent);
+  }
+
+  public openEditModal(groupId: number): void {
+    let group = this.getGroupObject(groupId);
+    if (!group) {
+      return;
+    }
+
+    this.editGroupModal = this.modals.open(EditGroupComponent, {data: {group: group, groupsList: this.usersGroups}});
+  }
+
+  private getGroupObject(id: number): userGroup | undefined {
+    let breakException = {};
+    let found: userGroup | undefined = undefined;
+
+    try {
+      this.usersGroups.forEach((group: userGroup) => {
+        if (group.id === id) {
+          found = group;
+          throw breakException;
+        }
+      });
+    } catch (e) {
+      if (e !== breakException) {
+        throw e;
+      }
+    }
+
+    return found;
   }
 
   public async fetchGroups() {

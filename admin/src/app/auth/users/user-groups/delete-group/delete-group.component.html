@@ -9,7 +9,7 @@
                   (selected)="changeSelectedGroup($event)">
         <mdb-option *ngFor="let group of groupsList" [value]="group.id">[#{{group.id}}] {{group.name}}</mdb-option>
       </mdb-select>
-      <label mdbLabel class="form-label ">Editing Group</label>
+      <label mdbLabel class="form-label ">Deleting Group</label>
     </mdb-form-control>
     <dl class="mt-3">
       <dt class="fw-normal">&ldquo;{{group.name}}&rdquo; Users Count</dt>

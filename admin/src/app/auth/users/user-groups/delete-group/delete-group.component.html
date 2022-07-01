@@ -1,1 +1,36 @@
-<p>delete-group works!</p>
+<form [formGroup]="deleteGroupForm" (ngSubmit)="submitDeleteGroupForm()">
+  <div class="modal-header">
+    <h5 class="modal-title fw-light"><i class="fal fa-object-group me-2"></i>Edit Group</h5>
+    <button type="button" class="btn-close" (click)="modalRef.close()"></button>
+  </div>
+  <div class="modal-body">
+    <mdb-form-control>
+      <mdb-select [disabled]="formIsLoading" formControlName="group" [(ngModel)]="selectedGroupId"
+                  (selected)="changeSelectedGroup($event)">
+        <mdb-option *ngFor="let group of groupsList" [value]="group.id">[#{{group.id}}] {{group.name}}</mdb-option>
+      </mdb-select>
+      <label mdbLabel class="form-label ">Editing Group</label>
+    </mdb-form-control>
+    <dl class="mt-3">
+      <dt class="fw-normal">&ldquo;{{group.name}}&rdquo; Users Count</dt>
+      <dd>{{group.userCount}}</dd>
+    </dl>
+    <app-form-field-error [formField]="deleteGroupForm.controls.group"></app-form-field-error>
+    <mdb-form-control class="mt-3">
+      <input mdbInput mdbValidate type="text" formControlName="totp" id="totpCode" maxlength="6"
+             autocomplete="off" [readonly]="formIsLoading" placeholder="000000"
+             (focus)="validator.focusTotpField($event)" (keyup)="totpSubmit($event)"
+             class="form-control mb-0" autofocus/>
+      <label mdbLabel class="form-label " for="totpCode">TOTP Code</label>
+    </mdb-form-control>
+    <app-form-field-error [formField]="deleteGroupForm.controls.totp"></app-form-field-error>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-outline-danger me-2" type="submit" *ngIf="!formIsLoading"
+            [disabled]="formIsLoading">Delete Forever
+    </button>
+    <app-button-loader [btnClass]="'btn-outline-danger me-2'" [spinnerClass]="'text-danger'"
+                       *ngIf="formIsLoading"></app-button-loader>
+    <button type="button" class="btn btn-secondary shadow-0" (click)="modalRef.close()">Cancel</button>
+  </div>
+</form>

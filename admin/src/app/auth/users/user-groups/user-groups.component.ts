@@ -5,6 +5,7 @@ import {ApiQueryFail, ApiSuccess} from "../../../../services/apiService";
 import {MdbModalRef, MdbModalService} from "mdb-angular-ui-kit/modal";
 import {CreateGroupComponent} from "./create-group/create-group.component";
 import {EditGroupComponent} from "./edit-group/edit-group.component";
+import {DeleteGroupComponent} from "./delete-group/delete-group.component";
 
 export interface userGroup {
   id: number,
@@ -24,6 +25,7 @@ export class UserGroupsComponent implements OnInit, OnDestroy {
 
   public createGroupModal?: MdbModalRef<CreateGroupComponent> = undefined;
   public editGroupModal?: MdbModalRef<EditGroupComponent> = undefined;
+  public deleteGroupModal?: MdbModalRef<EditGroupComponent> = undefined;
 
   constructor(private app: AppService, private aP: AdminPanelService, private modals: MdbModalService) {
   }
@@ -39,6 +41,20 @@ export class UserGroupsComponent implements OnInit, OnDestroy {
     }
 
     this.editGroupModal = this.modals.open(EditGroupComponent, {data: {group: group, groupsList: this.usersGroups}});
+  }
+
+  public openDeleteModal(groupId: number): void {
+    let group = this.getGroupObject(groupId);
+    if (!group) {
+      return;
+    }
+
+    this.deleteGroupModal = this.modals.open(DeleteGroupComponent, {
+      data: {
+        group: group,
+        groupsList: this.usersGroups
+      }
+    });
   }
 
   private getGroupObject(id: number): userGroup | undefined {

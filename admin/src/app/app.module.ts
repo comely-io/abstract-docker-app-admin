@@ -65,6 +65,8 @@ import {SearchUsersComponent} from './auth/users/search-users/search-users.compo
 import {CreateGroupComponent} from './auth/users/user-groups/create-group/create-group.component';
 import {EditGroupComponent} from './auth/users/user-groups/edit-group/edit-group.component';
 import {DeleteGroupComponent} from './auth/users/user-groups/delete-group/delete-group.component';
+import {CreateUserComponent} from './auth/users/create-user/create-user.component';
+import {ManageUserComponent} from './auth/users/manage-user/manage-user.component';
 
 @NgModule({
   declarations: [
@@ -96,6 +98,8 @@ import {DeleteGroupComponent} from './auth/users/user-groups/delete-group/delete
     CreateGroupComponent,
     EditGroupComponent,
     DeleteGroupComponent,
+    CreateUserComponent,
+    ManageUserComponent,
   ],
   imports: [
     BrowserModule,

@@ -16,6 +16,8 @@ import {AdminSessionsComponent} from "./auth/staff/admin-sessions/admin-sessions
 import {UsersComponent} from "./auth/users/users.component";
 import {SearchUsersComponent} from "./auth/users/search-users/search-users.component";
 import {UserGroupsComponent} from "./auth/users/user-groups/user-groups.component";
+import {CreateUserComponent} from "./auth/users/create-user/create-user.component";
+import {ManageUserComponent} from "./auth/users/manage-user/manage-user.component";
 
 const routes: Routes = [
   {path: '', component: SigninComponent},
@@ -42,7 +44,9 @@ const routes: Routes = [
         children: [
           {path: '', redirectTo: 'search', pathMatch: 'full'},
           {path: 'search', component: SearchUsersComponent},
-          {path: 'groups', component: UserGroupsComponent}
+          {path: 'manage', component: ManageUserComponent},
+          {path: 'groups', component: UserGroupsComponent},
+          {path: 'create', component: CreateUserComponent}
         ]
       },
       {

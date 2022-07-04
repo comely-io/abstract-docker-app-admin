@@ -1,0 +1,72 @@
+<section class="vh-100 bg-inner-blue">
+  <div class="container">
+    <div class="row d-flex justify-content-center">
+      <div class="col-8 col-md-6">
+        <form [formGroup]="createUserForm" (ngSubmit)="submitCreateForm()">
+          <div class="card shadow-0 my-5">
+            <div class="card-header text-center cursor-default noselect bg-secondary border-bottom text-white">
+              <h3 class="card-title fw-light my-3">
+                <i class="fal fa-user-plus me-3"></i>Create User Account
+              </h3>
+            </div>
+            <div class="card-body">
+              <mdb-form-control>
+                <mdb-select [disabled]="formIsDisabled" formControlName="group">
+                  <mdb-option value="0">(select)</mdb-option>
+                  <mdb-option *ngFor="let group of usersGroups" [value]="group.id">[#{{group.id}}
+                    ] {{group.name}}</mdb-option>
+                </mdb-select>
+                <label mdbLabel class="form-label ">Users Group</label>
+              </mdb-form-control>
+              <app-form-field-error [formField]="createUserForm.controls.group"></app-form-field-error>
+              <mdb-form-control class="mt-3">
+                <input mdbInput mdbValidate type="text" formControlName="username" id="username"
+                       maxlength="32"
+                       autocomplete="new-user" [readonly]="formIsDisabled" placeholder="unique"
+                       class="form-control mb-0" autofocus/>
+                <label mdbLabel class="form-label " for="username">Username</label>
+              </mdb-form-control>
+              <app-form-field-error [formField]="createUserForm.controls.username"></app-form-field-error>
+              <mdb-form-control class="mt-3">
+                <input mdbInput mdbValidate type="text" formControlName="email" id="email"
+                       maxlength="32"
+                       autocomplete="new-user" [readonly]="formIsDisabled" placeholder="john@doe.com"
+                       class="form-control mb-0" autofocus/>
+                <label mdbLabel class="form-label " for="email">E-mail Address <small
+                  class="text-muted">(optional)</small></label>
+              </mdb-form-control>
+              <app-form-field-error [formField]="createUserForm.controls.email"></app-form-field-error>
+              <mdb-form-control class="mt-3">
+                <input mdbInput mdbValidate type="text" formControlName="phone" id="phone"
+                       maxlength="32"
+                       autocomplete="new-user" [readonly]="formIsDisabled" placeholder="+971.23456789"
+                       class="form-control mb-0" autofocus/>
+                <label mdbLabel class="form-label " for="phone">Phone Number <small
+                  class="text-muted">(optional)</small></label>
+              </mdb-form-control>
+              <app-form-field-error [formField]="createUserForm.controls.phone"></app-form-field-error>
+            </div>
+            <div class="card-body border-top rounded-0 bg-light">
+              <mdb-form-control>
+                <input mdbInput mdbValidate type="text" formControlName="totp" id="totpCode" maxlength="6"
+                       autocomplete="off" [readonly]="formIsDisabled" placeholder="000000"
+                       (focus)="validator.focusTotpField($event)" (keyup)="totpSubmit($event)"
+                       class="form-control mb-0" autofocus/>
+                <label mdbLabel class="form-label " for="totpCode">TOTP Code</label>
+              </mdb-form-control>
+              <app-form-field-error [formField]="createUserForm.controls.totp"></app-form-field-error>
+            </div>
+            <div class="card-footer text-right">
+              <button class="btn btn-outline-danger me-2" type="submit" *ngIf="!formIsLoading"
+                      [disabled]="formIsLoading">Create User
+              </button>
+              <app-button-loader [btnClass]="'btn-outline-danger me-2'" [spinnerClass]="'text-danger'"
+                                 *ngIf="formIsLoading"></app-button-loader>
+              <a routerLink="/auth/users" class="btn btn-outline-blue" mdbRipple rippleColor="primary">Cancel</a>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>

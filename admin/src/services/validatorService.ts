@@ -81,6 +81,30 @@ export class ValidatorService {
   }
 
   /**
+   * Validates a username
+   * @param username
+   */
+  public validateUsername(username: any): string {
+    if (typeof username !== "string" || !username.length) {
+      throw new Error('Username is required');
+    }
+
+    if (!/^[a-zA-Z0-9]+[a-zA-Z0-9\-_]?[a-zA-Z0-9]+$/.test(username)) {
+      throw new Error('Username contains an illegal character');
+    }
+
+    let usernameLen = username.length;
+
+    if (usernameLen < 6) {
+      throw new Error('Username must be 6 characters long');
+    } else if (usernameLen > 16) {
+      throw new Error('Username cannot exceed 16 characters');
+    }
+
+    return username;
+  }
+
+  /**
    * Validates a password
    * @param password
    * @param label
@@ -108,8 +132,9 @@ export class ValidatorService {
   /**
    * Validates an e-mail address
    * @param email
+   * @param maxLen
    */
-  public validateEmail(email: any): string {
+  public validateEmail(email: any, maxLen: number = 32): string {
     if (typeof email !== "string" || !email.length) {
       throw new Error('E-mail address is required');
     }
@@ -118,7 +143,7 @@ export class ValidatorService {
       throw  new Error('Invalid e-mail address');
     }
 
-    if (email.length > 32) {
+    if (email.length > maxLen) {
       throw new Error('E-mail address must not exceed 32 characters');
     }
 

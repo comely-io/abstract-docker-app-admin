@@ -1,1 +1,92 @@
-<p>manage-user works!</p>
+<section class="pt-5 pb-3">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12 mb-4">
+        <h3 class="fw-light mb-0">User Management</h3>
+      </div>
+      <div class="col-md-8 col-lg-9 mt-3">
+        <mdb-tabs>
+          <mdb-tab>
+            <ng-template mdbTabTitle>
+              <span><i class="fal fa-user-edit me-2"></i>Account</span>
+            </ng-template>
+            <div class="card card-classic mt-4">
+              <div class="card-header">
+                <h5 class="card-title mb-0 fw-light">Editing Account</h5>
+              </div>
+              <div class="card-body">
+                <mdb-tabs [vertical]="true">
+                  <mdb-tab title="Account">Home content</mdb-tab>
+                  <mdb-tab title="Profile">Profile content</mdb-tab>
+                  <mdb-tab title="Referrer">Referrer content</mdb-tab>
+                  <mdb-tab title="Verifications">Verifications content</mdb-tab>
+                  <mdb-tab title="Password">Messages content</mdb-tab>
+                  <mdb-tab title="Reset">Messages content</mdb-tab>
+                </mdb-tabs>
+              </div>
+            </div>
+          </mdb-tab>
+          <mdb-tab>
+            <ng-template mdbTabTitle>
+              <span><i class="fal fa-flag me-2"></i>Flags &amp; Params</span>
+            </ng-template>
+            <div class="card card-classic mt-4">
+              <div class="card-header">
+                <h5 class="card-title mb-0 fw-light">Account Parameters</h5>
+              </div>
+              <div class="card-body">
+                <mdb-tabs [vertical]="true">
+                  <mdb-tab title="Flags">...</mdb-tab>
+                  <mdb-tab title="Encrypted Params">...</mdb-tab>
+                  <mdb-tab title="Baggage Data">...</mdb-tab>
+                </mdb-tabs>
+              </div>
+            </div>
+          </mdb-tab>
+          <mdb-tab>
+            <ng-template mdbTabTitle>
+              <span><i class="fal fa-book me-2"></i>History</span>
+            </ng-template>
+            <div class="card card-classic mt-4">
+              <div class="card-header">
+                <h5 class="card-title mb-0 fw-light">Account History</h5>
+              </div>
+              <div class="card-body">
+                <mdb-tabs [vertical]="true">
+                  <mdb-tab title="Administrative Logs">Administrative Logs</mdb-tab>
+                  <mdb-tab title="Notes">...</mdb-tab>
+                </mdb-tabs>
+              </div>
+            </div>
+          </mdb-tab>
+        </mdb-tabs>
+      </div>
+      <div class="col-md-4 col-lg-3 mt-3">
+        <div class="card shadow-0 border">
+          <div class="card-header text-center bg-inner-blue">
+            <img src="assets/unknown.jpeg" alt="User Thumbnail" mdbTooltip="User Thumbnail"
+                 class="img-fluid img-thumbnail rounded-circle my-2"
+                 style="max-width: 150px">
+            <p class="mb-0 fw-light text-danger">User ID # 443</p>
+          </div>
+          <div class="card-body">
+            <p class="mb-2 fw-light"><i class="fal fa-user me-2" mdbTooltip="Username"></i>mfaspk</p>
+            <p class="mb-2 fw-light"><span class="text-muted">(unnamed)</span></p>
+            <p class="mb-2 fw-light"><i class="fal fa-location-arrow me-2" mdbTooltip="Postal address"></i><span
+              class="text-muted">(no-address)</span></p>
+            <p class="mb-2 fw-light"><i class="fal fa-location me-2" mdbTooltip="Country"></i>UAE</p>
+            <p class="mb-2 fw-light"><i class="fal fa-envelope me-2" mdbTooltip="E-mail Address"></i>a_big_emailaddress+user@something-big-domain.com.pk
+            </p>
+            <p class="fw-light"><i class="fal fa-mobile me-2" mdbTooltip="SMS/Cell No."></i>(no-phone)</p>
+          </div>
+          <div class="card-footer">
+            <button class="btn btn-block btn-danger shadow-2"><i class="fal fa-trash-alt me-2"></i>Delete User</button>
+            <button class="btn btn-block btn-outline-dark shadow-2 mt-2">
+              <i class="fal fa-window-frame me-2"></i>Activity Log
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

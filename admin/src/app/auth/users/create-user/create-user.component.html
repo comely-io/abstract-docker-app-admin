@@ -9,7 +9,12 @@
                 <i class="fal fa-user-plus me-3"></i>Create User Account
               </h3>
             </div>
-            <div class="card-body">
+            <div class="card-body" *ngIf="createAccountSuccess">
+              <div class="alert alert-success py-2">
+                <i class="fal fa-check-circle me-2"></i>New user account has been created!
+              </div>
+            </div>
+            <div class="card-body" *ngIf="!createAccountSuccess">
               <mdb-form-control>
                 <mdb-select [disabled]="formIsDisabled" formControlName="group">
                   <mdb-option value="0">(select)</mdb-option>
@@ -21,7 +26,7 @@
               <app-form-field-error [formField]="createUserForm.controls.group"></app-form-field-error>
               <mdb-form-control class="mt-3">
                 <input mdbInput mdbValidate type="text" formControlName="username" id="username"
-                       maxlength="32"
+                       maxlength="16"
                        autocomplete="new-user" [readonly]="formIsDisabled" placeholder="unique"
                        class="form-control mb-0" autofocus/>
                 <label mdbLabel class="form-label " for="username">Username</label>
@@ -29,7 +34,7 @@
               <app-form-field-error [formField]="createUserForm.controls.username"></app-form-field-error>
               <mdb-form-control class="mt-3">
                 <input mdbInput mdbValidate type="text" formControlName="email" id="email"
-                       maxlength="32"
+                       maxlength="64"
                        autocomplete="new-user" [readonly]="formIsDisabled" placeholder="john@doe.com"
                        class="form-control mb-0" autofocus/>
                 <label mdbLabel class="form-label " for="email">E-mail Address <small
@@ -46,7 +51,7 @@
               </mdb-form-control>
               <app-form-field-error [formField]="createUserForm.controls.phone"></app-form-field-error>
             </div>
-            <div class="card-body border-top rounded-0 bg-light">
+            <div class="card-body border-top rounded-0 bg-light" *ngIf="!createAccountSuccess">
               <mdb-form-control>
                 <input mdbInput mdbValidate type="text" formControlName="totp" id="totpCode" maxlength="6"
                        autocomplete="off" [readonly]="formIsDisabled" placeholder="000000"
@@ -62,7 +67,8 @@
               </button>
               <app-button-loader [btnClass]="'btn-outline-danger me-2'" [spinnerClass]="'text-danger'"
                                  *ngIf="formIsLoading"></app-button-loader>
-              <a routerLink="/auth/users" class="btn btn-outline-blue" mdbRipple rippleColor="primary">Cancel</a>
+              <a routerLink="/auth/users" class="btn btn-outline-blue" mdbRipple rippleColor="primary"
+                 *ngIf="!createAccountSuccess">Cancel</a>
             </div>
           </div>
         </form>

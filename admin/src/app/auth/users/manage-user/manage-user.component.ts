@@ -156,6 +156,9 @@ export class ManageUserComponent implements OnInit {
       return;
     }
 
+    // Clear out TOTP code
+    this.resetForm.get("totp")?.setValue("");
+
     this.resetActionSubmit = true;
     this.formsAreDisabled = true;
     await this.app.api.callServer("post", "/auth/users/user", {

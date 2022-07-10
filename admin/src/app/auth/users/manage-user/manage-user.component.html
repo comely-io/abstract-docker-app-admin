@@ -274,8 +274,8 @@
                       <form [formGroup]="resetForm" (ngSubmit)="submitResetForm()">
                         <div class="card">
                           <div class="card-body">
-                            <div class="alert alert-success mb-4 py-3" *ngIf="editReferrerSuccess">
-                              <i class="fal fa-check-circle me-2"></i>{{editReferrerSuccess}}
+                            <div class="alert alert-success mb-4 py-3" *ngIf="resetActionSuccess">
+                              <i class="fal fa-check-circle me-2"></i>{{resetActionSuccess}}
                             </div>
                             <mdb-form-control class="mt-3">
                               <mdb-select [disabled]="formsAreDisabled" formControlName="action">

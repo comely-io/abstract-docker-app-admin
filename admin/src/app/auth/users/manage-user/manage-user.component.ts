@@ -135,7 +135,7 @@ export class ManageUserComponent implements OnInit {
     // Action
     try {
       action = this.resetForm.get("action")?.value;
-      if (!action || ["checksum", "disabled2fa", "re_credentials", "re_params"].indexOf(action) <= -1) {
+      if (!action || ["checksum", "disable2fa", "re_credentials", "re_params"].indexOf(action) <= -1) {
         throw new Error('Invalid account reset action');
       }
     } catch (e) {

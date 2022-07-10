@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {AppService} from "../../../../services/appService";
+import {AdminPanelService} from "../../../../services/adminPanelService";
 
 @Component({
   selector: 'app-search-users',
@@ -6,10 +8,13 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./search-users.component.scss']
 })
 export class SearchUsersComponent implements OnInit {
+  public flashError?: string;
 
-  constructor() { }
+  constructor(private app: AppService, private aP: AdminPanelService) {
+  }
 
   ngOnInit(): void {
+    this.flashError = this.app.flash.userRetrieveFail;
   }
 
 }

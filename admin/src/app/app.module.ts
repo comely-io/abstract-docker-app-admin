@@ -67,6 +67,7 @@ import {EditGroupComponent} from './auth/users/user-groups/edit-group/edit-group
 import {DeleteGroupComponent} from './auth/users/user-groups/delete-group/delete-group.component';
 import {CreateUserComponent} from './auth/users/create-user/create-user.component';
 import {ManageUserComponent} from './auth/users/manage-user/manage-user.component';
+import {CountriesComponent} from './auth/countries/countries.component';
 
 @NgModule({
   declarations: [
@@ -100,6 +101,7 @@ import {ManageUserComponent} from './auth/users/manage-user/manage-user.componen
     DeleteGroupComponent,
     CreateUserComponent,
     ManageUserComponent,
+    CountriesComponent,
   ],
   imports: [
     BrowserModule,

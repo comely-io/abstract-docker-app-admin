@@ -14,6 +14,7 @@ export interface PlainObject {
 
 export interface AppFlashMessages {
   authSessionSignin?: string,
+  userRetrieveFail?: string,
   staffRetrieveFail?: string
 }
 

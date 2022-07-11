@@ -61,7 +61,7 @@ export class AppService {
     this.flash = {};
   }
 
-  public handleAPIError(error: ApiQueryFail, options?: ApiErrorHandleOpts): void {
+  public handleAPIError(error: ApiQueryFail | any, options?: ApiErrorHandleOpts): void {
     options = Object.assign(<ApiErrorHandleOpts>{
       showTitle: false,
       type: "error",
@@ -69,7 +69,7 @@ export class AppService {
       preventAuthSession: false
     }, options);
 
-    let errorMsg: string = "An error occurred with API call";
+    let errorMsg: string = error?.message ?? "An error occurred with API call";
     if (typeof error.exception === "object") {
       errorMsg = "An exception received from API server";
       if (typeof error.exception["message"] === "string" && error.exception.message.length) {

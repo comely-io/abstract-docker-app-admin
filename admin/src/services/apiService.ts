@@ -150,7 +150,6 @@ export class ApiService {
       // Authenticated Session Call?
       if (options.authSession) {
         let sessionMeta: AuthSessionMeta;
-
         if (options?.useSessionToken) {
           sessionMeta = options.useSessionToken;
         } else {
@@ -166,7 +165,6 @@ export class ApiService {
 
         let authHeader: Array<string> = [];
         authHeader.push(this.config.authHeaderToken + " " + sessionMeta.token);
-
         // HMAC user signature
         let hmacExcludeKeys: Array<string> = [];
         if (options.hmacExcludeParams) {

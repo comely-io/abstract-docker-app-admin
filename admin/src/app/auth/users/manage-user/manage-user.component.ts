@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ApiErrorHandleOpts, AppService} from "../../../../services/appService";
+import {ApiErrorHandleOpts, AppService, PlainObject} from "../../../../services/appService";
 import {AdminPanelService} from "../../../../services/adminPanelService";
 import {ApiQueryFail, ApiSuccess} from "../../../../services/apiService";
 import {FormControl, FormGroup} from "@angular/forms";
@@ -168,6 +168,9 @@ export class ManageUserComponent implements OnInit {
     }).then((success: ApiSuccess) => {
       if (success.result.hasOwnProperty("success") && typeof success.result.success === "string" && success.result.success.length) {
         this.resetActionSuccess = success.result.success;
+        if (action === "checksum") { // Assume that CHECKSUM is now good
+          this.user.checksumVerified = true;
+        }
       }
     }).catch((error: ApiQueryFail) => {
       this.app.handleAPIError(error, <ApiErrorHandleOpts>{formGroup: this.resetForm});
@@ -187,7 +190,78 @@ export class ManageUserComponent implements OnInit {
   }
 
   public async submitEditProfile() {
+    this.editProfileSuccess = false;
+    let inputErrors: number = 0;
+    let profileData: any = {
+      user: this.user.id,
+      action: "update",
+      firstName: "",
+      lastName: "",
+      gender: "",
+      dob: "",
+      address1: "",
+      address2: "",
+      postalCode: "",
+      city: "",
+      state: "",
+      totp: ""
+    };
 
+    // Gender and DOB
+    try {
+      let gender = this.editProfileForm.controls.gender.value;
+      if (typeof gender === "string" && gender.length > 0) {
+        if (!(["o", "m", "f"].indexOf(gender) > -1)) {
+          throw new Error('Invalid gender selection');
+        }
+
+        profileData.gender = gender;
+      }
+    } catch (e) {
+      this.editProfileForm.get("gender")?.setErrors({message: e.message});
+      inputErrors++;
+    }
+
+    let dob = this.editProfileForm.get("dob")?.value;
+    if (dob instanceof Date) {
+      profileData.dob = dob.toDateString();
+    }
+
+    // UTF-8 input fields
+    let utf8Fields = ["firstName", "lastName", "address1", "address2", "postalCode", "city", "state"];
+    utf8Fields.forEach((field: string) => {
+      profileData[field] = this.editProfileForm.get(field)?.value ?? "";
+    });
+
+    // Totp
+    try {
+      profileData.totp = this.app.validator.validateTotp(this.editProfileForm.get("totp")?.value);
+    } catch (e) {
+      this.editProfileForm.get("totp")?.setErrors({message: e.message});
+      inputErrors++;
+    }
+
+    // Errors?
+    if (inputErrors !== 0) {
+      return;
+    }
+
+    // Clear out TOTP code
+    this.editProfileForm.get("totp")?.setValue("");
+
+    this.editProfileSubmit = true;
+    this.formsAreDisabled = true;
+    await this.app.api.callServer("post", "/auth/users/profiles", profileData).then((success: ApiSuccess) => {
+      if (success.result.hasOwnProperty("profile") && typeof success.result.profile === "object") {
+        this.editProfileSuccess = true;
+        this.userProfile = <userProfile>success.result.profile;
+      }
+    }).catch((error: ApiQueryFail) => {
+      this.app.handleAPIError(error, <ApiErrorHandleOpts>{formGroup: this.editProfileForm});
+    });
+
+    this.editProfileSubmit = false;
+    this.formsAreDisabled = false;
   }
 
   /**
@@ -230,8 +304,16 @@ export class ManageUserComponent implements OnInit {
         this.editProfileForm.controls.firstName.setValue(this.userProfile.firstName);
         this.editProfileForm.controls.lastName.setValue(this.userProfile.lastName);
         this.editProfileForm.controls.gender.setValue(this.userProfile.gender ?? "o");
+
+        if (this.userProfile.dobTs) {
+          this.editProfileForm.controls.dob.setValue(new Date(this.userProfile.dobTs * 1000));
+        }
+
         this.editProfileForm.controls.address1.setValue(this.userProfile.address1);
         this.editProfileForm.controls.address2.setValue(this.userProfile.address2);
+        this.editProfileForm.controls.postalCode.setValue(this.userProfile.postalCode);
+        this.editProfileForm.controls.city.setValue(this.userProfile.city);
+        this.editProfileForm.controls.state.setValue(this.userProfile.state);
       }
     }).catch((error: ApiQueryFail) => {
       this.app.handleAPIError(error);
@@ -319,7 +401,7 @@ export class ManageUserComponent implements OnInit {
       {page: 'Edit Account # ' + this.user.id, active: true}
     ]);
 
-    this.aP.titleChange.next(["User Account # " + this.user.id, "Edit Account", "Users"]);
+    this.aP.titleChange.next(["User Account # " + this.user.id, "Users"]);
   }
 
   ngOnInit(): void {

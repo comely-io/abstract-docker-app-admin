@@ -8,6 +8,10 @@ export interface HttpSimpleObject {
   [key: string]: string
 }
 
+export interface HttpJSONPayload {
+  [key: string]: string | boolean | number
+}
+
 export interface AppHttpResponse {
   success: boolean,
   code: number,
@@ -19,7 +23,7 @@ export interface AppHttpRequest {
   method: HttpMethod,
   url: string,
   headers: HttpSimpleObject | undefined,
-  payload: HttpSimpleObject | string | undefined,
+  payload: HttpSimpleObject | HttpJSONPayload | string | undefined,
   timeout?: number
 }
 
@@ -74,7 +78,7 @@ export class HttpService {
       let httpParams = new HttpParams();
       for (let param in req.payload) {
         if (req.payload.hasOwnProperty(param)) {
-          httpParams = httpParams.append(param, req.payload[param]);
+          httpParams = httpParams.append(param, req.payload[param] ?? "");
         }
       }
 

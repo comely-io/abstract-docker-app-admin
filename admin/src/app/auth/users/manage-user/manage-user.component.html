@@ -2,9 +2,10 @@
   <div class="container-fluid mb-5">
     <div class="row">
       <div class="col-12 mb-4">
-        <h3 class="fw-light mb-0" *ngIf="user">Editing &ldquo;{{user.username}}&rdquo;</h3>
+        <h3 class="fw-light mb-0" *ngIf="user">Editing &ldquo;<span class="user-select-all">{{user.username}}</span>&rdquo;
+        </h3>
         <h3 class="fw-light mb-0" *ngIf="!user">Loading User Account...
-          <app-spinner-icon spinnerClass="text-primary"></app-spinner-icon>
+          <app-spinner-icon spinnerClass="text-primary ms-3"></app-spinner-icon>
         </h3>
       </div>
       <div class="col-md-8 col-lg-9 mt-3" *ngIf="user">
@@ -85,6 +86,7 @@
                               <label mdbLabel class="form-label">Country of Residence</label>
                             </mdb-form-control>
                             <app-form-field-error [formField]="editAccountForm.controls.country"></app-form-field-error>
+                            <hr class="text-muted border-1">
                             <mdb-form-control class="mt-3">
                               <input mdbInput mdbValidate type="text" formControlName="totp" id="editAccTotp"
                                      maxlength="6"
@@ -147,6 +149,15 @@
                             </mdb-form-control>
                             <app-form-field-error [formField]="editProfileForm.controls.gender"></app-form-field-error>
                             <mdb-form-control class="mt-3">
+                              <input mdbInput [mdbDatepicker]="userDob" type="text" formControlName="dob"
+                                     class="form-control"
+                                     id="profileDob"/>
+                              <label mdbLabel for="profileDob" class="form-label">Date of birth</label>
+                              <mdb-datepicker-toggle [mdbDatepicker]="userDob"></mdb-datepicker-toggle>
+                              <mdb-datepicker #userDob [format]="'dd mmm yyyy'" [inline]="true"></mdb-datepicker>
+                            </mdb-form-control>
+                            <app-form-field-error [formField]="editProfileForm.controls.dob"></app-form-field-error>
+                            <mdb-form-control class="mt-3">
                               <input mdbInput mdbValidate type="text" formControlName="address1" id="profileAddr1"
                                      maxlength="64"
                                      [readonly]="formsAreDisabled"
@@ -194,7 +205,7 @@
                             </mdb-form-control>
                             <app-form-field-error
                               [formField]="editProfileForm.controls.state"></app-form-field-error>
-                            <hr>
+                            <hr class="text-muted border-1">
                             <mdb-form-control class="mt-3">
                               <input mdbInput mdbValidate type="text" formControlName="totp" id="editProfileTotp"
                                      maxlength="6"
@@ -219,20 +230,20 @@
                   </mdb-tab>
                   <mdb-tab title="Referral Program">
                     <div class="col-lg-8">
-                      <div class="mb-4">
-                        <dl>
-                          <dt class="fw-normal">Referrals Counts</dt>
-                          <dd>{{user.referralsCount}}<span> &mdash; <a
-                            routerLink="/auth/users/search"
-                            [queryParams]="{referrer: user.username}">[view]</a></span></dd>
-                        </dl>
-                      </div>
                       <form [formGroup]="editReferrerForm" (ngSubmit)="submitEditReferrer()">
                         <div class="card">
-                          <div class="card-header">
-                            <h5 class="card-title fw-light">Change Referrer ID</h5>
+                          <div class="card-body">
+                            <dl class="mb-0">
+                              <dt class="fw-normal">Referrals Counts</dt>
+                              <dd>{{user.referralsCount}}<span> &mdash; <a
+                                routerLink="/auth/users/search"
+                                [queryParams]="{referrer: user.username}">[view]</a></span></dd>
+                            </dl>
                           </div>
                           <div class="card-body">
+                            <h5 class="card-title fw-light mt-4 user-select-none"><i class="fal fa-user-edit me-2"></i>Change
+                              Referrer ID</h5>
+                            <hr class="text-muted border-1">
                             <div class="alert alert-success mb-4 py-3" *ngIf="editReferrerSuccess">
                               <i class="fal fa-check-circle me-2"></i>Referrer user has been updated successfully!
                             </div>
@@ -256,8 +267,8 @@
                             <app-form-field-error [formField]="editReferrerForm.controls.totp"></app-form-field-error>
                           </div>
                           <div class="card-footer bg-light">
-                            <button class="btn btn-outline-danger" type="submit" *ngIf="!editReferrerSubmit" mdbRipple
-                                    rippleColor="danger"
+                            <button class="btn btn-outline-primary" type="submit" *ngIf="!editReferrerSubmit" mdbRipple
+                                    rippleColor="primary"
                                     [disabled]="formsAreDisabled">Update Referrer
                             </button>
                             <app-button-loader [btnClass]="'btn-outline-primary'" [spinnerClass]="'text-primary'"
@@ -358,11 +369,34 @@
             <p class="mb-0 fw-light text-danger">User ID # {{user.id}}</p>
           </div>
           <div class="card-body">
-            <p class="mb-2 fw-light"><i class="fal fa-user me-2" mdbTooltip="Username"></i><span
-              class="user-select-all">{{user.username}}</span></p>
-            <p class="mb-2 fw-light"><span class="text-muted">(unnamed)</span></p>
-            <p class="mb-2 fw-light"><i class="fal fa-location-arrow me-2" mdbTooltip="Postal address"></i><span
-              class="text-muted">(no-address)</span></p>
+            <p class="mb-2 fw-light">
+              <i class="fal fa-user me-2" mdbTooltip="Username"></i><span
+              class="user-select-all">{{user.username}}</span>
+            </p>
+            <ng-container *ngIf="!userProfile?.firstName && !userProfile?.lastName">
+              <p class="mb-2 fw-light"><span class="text-muted">(unnamed)</span></p>
+            </ng-container>
+            <ng-container *ngIf="userProfile?.firstName || userProfile?.lastName">
+              <p class="mb-2 fw-light user-select-all"><i class="fal fa-id-card-alt me-2" mdbTooltip="Identity"></i>
+                <span *ngIf="userProfile?.firstName">{{userProfile?.firstName}} </span><span
+                  *ngIf="userProfile?.lastName">{{userProfile?.lastName}}</span>
+              </p>
+            </ng-container>
+            <ng-container *ngIf="!userProfile?.address1">
+              <p class="mb-2 fw-light user-select-all"><i class="fal fa-location-arrow me-2"
+                                                          mdbTooltip="Postal address"></i><span
+                class="text-muted">(no-address)</span></p>
+            </ng-container>
+            <ng-container *ngIf="userProfile?.address1">
+              <p class="mb-2 fw-light user-select-all text-muted">
+                <i class="fal fa-location-arrow me-2 text-dark"
+                   mdbTooltip="Postal address"></i>{{userProfile?.address1}}
+                <ng-container *ngIf="userProfile?.address2"><br>{{userProfile?.address2}}</ng-container>
+                <ng-container *ngIf="userProfile?.postalCode"><br>{{userProfile?.postalCode}}</ng-container>
+                <ng-container *ngIf="userProfile?.city"><br>{{userProfile?.city}}</ng-container>
+                <ng-container *ngIf="userProfile?.state"><br>{{userProfile?.state}}</ng-container>
+              </p>
+            </ng-container>
             <p class="mb-2 fw-light" *ngIf="user.country">
               <i class="fal fa-location me-2" mdbTooltip="Country"></i>{{user.country}}
             </p>

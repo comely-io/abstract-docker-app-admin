@@ -506,7 +506,7 @@ export class ManageUserComponent implements OnInit {
     this.loadUserProfile().then();
 
     this.editAccountForm.controls.status.setValue(this.user.status);
-    this.editAccountForm.controls.group.setValue(this.user.groupId);
+    this.editAccountForm.controls.groupId.setValue(this.user.groupId);
     this.editAccountForm.controls.username.setValue(this.user.username);
     this.editAccountForm.controls.email.setValue(this.user.email);
     this.editAccountForm.controls.phone.setValue(this.user.phone);

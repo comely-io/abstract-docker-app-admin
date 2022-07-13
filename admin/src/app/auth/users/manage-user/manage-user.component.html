@@ -57,7 +57,8 @@
                                      class="form-control mb-0" autofocus/>
                               <label mdbLabel class="form-label " for="editUsername">Username</label>
                             </mdb-form-control>
-                            <app-form-field-error [formField]="editAccountForm.controls.email"></app-form-field-error>
+                            <app-form-field-error
+                              [formField]="editAccountForm.controls.username"></app-form-field-error>
                             <mdb-form-control class="mt-3">
                               <input mdbInput mdbValidate type="text" formControlName="email" id="editEmail"
                                      maxlength="64"
@@ -398,7 +399,8 @@
               </p>
             </ng-container>
             <p class="mb-2 fw-light" *ngIf="user.country">
-              <i class="fal fa-location me-2" mdbTooltip="Country"></i>{{user.country}}
+              <i class="fal fa-location me-2" mdbTooltip="Country"></i><span
+              class="user-select-all">{{user.country}}</span>
             </p>
             <p class="mb-2 fw-light">
               <i class="fal fa-envelope me-2" mdbTooltip="E-mail Address"></i>

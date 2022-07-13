@@ -20,7 +20,7 @@ export interface userAccount {
   email?: string | null,
   emailVerified: number,
   phone?: string | null,
-  phoneVerified: string,
+  phoneVerified: number,
   country?: string | null,
   createdOn: number,
   updatedOn: number,
@@ -209,7 +209,68 @@ export class ManageUserComponent implements OnInit {
   }
 
   public async verifyAccSubmit() {
+    let inputErrors: number = 0;
+    let verifyData: any = {
+      user: this.user.id,
+      action: "verifications",
+      emailVerified: "",
+      phoneVerified: ""
+    };
 
+    // E-mail verified
+    try {
+      let emV = this.verificationsFormAcc.get("emailVerified")?.value ?? "";
+      if (["true", "false"].indexOf(emV) < 0) {
+        throw new Error('Invalid e-mail verification status');
+      }
+
+      verifyData.emailVerified = emV;
+    } catch (e) {
+      this.verificationsFormAcc.get("emailVerified")?.setErrors({message: e.message});
+      inputErrors++;
+    }
+
+    // Phone verified
+    try {
+      let phV = this.verificationsFormAcc.get("phoneVerified")?.value ?? "";
+      if (["true", "false"].indexOf(phV) < 0) {
+        throw new Error('Invalid phone verification status');
+      }
+
+      verifyData.phoneVerified = phV;
+    } catch (e) {
+      this.verificationsFormAcc.get("phoneVerified")?.setErrors({message: e.message});
+      inputErrors++;
+    }
+
+    // Totp
+    try {
+      verifyData.totp = this.app.validator.validateTotp(this.verificationsFormAcc.get("totp")?.value);
+    } catch (e) {
+      this.verificationsFormAcc.get("totp")?.setErrors({message: e.message});
+      inputErrors++;
+    }
+
+    // Errors?
+    if (inputErrors !== 0) {
+      return;
+    }
+
+    // Clear out TOTP code
+    this.verificationsFormAcc.get("totp")?.setValue("");
+
+    this.verificationsFormSubmit = true;
+    this.formsAreDisabled = true;
+    await this.app.api.callServer("post", "/auth/users/user", verifyData).then((success: ApiSuccess) => {
+      if (success.result.hasOwnProperty("status") && success.result.status === true) {
+        this.app.notify.success('User account verifications updated!');
+      }
+    }).catch((error: ApiQueryFail) => {
+      this.app.handleAPIError(error, <ApiErrorHandleOpts>{formGroup: this.verificationsFormAcc});
+    });
+
+    this.verificationsFormSubmit = false;
+    this.formsAreDisabled = false;
   }
 
   public verifyProfileTotpType(e: any) {
@@ -219,7 +280,68 @@ export class ManageUserComponent implements OnInit {
   }
 
   public async verifyProfileSubmit() {
+    let inputErrors: number = 0;
+    let verifyData: any = {
+      user: this.user.id,
+      action: "verifications",
+      idVerified: "",
+      addressVerified: ""
+    };
 
+    // Identity verified
+    try {
+      let idV = this.verificationsFormProfile.get("idVerified")?.value ?? "";
+      if (["true", "false"].indexOf(idV) < 0) {
+        throw new Error('Invalid e-mail verification status');
+      }
+
+      verifyData.idVerified = idV;
+    } catch (e) {
+      this.verificationsFormProfile.get("idVerified")?.setErrors({message: e.message});
+      inputErrors++;
+    }
+
+    // Phone verified
+    try {
+      let adV = this.verificationsFormProfile.get("addressVerified")?.value ?? "";
+      if (["true", "false"].indexOf(adV) < 0) {
+        throw new Error('Invalid phone verification status');
+      }
+
+      verifyData.addressVerified = adV;
+    } catch (e) {
+      this.verificationsFormProfile.get("addressVerified")?.setErrors({message: e.message});
+      inputErrors++;
+    }
+
+    // Totp
+    try {
+      verifyData.totp = this.app.validator.validateTotp(this.verificationsFormProfile.get("totp")?.value);
+    } catch (e) {
+      this.verificationsFormProfile.get("totp")?.setErrors({message: e.message});
+      inputErrors++;
+    }
+
+    // Errors?
+    if (inputErrors !== 0) {
+      return;
+    }
+
+    // Clear out TOTP code
+    this.verificationsFormProfile.get("totp")?.setValue("");
+
+    this.verificationsFormSubmit = true;
+    this.formsAreDisabled = true;
+    await this.app.api.callServer("post", "/auth/users/profiles", verifyData).then((success: ApiSuccess) => {
+      if (success.result.hasOwnProperty("status") && success.result.status === true) {
+        this.app.notify.success('User profile verifications updated!');
+      }
+    }).catch((error: ApiQueryFail) => {
+      this.app.handleAPIError(error, <ApiErrorHandleOpts>{formGroup: this.verificationsFormProfile});
+    });
+
+    this.verificationsFormSubmit = false;
+    this.formsAreDisabled = false;
   }
 
   /**
@@ -591,6 +713,14 @@ export class ManageUserComponent implements OnInit {
         this.editProfileForm.controls.postalCode.setValue(this.userProfile.postalCode);
         this.editProfileForm.controls.city.setValue(this.userProfile.city);
         this.editProfileForm.controls.state.setValue(this.userProfile.state);
+
+        if (this.userProfile.idVerified === 1) {
+          this.verificationsFormProfile.controls.idVerified.setValue("true");
+        }
+
+        if (this.userProfile.addressVerified === 1) {
+          this.verificationsFormProfile.controls.addressVerified.setValue("true");
+        }
       }
     }).catch((error: ApiQueryFail) => {
       this.app.handleAPIError(error);
@@ -670,6 +800,14 @@ export class ManageUserComponent implements OnInit {
 
     if (this.user.referrerUsername) {
       this.editReferrerForm.controls.referrer.setValue(this.user.referrerUsername);
+    }
+
+    if (this.user.emailVerified === 1) {
+      this.verificationsFormAcc.controls.emailVerified.setValue("true");
+    }
+
+    if (this.user.phoneVerified === 1) {
+      this.verificationsFormAcc.controls.phoneVerified.setValue("true");
     }
 
     this.formsAreDisabled = false;

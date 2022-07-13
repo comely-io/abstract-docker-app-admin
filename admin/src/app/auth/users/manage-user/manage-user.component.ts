@@ -72,7 +72,7 @@ export class ManageUserComponent implements OnInit {
   public editAccountSuccess: boolean = false;
   public editAccountSubmit: boolean = false;
   public editAccountForm: FormGroup = new FormGroup({
-    group: new FormControl("0"),
+    groupId: new FormControl("0"),
     status: new FormControl(),
     username: new FormControl(),
     email: new FormControl(),
@@ -289,7 +289,131 @@ export class ManageUserComponent implements OnInit {
   }
 
   public async submitEditAccount() {
+    this.editAccountSuccess = false;
+    let inputErrors: number = 0;
+    let accountData: any = {
+      user: this.user.id,
+      action: "account",
+      groupId: 0,
+      status: this.user.status,
+      username: this.user.username,
+      email: this.user.email ?? "",
+      phone: this.user.phone ?? "",
+      country: this.user.country ?? "",
+      totp: ""
+    };
 
+    // Group
+    try {
+      let groupId = parseInt(this.editAccountForm.get("groupId")?.value ?? 0);
+      if (!(groupId > 0 && groupId < Number.MAX_SAFE_INTEGER)) {
+        throw new Error('Select a users group');
+      }
+
+      accountData.groupId = groupId;
+    } catch (e) {
+      this.editAccountForm.get("groupId")?.setErrors({message: e.message});
+      inputErrors++;
+    }
+
+    // Status
+    try {
+      accountData.status = this.editAccountForm.get("status")?.value ?? "";
+      if (["active", "disabled"].indexOf(accountData.status) < 0) {
+        throw new Error('Invalid user status');
+      }
+    } catch (e) {
+      this.editAccountForm.get("status")?.setErrors({message: e.message});
+      inputErrors++;
+    }
+
+    // Username
+    try {
+      accountData.username = this.validator.validateUsername(this.editAccountForm.get("username")?.value);
+    } catch (e) {
+      this.editAccountForm.get("username")?.setErrors({message: e.message});
+      inputErrors++;
+    }
+
+    // Email
+    try {
+      accountData.email = this.editAccountForm.get("email")?.value ?? "";
+      if (!accountData.email || !accountData.email.length) {
+        accountData.email = "";
+      } else {
+        accountData.email = this.validator.validateEmail(accountData.email, 64);
+      }
+    } catch (e) {
+      this.editAccountForm.get("email")?.setErrors({message: e.message});
+      inputErrors++;
+    }
+
+    // Phone
+    try {
+      accountData.phone = this.editAccountForm.get("phone")?.value;
+      if (!accountData.phone || !accountData.phone.length) {
+        accountData.phone = "";
+      } else {
+        if (!this.validator.isValidPhNum(accountData.phone)) {
+          throw new Error('Invalid phone number');
+        }
+      }
+    } catch (e) {
+      this.editAccountForm.get("phone")?.setErrors({message: e.message});
+      inputErrors++;
+    }
+
+    // Country
+    try {
+      accountData.country = this.editAccountForm.get("country")?.value;
+      if (!accountData.country || !accountData.country.length) {
+        accountData.country = "";
+      } else {
+        if (!/^[a-z]{3}$/i.test(accountData.country)) {
+          throw new Error('Invalid user country');
+        }
+      }
+    } catch (e) {
+      this.editAccountForm.get("country")?.setErrors({message: e.message});
+      inputErrors++;
+    }
+
+    // Totp
+    try {
+      accountData.totp = this.app.validator.validateTotp(this.editAccountForm.get("totp")?.value);
+    } catch (e) {
+      this.editAccountForm.get("totp")?.setErrors({message: e.message});
+      inputErrors++;
+    }
+
+    // Errors?
+    if (inputErrors !== 0) {
+      return;
+    }
+
+    // Clear out TOTP code
+    this.editAccountForm.get("totp")?.setValue("");
+
+    this.editAccountSubmit = true;
+    this.formsAreDisabled = true;
+
+    await this.app.api.callServer("post", "/auth/users/user", accountData).then((success: ApiSuccess) => {
+      if (success.result.hasOwnProperty("user") && typeof success.result.user === "object") {
+        this.editAccountSuccess = true;
+        let newUserData: userAccount = <userAccount>success.result.user;
+        this.user.groupId = newUserData.groupId;
+        this.user.status = newUserData.status;
+        this.user.username = newUserData.username;
+        this.user.email = newUserData.email;
+        this.user.phone = newUserData.phone;
+        this.user.country = newUserData.country;
+      }
+    }).catch((error: ApiQueryFail) => {
+      this.app.handleAPIError(error, <ApiErrorHandleOpts>{formGroup: this.editAccountForm});
+    });
+
+    this.editAccountSubmit = false;
+    this.formsAreDisabled = false;
   }
 
   /**

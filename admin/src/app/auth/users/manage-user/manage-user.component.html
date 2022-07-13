@@ -35,13 +35,13 @@
                               <i class="fal fa-check-circle me-2"></i>Your changes have been saved successfully!
                             </div>
                             <mdb-form-control>
-                              <mdb-select [disabled]="formsAreDisabled" formControlName="group">
+                              <mdb-select [disabled]="formsAreDisabled" formControlName="groupId">
                                 <mdb-option *ngFor="let group of usersGroups" [value]="group.id">[#{{group.id}}
                                   ] {{group.name}}</mdb-option>
                               </mdb-select>
                               <label mdbLabel class="form-label">Users Group</label>
                             </mdb-form-control>
-                            <app-form-field-error [formField]="editAccountForm.controls.group"></app-form-field-error>
+                            <app-form-field-error [formField]="editAccountForm.controls.groupId"></app-form-field-error>
                             <mdb-form-control class="mt-3">
                               <mdb-select [disabled]="formsAreDisabled" formControlName="status">
                                 <mdb-option value="active">Active</mdb-option>

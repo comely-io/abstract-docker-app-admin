@@ -130,6 +130,75 @@ export class ManageUserComponent implements OnInit {
     totp: new FormControl()
   });
 
+  public passwordChangeSuccess: boolean = false;
+  public passwordChangeSubmit: boolean = false;
+  public passwordChangeForm: FormGroup = new FormGroup({
+    password: new FormControl(""),
+    flag: new FormControl(""),
+    totp: new FormControl()
+  });
+
+  /**
+   * Change Password
+   */
+  public passwordTotpType(e: any) {
+    this.validator.parseTotpField(e, () => {
+      this.submitPasswordChange().then();
+    });
+  }
+
+  public async submitPasswordChange() {
+    this.passwordChangeSuccess = false;
+    let inputErrors: number = 0;
+    let changePasswordData: any = {
+      user: this.user.id,
+      action: "password",
+      password: "",
+      flag: "",
+      totp: ""
+    }
+
+    // Password
+    try {
+      changePasswordData.password = this.app.validator.validatePassword(this.passwordChangeForm.get("password")?.value, "Temporary password")
+    } catch (e) {
+      this.passwordChangeForm.get("password")?.setErrors({message: e.message});
+      inputErrors++;
+    }
+
+    // Flag
+    changePasswordData.flag = this.passwordChangeForm.get("flag")?.value ?? "";
+
+    // Totp
+    try {
+      changePasswordData.totp = this.app.validator.validateTotp(this.passwordChangeForm.get("totp")?.value);
+    } catch (e) {
+      this.passwordChangeForm.get("totp")?.setErrors({message: e.message});
+      inputErrors++;
+    }
+
+    // Errors?
+    if (inputErrors !== 0) {
+      return;
+    }
+
+    // Clear out TOTP code
+    this.passwordChangeForm.get("totp")?.setValue("");
+
+    this.passwordChangeSubmit = true;
+    this.formsAreDisabled = true;
+    await this.app.api.callServer("post", "/auth/users/user", changePasswordData).then((success: ApiSuccess) => {
+      if (success.result.hasOwnProperty("status") && success.result.status === true) {
+        this.passwordChangeSuccess = true;
+      }
+    }).catch((error: ApiQueryFail) => {
+      this.app.handleAPIError(error, <ApiErrorHandleOpts>{formGroup: this.passwordChangeForm});
+    });
+
+    this.passwordChangeSubmit = false;
+    this.formsAreDisabled = false;
+  }
+
   /**
    * Verifications
    */

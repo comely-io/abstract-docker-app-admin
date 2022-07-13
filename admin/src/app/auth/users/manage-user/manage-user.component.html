@@ -279,7 +279,106 @@
                       </form>
                     </div>
                   </mdb-tab>
-                  <mdb-tab title="Verifications">Verifications content</mdb-tab>
+                  <mdb-tab title="Verifications">
+                    <div class="col-lg-8">
+                      <form [formGroup]="verificationsFormAcc" (ngSubmit)="verifyAccSubmit()">
+                        <div class="card">
+                          <div class="card-header user-select-none bg-light">
+                            <h5 class="card-title fw-light mb-0"><i class="fas fa-star-half-alt text-warning me-2"></i>Account
+                              Verifications</h5>
+                          </div>
+                          <div class="card-body">
+                            <mdb-form-control>
+                              <mdb-select [disabled]="formsAreDisabled" formControlName="emailVerified">
+                                <mdb-option value="true">Verified</mdb-option>
+                                <mdb-option value="false">Not Verified</mdb-option>
+                              </mdb-select>
+                              <label mdbLabel class="form-label">E-mail Address</label>
+                            </mdb-form-control>
+                            <app-form-field-error
+                              [formField]="verificationsFormAcc.controls.emailVerified"></app-form-field-error>
+                            <mdb-form-control class="mt-3">
+                              <mdb-select [disabled]="formsAreDisabled" formControlName="phoneVerified">
+                                <mdb-option value="true">Verified</mdb-option>
+                                <mdb-option value="false">Not Verified</mdb-option>
+                              </mdb-select>
+                              <label mdbLabel class="form-label">Phone No.</label>
+                            </mdb-form-control>
+                            <app-form-field-error
+                              [formField]="verificationsFormAcc.controls.phoneVerified"></app-form-field-error>
+                            <hr class="text-muted border-1">
+                            <mdb-form-control class="mt-3">
+                              <input mdbInput mdbValidate type="text" formControlName="totp" id="verification1Totp"
+                                     maxlength="6"
+                                     autocomplete="off" [readonly]="formsAreDisabled" placeholder="000000"
+                                     (focus)="validator.focusTotpField($event)" (keyup)="verifyAccTotpType($event)"
+                                     class="form-control mb-0" autofocus/>
+                              <label mdbLabel class="form-label " for="verification1Totp">TOTP Code</label>
+                            </mdb-form-control>
+                            <app-form-field-error
+                              [formField]="verificationsFormAcc.controls.totp"></app-form-field-error>
+                          </div>
+                          <div class="card-footer">
+                            <button class="btn btn-outline-primary" type="submit" *ngIf="!verificationsFormSubmit"
+                                    mdbRipple
+                                    rippleColor="primary"
+                                    [disabled]="formsAreDisabled">Save Changes
+                            </button>
+                            <app-button-loader [btnClass]="'btn-outline-primary'" [spinnerClass]="'text-primary'"
+                                               *ngIf="verificationsFormSubmit"></app-button-loader>
+                          </div>
+                        </div>
+                      </form>
+                      <form [formGroup]="verificationsFormProfile" (ngSubmit)="verifyProfileSubmit()" class="mt-4">
+                        <div class="card">
+                          <div class="card-header user-select-none bg-light">
+                            <h5 class="card-title fw-light mb-0"><i class="fas fa-id-card-alt text-warning me-2"></i>Profile
+                              Verifications</h5>
+                          </div>
+                          <div class="card-body">
+                            <mdb-form-control>
+                              <mdb-select [disabled]="formsAreDisabled" formControlName="idVerified">
+                                <mdb-option value="true">Verified</mdb-option>
+                                <mdb-option value="false">Not Verified</mdb-option>
+                              </mdb-select>
+                              <label mdbLabel class="form-label">Identity</label>
+                            </mdb-form-control>
+                            <app-form-field-error
+                              [formField]="verificationsFormProfile.controls.idVerified"></app-form-field-error>
+                            <mdb-form-control class="mt-3">
+                              <mdb-select [disabled]="formsAreDisabled" formControlName="addressVerified">
+                                <mdb-option value="true">Verified</mdb-option>
+                                <mdb-option value="false">Not Verified</mdb-option>
+                              </mdb-select>
+                              <label mdbLabel class="form-label">Address</label>
+                            </mdb-form-control>
+                            <app-form-field-error
+                              [formField]="verificationsFormProfile.controls.addressVerified"></app-form-field-error>
+                            <hr class="text-muted border-1">
+                            <mdb-form-control class="mt-3">
+                              <input mdbInput mdbValidate type="text" formControlName="totp" id="verification2Totp"
+                                     maxlength="6"
+                                     autocomplete="off" [readonly]="formsAreDisabled" placeholder="000000"
+                                     (focus)="validator.focusTotpField($event)" (keyup)="verifyProfileTotpType($event)"
+                                     class="form-control mb-0" autofocus/>
+                              <label mdbLabel class="form-label " for="verification2Totp">TOTP Code</label>
+                            </mdb-form-control>
+                            <app-form-field-error
+                              [formField]="verificationsFormProfile.controls.totp"></app-form-field-error>
+                          </div>
+                          <div class="card-footer">
+                            <button class="btn btn-outline-primary" type="submit" *ngIf="!verificationsFormSubmit"
+                                    mdbRipple
+                                    rippleColor="primary"
+                                    [disabled]="formsAreDisabled">Save Changes
+                            </button>
+                            <app-button-loader [btnClass]="'btn-outline-primary'" [spinnerClass]="'text-primary'"
+                                               *ngIf="verificationsFormSubmit"></app-button-loader>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </mdb-tab>
                   <mdb-tab title="Password">Messages content</mdb-tab>
                   <mdb-tab title="Reset">
                     <div class="col-lg-8">

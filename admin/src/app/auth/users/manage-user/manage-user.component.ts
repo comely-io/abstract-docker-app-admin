@@ -117,6 +117,42 @@ export class ManageUserComponent implements OnInit {
     });
   }
 
+  public verificationsFormSubmit: boolean = false;
+  public verificationsFormAcc: FormGroup = new FormGroup({
+    emailVerified: new FormControl("false"),
+    phoneVerified: new FormControl("false"),
+    totp: new FormControl()
+  });
+
+  public verificationsFormProfile: FormGroup = new FormGroup({
+    idVerified: new FormControl("false"),
+    addressVerified: new FormControl("false"),
+    totp: new FormControl()
+  });
+
+  /**
+   * Verifications
+   */
+  public verifyAccTotpType(e: any) {
+    this.validator.parseTotpField(e, () => {
+      this.verifyAccSubmit().then();
+    });
+  }
+
+  public async verifyAccSubmit() {
+
+  }
+
+  public verifyProfileTotpType(e: any) {
+    this.validator.parseTotpField(e, () => {
+      this.verifyProfileSubmit().then();
+    });
+  }
+
+  public async verifyProfileSubmit() {
+
+  }
+
   /**
    * Reset account actions
    */
@@ -275,7 +311,55 @@ export class ManageUserComponent implements OnInit {
   }
 
   public async submitEditReferrer() {
+    this.editReferrerSuccess = false;
+    let inputErrors: number = 0;
+    let editRefData: any = {
+      user: this.user.id,
+      action: "referrer",
+      referrer: "",
+      totp: ""
+    };
 
+    // Referrer Username
+    try {
+      let referrerUsername = this.editReferrerForm.get("referrer")?.value;
+      if (referrerUsername) {
+        editRefData.referrer = this.validator.validateUsername(referrerUsername);
+      }
+    } catch (e) {
+      this.editReferrerForm.get("referrer")?.setErrors({message: e.message});
+      inputErrors++;
+    }
+
+    // Totp
+    try {
+      editRefData.totp = this.app.validator.validateTotp(this.editReferrerForm.get("totp")?.value);
+    } catch (e) {
+      this.editReferrerForm.get("totp")?.setErrors({message: e.message});
+      inputErrors++;
+    }
+
+    // Errors?
+    if (inputErrors !== 0) {
+      return;
+    }
+
+    // Clear out TOTP code
+    this.editReferrerForm.get("totp")?.setValue("");
+
+    this.editReferrerSubmit = true;
+    this.formsAreDisabled = true;
+
+    await this.app.api.callServer("post", "/auth/users/user", editRefData).then((success: ApiSuccess) => {
+      if (success.result.hasOwnProperty("status") && success.result.status === true) {
+        this.editReferrerSuccess = true;
+      }
+    }).catch((error: ApiQueryFail) => {
+      this.app.handleAPIError(error, <ApiErrorHandleOpts>{formGroup: this.editReferrerForm});
+    });
+
+    this.editReferrerSubmit = false;
+    this.formsAreDisabled = false;
   }
 
   /**

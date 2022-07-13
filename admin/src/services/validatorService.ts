@@ -11,7 +11,7 @@ export class ValidatorService {
    * @param arg
    */
   public isValidPhNum(arg: any): boolean {
-    return typeof arg === "string" && /^\+[0-9]{1,6}\.[0-9]{4,16}$/.test(arg);
+    return typeof arg === "string" && /^\+\d{1,6}\.\d{4,16}$/.test(arg);
   }
 
   /**
@@ -30,7 +30,7 @@ export class ValidatorService {
   public parseTotpField(e: any, submitCallback?: totpCallbackFn) {
     let enteredCode = e.target.value;
     if (typeof enteredCode === "string") {
-      enteredCode = enteredCode.replace(/[^0-9]/, '');
+      enteredCode = enteredCode.replace(/\D/, '');
       e.target.value = enteredCode;
     }
 
@@ -48,7 +48,7 @@ export class ValidatorService {
       throw new Error('2FA TOTP code is required');
     }
 
-    if (!/^[0-9]{6}$/.test(totpCode)) {
+    if (!/^\d{6}$/.test(totpCode)) {
       throw new Error('Incomplete/Invalid TOTP code');
     }
 
@@ -89,7 +89,7 @@ export class ValidatorService {
       throw new Error('Username is required');
     }
 
-    if (!/^[a-zA-Z0-9]+[a-zA-Z0-9\-_]?[a-zA-Z0-9]+$/.test(username)) {
+    if (!/^[a-zA-Z\d]+[a-zA-Z\d\-_]?[a-zA-Z\d]+$/.test(username)) {
       throw new Error('Username contains an illegal character');
     }
 
@@ -159,7 +159,7 @@ export class ValidatorService {
       return false;
     }
 
-    return /^\w+@[a-z0-9]+(\.[a-z0-9]{2,8}){1,3}$/.test(email);
+    return /^\w+@[a-z\d]+(\.[a-z\d]{2,8}){1,3}$/.test(email);
   }
 
   /**

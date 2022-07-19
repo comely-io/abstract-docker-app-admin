@@ -484,7 +484,49 @@
               </div>
               <div class="card-body">
                 <mdb-tabs [vertical]="true">
-                  <mdb-tab title="Flags">...</mdb-tab>
+                  <mdb-tab title="Flags">
+
+                    <div class="col-lg-8">
+                      <form [formGroup]="flagsForm" (ngSubmit)="submitEditFlags()">
+                        <div class="card">
+                          <div class="card-body">
+                            <div class="alert alert-success mb-4 py-3" *ngIf="flagsEditSuccess">
+                              <i class="fal fa-check-circle me-2"></i>User account flags/tags updated successfully!
+                            </div>
+                            <ng-container *ngFor="let knownFlag of this.userFlags | keyvalue">
+                              <div class="form-check mt-2">
+                                <input mdbCheckbox class="form-check-input" type="checkbox" value=""
+                                       [checked]="knownFlag.value.checked"
+                                       id="flag_{{knownFlag.key}}"/>
+                                <label class="form-check-label" for="{{knownFlag.key}}">
+                                  {{knownFlag.value.label ?? knownFlag.key}}
+                                </label>
+                              </div>
+                            </ng-container>
+                            <hr class="text-muted border-1">
+                            <mdb-form-control class="mt-3">
+                              <input mdbInput mdbValidate type="text" formControlName="totp" id="editFlagsTotp"
+                                     maxlength="6"
+                                     autocomplete="off" [readonly]="formsAreDisabled" placeholder="000000"
+                                     (focus)="validator.focusTotpField($event)" (keyup)="editFlagsTotpType($event)"
+                                     class="form-control mb-0" autofocus/>
+                              <label mdbLabel class="form-label " for="editFlagsTotp">TOTP Code</label>
+                            </mdb-form-control>
+                            <app-form-field-error [formField]="flagsForm.controls.totp"></app-form-field-error>
+                          </div>
+                          <div class="card-footer bg-light">
+                            <button class="btn btn-outline-danger" type="submit" *ngIf="!flagsEditSubmit" mdbRipple
+                                    rippleColor="danger"
+                                    [disabled]="formsAreDisabled">Save Changes
+                            </button>
+                            <app-button-loader [btnClass]="'btn-outline-danger'" [spinnerClass]="'text-danger'"
+                                               *ngIf="flagsEditSubmit"></app-button-loader>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+
+                  </mdb-tab>
                   <mdb-tab title="Encrypted Params">...</mdb-tab>
                   <mdb-tab title="Baggage Data">...</mdb-tab>
                 </mdb-tabs>

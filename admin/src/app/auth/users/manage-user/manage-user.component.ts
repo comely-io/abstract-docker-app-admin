@@ -53,6 +53,15 @@ export interface userProfile {
   dobDate?: userProfileDob | null
 }
 
+interface userFlagsList {
+  [key: string]: userFlagEntry
+}
+
+interface userFlagEntry {
+  label?: string,
+  checked: boolean,
+}
+
 @Component({
   selector: 'app-manage-user',
   templateUrl: './manage-user.component.html',
@@ -110,13 +119,6 @@ export class ManageUserComponent implements OnInit {
     totp: new FormControl()
   });
 
-  constructor(private app: AppService, private aP: AdminPanelService, private route: ActivatedRoute) {
-    this.validator = app.validator;
-    this.route.queryParams.subscribe((params: Params) => {
-      this.userId = parseInt(params["id"]);
-    });
-  }
-
   public verificationsFormSubmit: boolean = false;
   public verificationsFormAcc: FormGroup = new FormGroup({
     emailVerified: new FormControl("false"),
@@ -137,6 +139,35 @@ export class ManageUserComponent implements OnInit {
     flag: new FormControl(""),
     totp: new FormControl()
   });
+
+  public flagsEditSuccess: boolean = false;
+  public flagsEditSubmit: boolean = false;
+  public flagsForm: FormGroup = new FormGroup({
+    totp: new FormControl()
+  });
+
+  private userAccountTags?: Array<string>;
+  public userFlags: userFlagsList = {};
+
+  constructor(private app: AppService, private aP: AdminPanelService, private route: ActivatedRoute) {
+    this.validator = app.validator;
+    this.route.queryParams.subscribe((params: Params) => {
+      this.userId = parseInt(params["id"]);
+    });
+  }
+
+  /**
+   * Edit User Account Flags/Tags
+   */
+  public async submitEditFlags() {
+
+  }
+
+  public editFlagsTotpType(e: any): void {
+    this.validator.parseTotpField(e, () => {
+      this.submitEditFlags().then();
+    });
+  }
 
   /**
    * Change Password
@@ -749,6 +780,57 @@ export class ManageUserComponent implements OnInit {
   }
 
   /**
+   * Account flags/tags
+   * @param fetchedKnownFlags
+   * @private
+   */
+  private loadUserFlags(fetchedKnownFlags: Array<any>): void {
+    if (fetchedKnownFlags.length) {
+      fetchedKnownFlags.forEach((flag: string) => {
+        this.userFlags[flag] = <userFlagEntry>{
+          label: ManageUserComponent.userAccountFlagLabel(flag),
+          checked: this.checkIfFlagIsChecked(flag)
+        };
+      });
+    }
+  }
+
+  private checkIfFlagIsChecked(flag: string): boolean {
+    if (this.userAccountTags) {
+      if (this.userAccountTags.indexOf(flag.toUpperCase()) > -1) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private static userAccountFlagLabel(flag: string): string | undefined {
+    switch (flag.toLowerCase()) {
+      case "tos_accepted":
+        return "Terms of Services Accepted";
+      case "pp_accepted":
+        return "Privacy Policy Accepted";
+      case "suggest_pw_change":
+        return "Suggest a password change";
+      case "force_pw_change":
+        return "Force a password change";
+      case "suggest_2fa_change":
+        return "Suggest change of 2FA/GoogleAuth seed";
+      case "account_limited_1":
+        return "Account Limitations Set 1";
+      case "account_limited_2":
+        return "Account Limitations Set 2";
+      case "account_limited_3":
+        return "Account Limitations Set 3";
+      case "promo_mails":
+        return "Subscribed to Promotional E-mails";
+      default:
+        return undefined;
+    }
+  }
+
+  /**
    * Load users groups & user account
    * @private
    */
@@ -775,6 +857,14 @@ export class ManageUserComponent implements OnInit {
 
         if (success.result.hasOwnProperty("errors") && typeof success.result.errors === "object") {
           this.userAccountLoadErrors = success.result.errors;
+        }
+
+        if (success.result.hasOwnProperty("tags") && Array.isArray(success.result.tags)) {
+          this.userAccountTags = success.result.tags;
+        }
+
+        if (success.result.hasOwnProperty("knownUsersFlags") && Array.isArray(success.result.knownUsersFlags)) {
+          this.loadUserFlags(success.result.knownUsersFlags);
         }
       }
     }).catch((error: ApiQueryFail) => {

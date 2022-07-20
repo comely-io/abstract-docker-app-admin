@@ -327,7 +327,7 @@
                           </div>
                         </div>
                       </form>
-                      <form [formGroup]="verificationsFormProfile" (ngSubmit)="verifyProfileSubmit()" class="mt-4">
+                      <form [formGroup]="verificationsFormProfile" (ngSubmit)="verifyProfileSubmit()" class="mt-5">
                         <div class="card">
                           <div class="card-header user-select-none bg-light">
                             <h5 class="card-title fw-light mb-0">Profile Verifications</h5>
@@ -540,7 +540,15 @@
                             <div class="alert alert-success mb-3 py-3" *ngIf="editParamsSuccess">
                               <i class="fal fa-check-circle me-2"></i>Encrypted params has been updated!
                             </div>
-
+                            <mdb-form-control>
+                              <input mdbInput mdbValidate type="text" formControlName="secureData" id="paramsSecureData"
+                                     maxlength="128"
+                                     autocomplete="off" [readonly]="formsAreDisabled" placeholder="encrypted~bytes"
+                                     class="form-control mb-0" autofocus/>
+                              <label mdbLabel class="form-label " for="paramsSecureData">Secure Data</label>
+                            </mdb-form-control>
+                            <app-form-field-error
+                              [formField]="editParamsForm.controls.secureData"></app-form-field-error>
                             <hr class="text-muted border-1">
                             <mdb-form-control class="mt-3">
                               <input mdbInput mdbValidate type="text" formControlName="totp" id="editParamsTotp"

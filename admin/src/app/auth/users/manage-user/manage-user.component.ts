@@ -216,7 +216,7 @@ export class ManageUserComponent implements OnInit {
     this.formsAreDisabled = true;
     await this.app.api.callServer("post", "/auth/users/user", editParamsData).then((success: ApiSuccess) => {
       if (success.result.hasOwnProperty("status") && success.result.status === true) {
-        this.flagsEditSuccess = true;
+        this.editParamsSuccess = true;
       }
     }).catch((error: ApiQueryFail) => {
       this.app.handleAPIError(error, <ApiErrorHandleOpts>{formGroup: this.editParamsForm});
@@ -252,14 +252,7 @@ export class ManageUserComponent implements OnInit {
     });
 
     if (flagsFormData.tags.length) {
-      flagsFormData.tags = flagsFormData.tags.substring(0, -1).toLowerCase();
-    }
-
-    if (this.userAccountTags) {
-      if (this.userAccountTags.join(",").toLowerCase() === flagsFormData.tags) {
-        this.app.notify.error('There are no changes to be saved!');
-        return;
-      }
+      flagsFormData.tags = flagsFormData.tags.slice(0, -1).toLowerCase();
     }
 
     // Totp
@@ -270,13 +263,20 @@ export class ManageUserComponent implements OnInit {
       inputErrors++;
     }
 
+    // Clear out TOTP code
+    this.flagsForm.get("totp")?.setValue("");
+
+    if (this.userAccountTags) {
+      if (this.userAccountTags.join(",").toLowerCase() === flagsFormData.tags) {
+        this.app.notify.error('There are no changes to be saved!');
+        return;
+      }
+    }
+
     // Errors?
     if (inputErrors !== 0) {
       return;
     }
-
-    // Clear out TOTP code
-    this.flagsForm.get("totp")?.setValue("");
 
     this.flagsEditSubmit = true;
     this.formsAreDisabled = true;
@@ -1038,6 +1038,10 @@ export class ManageUserComponent implements OnInit {
 
     if (this.user.phoneVerified === 1) {
       this.verificationsFormAcc.controls.phoneVerified.setValue("true");
+    }
+
+    if (this.userEncryptedParams) {
+      this.editParamsForm.controls.secureData.setValue(this.userEncryptedParams["secureData"] ?? "");
     }
 
     this.formsAreDisabled = false;

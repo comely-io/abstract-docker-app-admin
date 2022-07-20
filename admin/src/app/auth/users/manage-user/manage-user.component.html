@@ -80,8 +80,7 @@
                                 <mdb-option value="">(none)</mdb-option>
                                 <mdb-option *ngFor="let country of countriesList.countries |keyvalue"
                                             [value]="country.value.code">{{country.value.name}}
-                                  (+{{country.value.dialCode}}
-                                  )
+                                  (+{{country.value.dialCode}})
                                 </mdb-option>
                               </mdb-select>
                               <label mdbLabel class="form-label">Country of Residence</label>
@@ -485,20 +484,27 @@
               <div class="card-body">
                 <mdb-tabs [vertical]="true">
                   <mdb-tab title="Flags">
-
                     <div class="col-lg-8">
                       <form [formGroup]="flagsForm" (ngSubmit)="submitEditFlags()">
                         <div class="card">
                           <div class="card-body">
-                            <div class="alert alert-success mb-4 py-3" *ngIf="flagsEditSuccess">
+                            <div class="alert alert-info mb-3">
+                              <i class="fal fa-info-circle me-2"></i>User account tags/flags can be used to trigger or
+                              acknowledge certain actions from the user account side. Actual functionality for these
+                              flags must be implemented in app by developers.
+                            </div>
+                            <div class="alert alert-success mb-3 py-3" *ngIf="flagsEditSuccess">
                               <i class="fal fa-check-circle me-2"></i>User account flags/tags updated successfully!
                             </div>
                             <ng-container *ngFor="let knownFlag of this.userFlags | keyvalue">
-                              <div class="form-check mt-2">
+                              <div class="form-check mt-3">
                                 <input mdbCheckbox class="form-check-input" type="checkbox" value=""
+                                       (checkboxChange)="updateUserFlagValue(knownFlag.key, $event)"
+                                       [name]="knownFlag.key"
                                        [checked]="knownFlag.value.checked"
+                                       [disabled]="formsAreDisabled"
                                        id="flag_{{knownFlag.key}}"/>
-                                <label class="form-check-label" for="{{knownFlag.key}}">
+                                <label class="form-check-label" for="flag_{{knownFlag.key}}">
                                   {{knownFlag.value.label ?? knownFlag.key}}
                                 </label>
                               </div>
@@ -525,9 +531,39 @@
                         </div>
                       </form>
                     </div>
-
                   </mdb-tab>
-                  <mdb-tab title="Encrypted Params">...</mdb-tab>
+                  <mdb-tab title="Encrypted Params">
+                    <div class="col-lg-8">
+                      <form [formGroup]="editParamsForm" (ngSubmit)="submitEditParams()">
+                        <div class="card">
+                          <div class="card-body">
+                            <div class="alert alert-success mb-3 py-3" *ngIf="editParamsSuccess">
+                              <i class="fal fa-check-circle me-2"></i>Encrypted params has been updated!
+                            </div>
+
+                            <hr class="text-muted border-1">
+                            <mdb-form-control class="mt-3">
+                              <input mdbInput mdbValidate type="text" formControlName="totp" id="editParamsTotp"
+                                     maxlength="6"
+                                     autocomplete="off" [readonly]="formsAreDisabled" placeholder="000000"
+                                     (focus)="validator.focusTotpField($event)" (keyup)="editParamsTotpType($event)"
+                                     class="form-control mb-0" autofocus/>
+                              <label mdbLabel class="form-label " for="editParamsTotp">TOTP Code</label>
+                            </mdb-form-control>
+                            <app-form-field-error [formField]="editParamsForm.controls.totp"></app-form-field-error>
+                          </div>
+                          <div class="card-footer bg-light">
+                            <button class="btn btn-outline-danger" type="submit" *ngIf="!editParamsSubmit" mdbRipple
+                                    rippleColor="danger"
+                                    [disabled]="formsAreDisabled">Save Changes
+                            </button>
+                            <app-button-loader [btnClass]="'btn-outline-danger'" [spinnerClass]="'text-danger'"
+                                               *ngIf="editParamsSubmit"></app-button-loader>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </mdb-tab>
                   <mdb-tab title="Baggage Data">...</mdb-tab>
                 </mdb-tabs>
               </div>

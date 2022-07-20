@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ApiErrorHandleOpts, AppService} from "../../../../services/appService";
+import {ApiErrorHandleOpts, AppService, PlainObject} from "../../../../services/appService";
 import {AdminPanelService} from "../../../../services/adminPanelService";
 import {ApiQueryFail, ApiSuccess} from "../../../../services/apiService";
 import {FormControl, FormGroup} from "@angular/forms";
@@ -7,6 +7,7 @@ import {userGroup} from "../user-groups/user-groups.component";
 import {ActivatedRoute, Params} from "@angular/router";
 import {countryList} from "../../countries/countries.component";
 import {ValidatorService} from "../../../../services/validatorService";
+import {MdbCheckboxChange} from "mdb-angular-ui-kit/checkbox";
 
 export type userStatus = "active" | "disabled";
 
@@ -146,6 +147,14 @@ export class ManageUserComponent implements OnInit {
     totp: new FormControl()
   });
 
+  public editParamsSuccess: boolean = false;
+  public editParamsSubmit: boolean = false;
+  public editParamsForm: FormGroup = new FormGroup({
+    secureData: new FormControl(),
+    totp: new FormControl()
+  });
+
+  public userEncryptedParams: PlainObject = {};
   private userAccountTags?: Array<string>;
   public userFlags: userFlagsList = {};
 
@@ -157,10 +166,130 @@ export class ManageUserComponent implements OnInit {
   }
 
   /**
+   * Edit User Encrypted Params
+   */
+  public async submitEditParams() {
+    this.editParamsSuccess = false;
+    let inputErrors: number = 0;
+    let editParamsData: any = {
+      user: this.user.id,
+      action: "params",
+      secureData: ""
+    };
+
+    // Secure data
+    try {
+      let secureDataStr = this.app.validator.validateInput(this.editParamsForm.get("secureData")?.value, false);
+      if (secureDataStr.length) {
+        if (secureDataStr.length < 3) {
+          throw new Error('Secure data string length too short');
+        }
+
+        if (secureDataStr.length > 128) {
+          throw new Error('Secure data string must not exceed 128 bytes');
+        }
+      }
+
+      editParamsData.secureData = secureDataStr;
+    } catch (e) {
+      this.editParamsForm.get("secureData")?.setErrors({message: e.message});
+      inputErrors++;
+    }
+
+    // Totp
+    try {
+      editParamsData.totp = this.app.validator.validateTotp(this.editParamsForm.get("totp")?.value);
+    } catch (e) {
+      this.editParamsForm.get("totp")?.setErrors({message: e.message});
+      inputErrors++;
+    }
+
+    // Errors?
+    if (inputErrors !== 0) {
+      return;
+    }
+
+    // Clear out TOTP code
+    this.editParamsForm.get("totp")?.setValue("");
+
+    this.editParamsSubmit = true;
+    this.formsAreDisabled = true;
+    await this.app.api.callServer("post", "/auth/users/user", editParamsData).then((success: ApiSuccess) => {
+      if (success.result.hasOwnProperty("status") && success.result.status === true) {
+        this.flagsEditSuccess = true;
+      }
+    }).catch((error: ApiQueryFail) => {
+      this.app.handleAPIError(error, <ApiErrorHandleOpts>{formGroup: this.editParamsForm});
+    });
+
+    this.editParamsSubmit = false;
+    this.formsAreDisabled = false;
+  }
+
+  public editParamsTotpType(e: any): void {
+    this.validator.parseTotpField(e, () => {
+      this.submitEditParams().then();
+    });
+  }
+
+  /**
    * Edit User Account Flags/Tags
    */
   public async submitEditFlags() {
+    this.flagsEditSuccess = false;
+    let inputErrors: number = 0;
+    let flagsFormData: any = {
+      user: this.user.id,
+      action: "tags",
+      tags: ""
+    };
 
+    // New tags
+    Object.keys(this.userFlags).forEach((flag: string) => {
+      if (this.userFlags[flag].checked) {
+        flagsFormData.tags += flag + ",";
+      }
+    });
+
+    if (flagsFormData.tags.length) {
+      flagsFormData.tags = flagsFormData.tags.substring(0, -1).toLowerCase();
+    }
+
+    if (this.userAccountTags) {
+      if (this.userAccountTags.join(",").toLowerCase() === flagsFormData.tags) {
+        this.app.notify.error('There are no changes to be saved!');
+        return;
+      }
+    }
+
+    // Totp
+    try {
+      flagsFormData.totp = this.app.validator.validateTotp(this.flagsForm.get("totp")?.value);
+    } catch (e) {
+      this.flagsForm.get("totp")?.setErrors({message: e.message});
+      inputErrors++;
+    }
+
+    // Errors?
+    if (inputErrors !== 0) {
+      return;
+    }
+
+    // Clear out TOTP code
+    this.flagsForm.get("totp")?.setValue("");
+
+    this.flagsEditSubmit = true;
+    this.formsAreDisabled = true;
+    await this.app.api.callServer("post", "/auth/users/user", flagsFormData).then((success: ApiSuccess) => {
+      if (success.result.hasOwnProperty("status") && success.result.status === true) {
+        this.flagsEditSuccess = true;
+      }
+    }).catch((error: ApiQueryFail) => {
+      this.app.handleAPIError(error, <ApiErrorHandleOpts>{formGroup: this.flagsForm});
+    });
+
+    this.flagsEditSubmit = false;
+    this.formsAreDisabled = false;
   }
 
   public editFlagsTotpType(e: any): void {
@@ -781,13 +910,18 @@ export class ManageUserComponent implements OnInit {
 
   /**
    * Account flags/tags
-   * @param fetchedKnownFlags
-   * @private
    */
+  public updateUserFlagValue(flag: string, e: MdbCheckboxChange): void {
+    flag = flag.toLowerCase();
+    if (this.userFlags.hasOwnProperty(flag)) {
+      this.userFlags[flag].checked = e.checked;
+    }
+  }
+
   private loadUserFlags(fetchedKnownFlags: Array<any>): void {
     if (fetchedKnownFlags.length) {
       fetchedKnownFlags.forEach((flag: string) => {
-        this.userFlags[flag] = <userFlagEntry>{
+        this.userFlags[flag.toLowerCase()] = <userFlagEntry>{
           label: ManageUserComponent.userAccountFlagLabel(flag),
           checked: this.checkIfFlagIsChecked(flag)
         };
@@ -859,12 +993,18 @@ export class ManageUserComponent implements OnInit {
           this.userAccountLoadErrors = success.result.errors;
         }
 
+        // Flags & Tags
         if (success.result.hasOwnProperty("tags") && Array.isArray(success.result.tags)) {
           this.userAccountTags = success.result.tags;
         }
 
         if (success.result.hasOwnProperty("knownUsersFlags") && Array.isArray(success.result.knownUsersFlags)) {
           this.loadUserFlags(success.result.knownUsersFlags);
+        }
+
+        // Encrypted Params
+        if (success.result.hasOwnProperty("params") && typeof success.result.params === "object") {
+          this.userEncryptedParams = success.result.params;
         }
       }
     }).catch((error: ApiQueryFail) => {

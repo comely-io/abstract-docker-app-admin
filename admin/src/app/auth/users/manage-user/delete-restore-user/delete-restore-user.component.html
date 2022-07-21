@@ -1,1 +1,30 @@
-<p>delete-restore-user works!</p>
+<form [formGroup]="deleteRestoreForm" (ngSubmit)="submitDeleteRestore()">
+  <div class="modal-header">
+    <h5 class="modal-title fw-light" *ngIf="user.archived === 0">
+      <i class="fal fa-trash-alt me-2"></i>Delete User</h5>
+    <h5 class="modal-title fw-light" *ngIf="user.archived !== 0">
+      <i class="fal fa-trash-restore-alt me-2"></i>Restore User</h5>
+    <button type="button" class="btn-close" (click)="modalRef.close()"></button>
+  </div>
+  <div class="modal-body">
+    <mdb-form-control>
+      <input mdbInput mdbValidate type="text" formControlName="totp" id="totpCode" maxlength="6"
+             autocomplete="off" [readonly]="formDisabled" placeholder="000000"
+             (focus)="validator.focusTotpField($event)" (keyup)="totpSubmit($event)"
+             class="form-control mb-0" autofocus/>
+      <label mdbLabel class="form-label " for="totpCode">TOTP Code</label>
+    </mdb-form-control>
+    <app-form-field-error [formField]="deleteRestoreForm.controls.totp"></app-form-field-error>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-outline-danger me-2" type="submit" *ngIf="!formSubmit && user.archived === 0"
+            [disabled]="formDisabled">Delete User
+    </button>
+    <button class="btn btn-outline-danger me-2" type="submit" *ngIf="!formSubmit && user.archived !== 0"
+            [disabled]="formDisabled">Restore User
+    </button>
+    <app-button-loader [btnClass]="'btn-outline-danger me-2'" [spinnerClass]="'text-danger'"
+                       *ngIf="formSubmit"></app-button-loader>
+    <button type="button" class="btn btn-outline-dark shadow-0" (click)="modalRef.close()">Cancel</button>
+  </div>
+</form>

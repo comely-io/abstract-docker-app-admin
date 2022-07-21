@@ -10,6 +10,7 @@ import {ValidatorService} from "../../../../services/validatorService";
 import {MdbCheckboxChange} from "mdb-angular-ui-kit/checkbox";
 import {MdbModalRef, MdbModalService} from "mdb-angular-ui-kit/modal";
 import {DeleteRestoreUserComponent} from "./delete-restore-user/delete-restore-user.component";
+import {BehaviorSubject} from "rxjs";
 
 export type userStatus = "active" | "disabled";
 
@@ -160,6 +161,7 @@ export class ManageUserComponent implements OnInit {
   private userAccountTags?: Array<string>;
   public userFlags: userFlagsList = {};
 
+  public deleteRestoreEvent?: BehaviorSubject<boolean | null>;
   public deleteRestoreUserModal?: MdbModalRef<DeleteRestoreUserComponent> = undefined;
 
   constructor(private app: AppService, private aP: AdminPanelService, private route: ActivatedRoute, private modals: MdbModalService) {
@@ -173,7 +175,12 @@ export class ManageUserComponent implements OnInit {
    * Open Delete or Restore User Modal
    */
   public openDeleteRestoreUserModal(): void {
-    this.deleteRestoreUserModal = this.modals.open(DeleteRestoreUserComponent, {data: {user: this.user}});
+    this.deleteRestoreUserModal = this.modals.open(DeleteRestoreUserComponent, {
+      data: {
+        user: this.user,
+        updateEvent: this.deleteRestoreEvent
+      }
+    });
   }
 
   /**
@@ -1054,6 +1061,13 @@ export class ManageUserComponent implements OnInit {
     if (this.userEncryptedParams) {
       this.editParamsForm.controls.secureData.setValue(this.userEncryptedParams["secureData"] ?? "");
     }
+
+    this.deleteRestoreEvent = new BehaviorSubject<boolean | null>(null);
+    this.deleteRestoreEvent.subscribe((value: boolean | null) => {
+      if (typeof value === "boolean") {
+        this.user.archived = value ? 1 : 0;
+      }
+    });
 
     this.formsAreDisabled = false;
     this.aP.breadcrumbs.next([

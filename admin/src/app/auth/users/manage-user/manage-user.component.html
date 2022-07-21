@@ -287,7 +287,7 @@
                     <div class="col-lg-8">
                       <form [formGroup]="verificationsFormAcc" (ngSubmit)="verifyAccSubmit()">
                         <div class="card">
-                          <div class="card-header user-select-none bg-light">
+                          <div class="card-header user-select-none bg-light py-3">
                             <h5 class="card-title fw-light mb-0">Account Verifications</h5>
                           </div>
                           <div class="card-body">
@@ -334,7 +334,7 @@
                       </form>
                       <form [formGroup]="verificationsFormProfile" (ngSubmit)="verifyProfileSubmit()" class="mt-5">
                         <div class="card">
-                          <div class="card-header user-select-none bg-light">
+                          <div class="card-header user-select-none bg-light py-3">
                             <h5 class="card-title fw-light mb-0">Profile Verifications</h5>
                           </div>
                           <div class="card-body">
@@ -420,7 +420,7 @@
                             <app-form-field-error
                               [formField]="passwordChangeForm.controls.totp"></app-form-field-error>
                           </div>
-                          <div class="card-footer">
+                          <div class="card-footer bg-light">
                             <button class="btn btn-outline-danger" type="submit" *ngIf="!passwordChangeSubmit"
                                     mdbRipple
                                     rippleColor="danger"

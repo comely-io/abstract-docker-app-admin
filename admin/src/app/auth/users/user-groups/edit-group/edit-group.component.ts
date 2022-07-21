@@ -4,7 +4,6 @@ import {FormControl, FormGroup} from "@angular/forms";
 import {ApiErrorHandleOpts, AppService} from "../../../../../services/appService";
 import {MdbModalRef} from "mdb-angular-ui-kit/modal";
 import {userGroup} from "../user-groups.component";
-import {group} from "@angular/animations";
 import {ApiQueryFail, ApiSuccess} from "../../../../../services/apiService";
 
 @Component({

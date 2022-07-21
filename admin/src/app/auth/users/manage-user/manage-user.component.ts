@@ -8,6 +8,8 @@ import {ActivatedRoute, Params} from "@angular/router";
 import {countryList} from "../../countries/countries.component";
 import {ValidatorService} from "../../../../services/validatorService";
 import {MdbCheckboxChange} from "mdb-angular-ui-kit/checkbox";
+import {MdbModalRef, MdbModalService} from "mdb-angular-ui-kit/modal";
+import {DeleteRestoreUserComponent} from "./delete-restore-user/delete-restore-user.component";
 
 export type userStatus = "active" | "disabled";
 
@@ -158,11 +160,20 @@ export class ManageUserComponent implements OnInit {
   private userAccountTags?: Array<string>;
   public userFlags: userFlagsList = {};
 
-  constructor(private app: AppService, private aP: AdminPanelService, private route: ActivatedRoute) {
+  public deleteRestoreUserModal?: MdbModalRef<DeleteRestoreUserComponent> = undefined;
+
+  constructor(private app: AppService, private aP: AdminPanelService, private route: ActivatedRoute, private modals: MdbModalService) {
     this.validator = app.validator;
     this.route.queryParams.subscribe((params: Params) => {
       this.userId = parseInt(params["id"]);
     });
+  }
+
+  /**
+   * Open Delete or Restore User Modal
+   */
+  public openDeleteRestoreUserModal(): void {
+    this.deleteRestoreUserModal = this.modals.open(DeleteRestoreUserComponent, {data: {user: this.user}});
   }
 
   /**

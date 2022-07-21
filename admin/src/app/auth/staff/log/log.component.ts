@@ -114,7 +114,7 @@ export class LogComponent implements OnInit {
         let flagsI: Array<string> = flags.split(/[\s,]+/);
         if (flagsI.length) {
           flagsI.forEach((flag: string, index: number) => {
-            if (!/^[\w.\-]{1,16}(:[0-9]{1,10})?$/.test(flag)) {
+            if (!/^[\w.\-]{1,16}(:\d{1,10})?$/.test(flag)) {
               throw new Error('Invalid flag value at index ' + index);
             }
           })

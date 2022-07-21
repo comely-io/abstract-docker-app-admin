@@ -172,16 +172,6 @@ export class LogComponent implements OnInit {
     }).catch((error: ApiQueryFail) => {
       this.app.handleAPIError(error);
     });
-
-    // Selected admin?
-    this.route.queryParams.subscribe((params: Params) => {
-      if (params.hasOwnProperty("admin")) {
-        let selectedStaffId: number = parseInt(params["admin"]);
-        if (selectedStaffId > 0) {
-          this.selectAdminId(selectedStaffId);
-        }
-      }
-    });
   }
 
   public async queryActivityLog() {
@@ -211,6 +201,22 @@ export class LogComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Selected admin?
+    this.route.queryParams.subscribe((params: Params) => {
+      if (params.hasOwnProperty("admin")) {
+        let selectedStaffId: number = parseInt(params["admin"]);
+        if (selectedStaffId > 0) {
+          this.selectAdminId(selectedStaffId);
+        }
+      }
+
+      if (params.hasOwnProperty("flags")) {
+        if (typeof params.flags === "string" && params.flags.length) {
+          this.searchLogsForm.controls.flags.setValue(params.flags);
+        }
+      }
+    });
+
     this.getStaffList().then();
 
     this.adminPanel.breadcrumbs.next([

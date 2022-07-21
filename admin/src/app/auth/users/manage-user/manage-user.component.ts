@@ -442,6 +442,9 @@ export class ManageUserComponent implements OnInit {
     await this.app.api.callServer("post", "/auth/users/user", verifyData).then((success: ApiSuccess) => {
       if (success.result.hasOwnProperty("status") && success.result.status === true) {
         this.app.notify.success('User account verifications updated!');
+
+        this.user.emailVerified = verifyData.emailVerified === "true" ? 1 : 0;
+        this.user.phoneVerified = verifyData.phoneVerified === "true" ? 1 : 0;
       }
     }).catch((error: ApiQueryFail) => {
       this.app.handleAPIError(error, <ApiErrorHandleOpts>{formGroup: this.verificationsFormAcc});
@@ -513,6 +516,11 @@ export class ManageUserComponent implements OnInit {
     await this.app.api.callServer("post", "/auth/users/profiles", verifyData).then((success: ApiSuccess) => {
       if (success.result.hasOwnProperty("status") && success.result.status === true) {
         this.app.notify.success('User profile verifications updated!');
+
+        if (this.userProfile) {
+          this.userProfile.idVerified = verifyData.idVerified === "true" ? 1 : 0;
+          this.userProfile.addressVerified = verifyData.addressVerified === "true" ? 1 : 0;
+        }
       }
     }).catch((error: ApiQueryFail) => {
       this.app.handleAPIError(error, <ApiErrorHandleOpts>{formGroup: this.verificationsFormProfile});

@@ -68,8 +68,7 @@ import {DeleteGroupComponent} from './auth/users/user-groups/delete-group/delete
 import {CreateUserComponent} from './auth/users/create-user/create-user.component';
 import {ManageUserComponent} from './auth/users/manage-user/manage-user.component';
 import {CountriesComponent} from './auth/countries/countries.component';
-import { DeleteRestoreUserComponent } from './auth/users/manage-user/delete-restore-user/delete-restore-user.component';
-import { ActivityLogsMenuComponent } from './auth/users/manage-user/activity-logs-menu/activity-logs-menu.component';
+import {DeleteRestoreUserComponent} from './auth/users/manage-user/delete-restore-user/delete-restore-user.component';
 
 @NgModule({
   declarations: [
@@ -105,7 +104,6 @@ import { ActivityLogsMenuComponent } from './auth/users/manage-user/activity-log
     ManageUserComponent,
     CountriesComponent,
     DeleteRestoreUserComponent,
-    ActivityLogsMenuComponent,
   ],
   imports: [
     BrowserModule,

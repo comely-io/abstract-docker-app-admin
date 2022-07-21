@@ -601,20 +601,29 @@
               <p class="mb-2 fw-light"><span class="text-muted">(unnamed)</span></p>
             </ng-container>
             <ng-container *ngIf="userProfile?.firstName || userProfile?.lastName">
-              <p class="mb-2 fw-light user-select-all"><i class="fal fa-id-card-alt me-2" mdbTooltip="Identity"></i>
+              <p class="mb-2 fw-light user-select-all">
+                <i class="fal fa-id-card-alt me-2" mdbTooltip="Identity" *ngIf="userProfile?.idVerified !== 1"></i>
+                <i class="fal fa-id-card-alt me-2 text-success" mdbTooltip="Identity (Verified)"
+                   *ngIf="userProfile?.idVerified === 1"></i>
                 <span *ngIf="userProfile?.firstName">{{userProfile?.firstName}} </span><span
-                  *ngIf="userProfile?.lastName">{{userProfile?.lastName}}</span>
+                *ngIf="userProfile?.lastName">{{userProfile?.lastName}}</span>
               </p>
             </ng-container>
             <ng-container *ngIf="!userProfile?.address1">
-              <p class="mb-2 fw-light user-select-all"><i class="fal fa-location-arrow me-2"
-                                                          mdbTooltip="Postal address"></i><span
-                class="text-muted">(no-address)</span></p>
+              <p class="mb-2 fw-light user-select-all">
+                <i class="fal fa-location-arrow me-2" mdbTooltip="Postal address"
+                   *ngIf="userProfile?.addressVerified !== 1"></i>
+                <i class="fal fa-location-arrow me-2 text-success" mdbTooltip="Postal address (Verified)"
+                   *ngIf="userProfile?.addressVerified === 1"></i>
+                <span
+                  class="text-muted">(no-address)</span></p>
             </ng-container>
             <ng-container *ngIf="userProfile?.address1">
               <p class="mb-2 fw-light user-select-all text-muted">
-                <i class="fal fa-location-arrow me-2 text-dark"
-                   mdbTooltip="Postal address"></i>{{userProfile?.address1}}
+                <i class="fal fa-location-arrow me-2 text-dark" mdbTooltip="Postal address"
+                   *ngIf="userProfile?.addressVerified !== 1"></i>
+                <i class="fal fa-location-arrow me-2 text-success" mdbTooltip="Postal address (Verified)"
+                   *ngIf="userProfile?.addressVerified === 1"></i>{{userProfile?.address1}}
                 <ng-container *ngIf="userProfile?.address2"><br>{{userProfile?.address2}}</ng-container>
                 <ng-container *ngIf="userProfile?.postalCode"><br>{{userProfile?.postalCode}}</ng-container>
                 <ng-container *ngIf="userProfile?.city"><br>{{userProfile?.city}}</ng-container>
@@ -626,31 +635,48 @@
               class="user-select-all">{{user.country}}</span>
             </p>
             <p class="mb-2 fw-light">
-              <i class="fal fa-envelope me-2" mdbTooltip="E-mail Address"></i>
+              <i class="fal fa-envelope me-2" mdbTooltip="E-mail Address" *ngIf="user.emailVerified !== 1"></i>
+              <i class="fal fa-envelope me-2 text-success" mdbTooltip="E-mail Address (Verified)"
+                 *ngIf="user.emailVerified === 1"></i>
               <span *ngIf="user.email" class="user-select-all">{{user.email}}</span>
               <span *ngIf="!user.email" class="text-muted">(no-email)</span>
             </p>
             <p class="fw-light">
-              <i class="fal fa-mobile me-2" mdbTooltip="SMS/Cell No."></i>
+              <i class="fal fa-mobile me-2" mdbTooltip="SMS/Cell No." *ngIf="user.phoneVerified !== 1"></i>
+              <i class="fal fa-mobile me-2 text-success" mdbTooltip="SMS/Cell No. (Verified)"
+                 *ngIf="user.phoneVerified === 1"></i>
               <span *ngIf="user.phone" class="user-select-all">{{user.phone}}</span>
               <span *ngIf="!user.phone" class="text-muted">(not-set)</span>
             </p>
           </div>
           <div class="card-footer">
-            <button class="btn btn-block btn-danger shadow-2" (click)="openDeleteRestoreUserModal()"
+            <button class="btn btn-block btn-danger shadow-2" (click)="openDeleteRestoreUserModal()" mdbRipple
+                    rippleColor="danger"
                     *ngIf="user.archived === 0"><i
               class="fal fa-trash-alt me-2"></i>Delete User
             </button>
-            <button class="btn btn-block btn-warning shadow-2" (click)="openDeleteRestoreUserModal()"
+            <button class="btn btn-block btn-warning shadow-2" (click)="openDeleteRestoreUserModal()" mdbRipple
+                    rippleColor="warning"
                     *ngIf="user.archived !== 0"><i
               class="fal fa-trash-restore-alt me-2"></i>Restore Deleted User
             </button>
-            <button class="btn btn-block btn-outline-dark shadow-2 mt-2">
-              <i class="fal fa-window-frame me-2"></i>Activity Log
+            <button class="btn btn-block btn-outline-dark shadow-2 mt-2" [mdbPopover]="userActivityLogs" mdbRipple
+                    rippleColor="secondary">
+              <i class="fal fa-window-frame me-2"></i>Activity Logs
             </button>
           </div>
         </div>
       </div>
     </div>
   </div>
+  <ng-template #userActivityLogs class="p-0">
+    <div class="px-1 py-2">
+      <a class="btn btn-outline-danger btn-block me-2 shadow-1" routerLink="/auth/staff/log" mdbRipple
+         rippleColor="danger"
+         [queryParams]="{flags: 'user:' + user.id}"><i class="fal fa-user-shield me-2"></i>Administrative Logs</a>
+      <a class="btn btn-outline-secondary btn-block me-2 shadow-1" routerLink="/auth/users/log" mdbRipple
+         rippleColor="secondary"
+         [queryParams]="{user: user.username}"><i class="fal fa-book-user me-2"></i>User's Activity</a>
+    </div>
+  </ng-template>
 </section>

@@ -1,0 +1,37 @@
+<form [formGroup]="setForm" (ngSubmit)="submitSetForm()">
+  <div class="modal-header">
+    <h5 class="modal-title fw-light"><i class="fal fa-object-group me-2"></i>Set Baggage Value</h5>
+    <button type="button" class="btn-close" (click)="modalRef.close()"></button>
+  </div>
+  <div class="modal-body">
+    <mdb-form-control>
+      <input mdbInput mdbValidate type="text" formControlName="keyId" id="key" maxlength="32"
+             autocomplete="off" [readonly]="formIsLoading" placeholder="key"
+             class="form-control mb-0" autofocus/>
+      <label mdbLabel class="form-label " for="key">Key</label>
+    </mdb-form-control>
+    <app-form-field-error [formField]="setForm.controls.keyId"></app-form-field-error>
+    <mdb-form-control class="mt-3">
+      <textarea mdbInput mdbValidate formControlName="data" id="keyData" maxlength="1024"
+                [readonly]="formIsLoading" class="form-control mb-0" rows="4"></textarea>
+      <label mdbLabel class="form-label " for="keyData">Data / Value</label>
+    </mdb-form-control>
+    <app-form-field-error [formField]="setForm.controls.data"></app-form-field-error>
+    <mdb-form-control class="mt-3">
+      <input mdbInput mdbValidate type="text" formControlName="totp" id="totpCode" maxlength="6"
+             autocomplete="off" [readonly]="formIsLoading" placeholder="000000"
+             (focus)="validator.focusTotpField($event)" (keyup)="totpSubmit($event)"
+             class="form-control mb-0" autofocus/>
+      <label mdbLabel class="form-label " for="totpCode">TOTP Code</label>
+    </mdb-form-control>
+    <app-form-field-error [formField]="setForm.controls.totp"></app-form-field-error>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-outline-primary me-2" type="submit" *ngIf="!formIsLoading" mdbRipple rippleColor="primary"
+            [disabled]="formIsLoading">Set Value
+    </button>
+    <app-button-loader [btnClass]="'btn-outline-primary me-2'" [spinnerClass]="'text-danger'"
+                       *ngIf="formIsLoading"></app-button-loader>
+    <button type="button" class="btn btn-secondary shadow-0" (click)="modalRef.close()">Cancel</button>
+  </div>
+</form>

@@ -69,6 +69,9 @@ import {CreateUserComponent} from './auth/users/create-user/create-user.componen
 import {ManageUserComponent} from './auth/users/manage-user/manage-user.component';
 import {CountriesComponent} from './auth/countries/countries.component';
 import {DeleteRestoreUserComponent} from './auth/users/manage-user/delete-restore-user/delete-restore-user.component';
+import {UserBaggageComponent} from './auth/users/manage-user/user-baggage/user-baggage.component';
+import {SetBaggageComponent} from './auth/users/manage-user/user-baggage/set-baggage/set-baggage.component';
+import {DeleteBaggageComponent} from './auth/users/manage-user/user-baggage/delete-baggage/delete-baggage.component';
 
 @NgModule({
   declarations: [
@@ -104,6 +107,9 @@ import {DeleteRestoreUserComponent} from './auth/users/manage-user/delete-restor
     ManageUserComponent,
     CountriesComponent,
     DeleteRestoreUserComponent,
+    UserBaggageComponent,
+    SetBaggageComponent,
+    DeleteBaggageComponent,
   ],
   imports: [
     BrowserModule,

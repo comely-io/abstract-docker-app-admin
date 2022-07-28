@@ -11,6 +11,7 @@ import {MdbCheckboxChange} from "mdb-angular-ui-kit/checkbox";
 import {MdbModalRef, MdbModalService} from "mdb-angular-ui-kit/modal";
 import {DeleteRestoreUserComponent} from "./delete-restore-user/delete-restore-user.component";
 import {BehaviorSubject} from "rxjs";
+import {MdbTabChange} from "mdb-angular-ui-kit/tabs/tabs.component";
 
 export type userStatus = "active" | "disabled";
 
@@ -164,11 +165,22 @@ export class ManageUserComponent implements OnInit {
   public deleteRestoreEvent?: BehaviorSubject<boolean | null>;
   public deleteRestoreUserModal?: MdbModalRef<DeleteRestoreUserComponent> = undefined;
 
+  public baggageTabOpenEvent: BehaviorSubject<boolean | null> = new BehaviorSubject<boolean | null>(null);
+
   constructor(private app: AppService, private aP: AdminPanelService, private route: ActivatedRoute, private modals: MdbModalService) {
     this.validator = app.validator;
     this.route.queryParams.subscribe((params: Params) => {
       this.userId = parseInt(params["id"]);
     });
+  }
+
+  /**
+   * User baggage events
+   */
+  public baggageTabOpen(e: MdbTabChange): void {
+    if (/^Baggage/.test(e.tab.title)) {
+      this.baggageTabOpenEvent.next(true);
+    }
   }
 
   /**

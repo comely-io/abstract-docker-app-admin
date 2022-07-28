@@ -487,7 +487,7 @@
                 <h5 class="card-title mb-0 fw-light">Account Parameters</h5>
               </div>
               <div class="card-body">
-                <mdb-tabs [vertical]="true">
+                <mdb-tabs [vertical]="true" (activeTabChange)="baggageTabOpen($event)">
                   <mdb-tab title="Flags">
                     <div class="col-lg-8">
                       <form [formGroup]="flagsForm" (ngSubmit)="submitEditFlags()">
@@ -577,7 +577,12 @@
                       </form>
                     </div>
                   </mdb-tab>
-                  <mdb-tab title="Baggage Data">...</mdb-tab>
+                  <mdb-tab title="Baggage Data">
+                    <div class="col-lg-10">
+                      <app-user-baggage [baggageTabOpenEvent]="this.baggageTabOpenEvent"
+                                        [user]="this.user"></app-user-baggage>
+                    </div>
+                  </mdb-tab>
                 </mdb-tabs>
               </div>
             </div>

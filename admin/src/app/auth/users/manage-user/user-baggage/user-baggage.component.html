@@ -1,0 +1,49 @@
+<div class="card shadow-2">
+  <div class="card-body">
+    <ng-container *ngIf="this.baggageWasLoaded">
+      <div class="text-end mb-4">
+        <button class="btn btn-sm btn-danger" mdbRipple rippleColor="danger" (click)="openSetModal()">
+          <i class="fal fa-plus-square me-2"></i>Set Value
+        </button>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="!this.loadedBaggage">
+      <div class="text-center py-5">
+        <app-spinner-icon spinnerClass="text-primary me-3"></app-spinner-icon>
+        Loading...
+      </div>
+    </ng-container>
+    <ng-container *ngIf="this.loadedBaggage">
+      <div class="table-responsive">
+        <table class="table table-sm table-inherit table-hover table-condensed mb-0 no-wrap-table">
+          <thead class="table-dark">
+          <tr>
+            <th scope="row" class="text-center fw-light">Key</th>
+            <th scope="row" class="text-center fw-light">Length</th>
+            <th scope="row" class="text-center fw-light">Value</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngIf="this.loadedBaggage.length === 0">
+            <td class="text-muted" colspan="3">There are no baggage values set</td>
+          </tr>
+          <ng-container *ngFor="let item of loadedBaggage">
+            <tr>
+              <td class="text-start"><a class="text-primary pointer fs-xs cursor-pointer"
+                                        (click)="showDeleteModal(item.key)"><i
+                class="fal fa-trash-alt me-2"></i></a><span class="user-select-all">{{item.key}}</span></td>
+              <td class="text-end">
+                <span class="text-muted" *ngIf="item.length">{{item.length}} bytes</span>
+                <span class="text-muted" *ngIf="!item.length">n/a</span>
+              </td>
+              <td class="text-start"><a class="text-primary pointer fs-xs cursor-pointer"
+                                        (click)="openSetModal(item.key)"><i
+                class="fal fa-pencil-alt me-2"></i></a>{{item.data}}</td>
+            </tr>
+          </ng-container>
+          </tbody>
+        </table>
+      </div>
+    </ng-container>
+  </div>
+</div>

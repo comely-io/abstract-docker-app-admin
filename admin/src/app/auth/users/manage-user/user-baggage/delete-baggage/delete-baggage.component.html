@@ -1,0 +1,27 @@
+<form [formGroup]="deleteForm" (ngSubmit)="submitDeleteForm()">
+  <div class="modal-header">
+    <h5 class="modal-title fw-light">
+      <i class="fal fa-trash-alt me-2"></i>Delete Baggage Item</h5>
+    <button type="button" class="btn-close" (click)="modalRef.close()"></button>
+  </div>
+  <div class="modal-body">
+    <p class="mb-0 text-info">{{item}}</p>
+    <hr class="text-muted border-1">
+    <mdb-form-control>
+      <input mdbInput mdbValidate type="text" formControlName="totp" id="totpCode" maxlength="6"
+             autocomplete="off" [readonly]="formIsLoading" placeholder="000000"
+             (focus)="validator.focusTotpField($event)" (keyup)="totpSubmit($event)"
+             class="form-control mb-0" autofocus/>
+      <label mdbLabel class="form-label " for="totpCode">TOTP Code</label>
+    </mdb-form-control>
+    <app-form-field-error [formField]="deleteForm.controls.totp"></app-form-field-error>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-outline-danger me-2" type="submit" *ngIf="!formIsLoading" mdbRipple rippleColor="danger"
+            [disabled]="formIsLoading">Delete Item
+    </button>
+    <app-button-loader [btnClass]="'btn-outline-danger me-2'" [spinnerClass]="'text-danger'"
+                       *ngIf="formIsLoading"></app-button-loader>
+    <button type="button" class="btn btn-outline-dark shadow-0" (click)="modalRef.close()">Cancel</button>
+  </div>
+</form>

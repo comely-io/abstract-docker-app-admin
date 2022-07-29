@@ -1091,7 +1091,8 @@ export class ManageUserComponent implements OnInit {
 
     this.formsAreDisabled = false;
     this.aP.breadcrumbs.next([
-      {page: 'Users Control', icon: 'fal fa-users', active: true},
+      {page: 'Users Control', icon: 'fal fa-users', link: '/auth/users/search'},
+      {page: 'Search', link: '/auth/users/search'},
       {page: 'Edit Account # ' + this.user.id, active: true}
     ]);
 
@@ -1104,7 +1105,8 @@ export class ManageUserComponent implements OnInit {
 
     this.aP.breadcrumbs.next([
       {page: 'Users Control', icon: 'fal fa-users', active: true},
-      {page: 'Edit Account', active: true}
+      {page: 'Search', active: true},
+      {page: 'Edit Account', active: true},
     ]);
 
     this.aP.titleChange.next(["Edit Account", "Users"]);

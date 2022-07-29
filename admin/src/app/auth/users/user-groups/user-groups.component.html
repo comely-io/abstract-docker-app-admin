@@ -28,7 +28,9 @@
                     <tr>
                       <td class="text-end">{{group.id}}</td>
                       <td class="text-start">{{group.name}}</td>
-                      <td class="text-end">{{group.userCount}}</td>
+                      <td class="text-end">
+                        <a routerLink="/auth/users/search" [queryParams]="{groupId: group.id}">{{group.userCount}}</a>
+                      </td>
                       <td class="text-end">
                         <app-timestamp-display [epoch]="group.updatedOn" cssClasses="text-end"></app-timestamp-display>
                       </td>

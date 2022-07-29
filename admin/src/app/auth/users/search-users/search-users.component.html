@@ -14,7 +14,7 @@
               <mdb-form-control>
                 <input mdbInput mdbValidate type="text" formControlName="search" id="searchSearch"
                        maxlength="64"
-                       [readonly]="searchIsDisabled" placeholder="match something"
+                       [readonly]="searchIsDisabled" placeholder="match something" (change)="changedLookForValue()"
                        class="form-control mb-0" autofocus/>
                 <label mdbLabel class="form-label " for="searchSearch">Look For</label>
               </mdb-form-control>
@@ -33,13 +33,13 @@
                 </mdb-form-control>
                 <app-form-field-error [formField]="searchUsersForm.controls.search"></app-form-field-error>
                 <mdb-form-control class="mt-3" *ngIf="usersGroups">
-                  <mdb-select [disabled]="searchIsDisabled" [value]="0" formControlName="searchGroupId">
+                  <mdb-select [disabled]="searchIsDisabled" [value]="0" formControlName="groupId">
                     <mdb-option value="0">(any)</mdb-option>
                     <mdb-option *ngFor="let group of usersGroups" [value]="group.id">{{group.name}}</mdb-option>
                   </mdb-select>
                   <label mdbLabel class="form-label ">Users Group</label>
                 </mdb-form-control>
-                <app-form-field-error [formField]="searchUsersForm.controls.searchGroupId"></app-form-field-error>
+                <app-form-field-error [formField]="searchUsersForm.controls.groupId"></app-form-field-error>
                 <mdb-form-control class="mt-3">
                   <mdb-select [disabled]="searchIsDisabled" value="" formControlName="status">
                     <mdb-option value="any">(any)</mdb-option>
@@ -93,7 +93,7 @@
                             (changePerPage)="changePerPage($event)"></app-pagination>
           </div>
           <div class="table-responsive">
-            <table class="table table-sm table-striped table-hover table-inherit mb-0">
+            <table class="table table-sm table-striped table-hover table-inherit mb-0 no-wrap-table">
               <thead class="table-dark">
               <tr>
                 <th scope="row" class="text-center fw-light">ID</th>
@@ -104,14 +104,15 @@
                 <th scope="row" class="text-center fw-light">Phone No.</th>
                 <th scope="row" class="text-center fw-light">Country</th>
                 <th scope="row" class="text-center fw-light">Flags</th>
-                <th scope="row" class="text-center fw-light">Registered</th>
+                <th scope="row" class="text-center fw-light">Registered On</th>
               </tr>
               </thead>
               <tbody>
               <ng-container *ngIf="this.fetchedUsers">
                 <ng-container *ngFor="let user of this.fetchedUsers">
                   <tr>
-                    <td class="text-right">{{user.id}}</td>
+                    <td class="text-end">
+                      <a routerLink="/auth/users/manage" [queryParams]="{id: user.id}">{{user.id}}</a></td>
                     <td class="text-center">
                       <span class="text-success" mdbTooltip="Verified" *ngIf="this.user.checksumVerified"><i
                         class="fal fa-check-circle"></i></span>
@@ -122,15 +123,14 @@
                       <span class="text-success" *ngIf="this.user.status === 'active'">Active</span>
                       <span class="text-muted" *ngIf="this.user.status !== 'active'">Disabled</span>
                     </td>
-                    <td class="text-center">
-                      {{this.user.username}}<a routerLink="/auth/users/manage" [queryParams]="{id: user.id}"><i
-                      class="fal fa-pencil fs-2"></i></a>
+                    <td class="text-start">
+                      <a routerLink="/auth/users/manage" [queryParams]="{id: user.id}">{{user.username}}</a>
                     </td>
-                    <td [ngClass]="user.email ? 'text-left' : 'text-center'">
+                    <td [ngClass]="user.email ? 'text-start' : 'text-center'">
                       <span *ngIf="user.email">{{user.email}}</span>
                       <span *ngIf="!user.email" class="text-muted">(not set)</span>
                     </td>
-                    <td [ngClass]="user.phone ? 'text-right' : 'text-center'">
+                    <td [ngClass]="user.phone ? 'text-end' : 'text-center'">
                       <span *ngIf="user.phone">{{user.phone}}</span>
                       <span *ngIf="!user.phone" class="text-muted">(not set)</span>
                     </td>
@@ -139,7 +139,7 @@
                       <span *ngIf="!user.country" class="text-muted">(not set)</span>
                     </td>
                     <td>...</td>
-                    <td class="text-right">
+                    <td class="text-end">
                       <app-timestamp-display [epoch]="user.createdOn" cssClasses="text-end"></app-timestamp-display>
                     </td>
                   </tr>

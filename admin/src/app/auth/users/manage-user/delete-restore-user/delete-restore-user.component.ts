@@ -1,7 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ApiErrorHandleOpts, AppService} from "../../../../../services/appService";
 import {MdbModalRef} from "mdb-angular-ui-kit/modal";
-import {DeleteGroupComponent} from "../../user-groups/delete-group/delete-group.component";
 import {userAccount} from "../manage-user.component";
 import {FormControl, FormGroup} from "@angular/forms";
 import {ValidatorService} from "../../../../../services/validatorService";
@@ -25,7 +24,7 @@ export class DeleteRestoreUserComponent implements OnInit {
     totp: new FormControl()
   });
 
-  constructor(public app: AppService, public modalRef: MdbModalRef<DeleteGroupComponent>) {
+  constructor(public app: AppService, public modalRef: MdbModalRef<DeleteRestoreUserComponent>) {
     this.validator = app.validator;
   }
 

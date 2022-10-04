@@ -18,6 +18,7 @@ import {SearchUsersComponent} from "./auth/users/search-users/search-users.compo
 import {UserGroupsComponent} from "./auth/users/user-groups/user-groups.component";
 import {CreateUserComponent} from "./auth/users/create-user/create-user.component";
 import {ManageUserComponent} from "./auth/users/manage-user/manage-user.component";
+import {CountriesComponent} from "./auth/app/countries/countries.component";
 
 const routes: Routes = [
   {path: '', component: SigninComponent},
@@ -35,7 +36,8 @@ const routes: Routes = [
         component: AuthAppComponent,
         children: [
           {path: '', redirectTo: 'docker', pathMatch: 'full'},
-          {path: 'docker', component: DockerComponent}
+          {path: 'docker', component: DockerComponent},
+          {path: 'countries', component: CountriesComponent}
         ]
       },
       {

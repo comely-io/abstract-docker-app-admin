@@ -5,7 +5,7 @@ import {ApiQueryFail, ApiSuccess} from "../../../../services/apiService";
 import {FormControl, FormGroup} from "@angular/forms";
 import {userGroup} from "../user-groups/user-groups.component";
 import {ActivatedRoute, Params} from "@angular/router";
-import {countryList} from "../../countries/countries.component";
+import {countryList} from "../../app/countries/countries.component";
 import {ValidatorService} from "../../../../services/validatorService";
 import {MdbCheckboxChange} from "mdb-angular-ui-kit/checkbox";
 import {MdbModalRef, MdbModalService} from "mdb-angular-ui-kit/modal";

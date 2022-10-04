@@ -1,0 +1,54 @@
+<section class="" style="min-height: 100% !important;">
+  <div class="container">
+    <div class="row d-flex justify-content-center">
+      <div class="col-12 col-md-10 my-5">
+        <div class="alert alert-warning px-3 py-2 mb-3" *ngIf="countriesList && countriesList.cachedOn > 10">
+          <i class="fal fa-clock me-1"></i>Loaded countries list is cached since: <strong>
+          <app-timestamp-display [epoch]="countriesList.cachedOn"></app-timestamp-display>
+        </strong>
+          <button class="btn btn-sm btn-primary float-end" [disabled]="countriesListLoading"
+                  (click)="refreshCountriesList(false, true)"><i
+            class="fal fa-redo me-2"></i>Refresh
+          </button>
+        </div>
+        <div class="card shadow-0">
+          <div class="card-header">
+            <h5 class="card-title mb-0 float-start fw-light">
+              Total Countries: <span class="badge badge-info">{{countriesList?.count ?? "0"}}</span></h5>
+            <button class="btn btn-outline-danger btn-sm float-end">
+              <i class="fal fa-plus-square me-1"></i>Insert
+            </button>
+          </div>
+          <div class="card-body">
+            <mdb-tabs class="my-3">
+              <mdb-tab title="Available">
+                <ng-container *ngIf="countriesListLoading">
+                  <div class="text-center text-muted">
+                    <app-spinner-icon spinnerClass="text-muted me-2"></app-spinner-icon>
+                    Loading...
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="countriesList">
+                  <app-countries-table type="available" [list]="countriesAvailableList"
+                                       (statusChangeQuery)="openStatusChangeModal($event)"></app-countries-table>
+                </ng-container>
+              </mdb-tab>
+              <mdb-tab title="Disabled">
+                <ng-container *ngIf="countriesListLoading">
+                  <div class="text-center text-muted">
+                    <app-spinner-icon spinnerClass="text-muted me-2"></app-spinner-icon>
+                    Loading...
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="countriesList">
+                  <app-countries-table type="disabled" [list]="countriesDisabledList"
+                                       (statusChangeQuery)="openStatusChangeModal($event)"></app-countries-table>
+                </ng-container>
+              </mdb-tab>
+            </mdb-tabs>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

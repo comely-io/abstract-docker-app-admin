@@ -1,0 +1,26 @@
+<form [formGroup]="countriesStatusForm" (ngSubmit)="submitStatusForm()">
+  <div class="modal-header">
+    <h5 class="modal-title fw-light">
+      <i class="fal fa-move me-2"></i>Countries List / Status</h5>
+    <button type="button" class="btn-close" (click)="modalRef.close()"></button>
+  </div>
+  <div class="modal-body">
+    <p class="mb-3">Total of {{countries.length}} countries will be moved to {{list|uppercase}} list.</p>
+    <mdb-form-control>
+      <input mdbInput mdbValidate type="text" formControlName="totp" id="totpCode" maxlength="6"
+             autocomplete="off" [readonly]="formDisabled" placeholder="000000"
+             (focus)="validator.focusTotpField($event)" (keyup)="totpSubmit($event)"
+             class="form-control mb-0" autofocus/>
+      <label mdbLabel class="form-label " for="totpCode">TOTP Code</label>
+    </mdb-form-control>
+    <app-form-field-error [formField]="countriesStatusForm.controls.totp"></app-form-field-error>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-outline-danger me-2" mdbRipple rippleColor="danger" type="submit" *ngIf="!formSubmit"
+            [disabled]="formDisabled">Confirm
+    </button>
+    <app-button-loader [btnClass]="'btn-outline-danger me-2'" [spinnerClass]="'text-danger'"
+                       *ngIf="formSubmit"></app-button-loader>
+    <button type="button" class="btn btn-outline-dark shadow-0" (click)="modalRef.close()">Cancel</button>
+  </div>
+</form>

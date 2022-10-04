@@ -67,11 +67,14 @@ import {EditGroupComponent} from './auth/users/user-groups/edit-group/edit-group
 import {DeleteGroupComponent} from './auth/users/user-groups/delete-group/delete-group.component';
 import {CreateUserComponent} from './auth/users/create-user/create-user.component';
 import {ManageUserComponent} from './auth/users/manage-user/manage-user.component';
-import {CountriesComponent} from './auth/countries/countries.component';
+import {CountriesComponent} from './auth/app/countries/countries.component';
 import {DeleteRestoreUserComponent} from './auth/users/manage-user/delete-restore-user/delete-restore-user.component';
 import {UserBaggageComponent} from './auth/users/manage-user/user-baggage/user-baggage.component';
 import {SetBaggageComponent} from './auth/users/manage-user/user-baggage/set-baggage/set-baggage.component';
 import {DeleteBaggageComponent} from './auth/users/manage-user/user-baggage/delete-baggage/delete-baggage.component';
+import {CountriesTableComponent} from './auth/app/countries/countries-table/countries-table.component';
+import { CountriesMoveModalComponent } from './auth/app/countries/countries-move-modal/countries-move-modal.component';
+import { CountriesSetupModalComponent } from './auth/app/countries/countries-setup-modal/countries-setup-modal.component';
 
 @NgModule({
   declarations: [
@@ -110,6 +113,9 @@ import {DeleteBaggageComponent} from './auth/users/manage-user/user-baggage/dele
     UserBaggageComponent,
     SetBaggageComponent,
     DeleteBaggageComponent,
+    CountriesTableComponent,
+    CountriesMoveModalComponent,
+    CountriesSetupModalComponent,
   ],
   imports: [
     BrowserModule,

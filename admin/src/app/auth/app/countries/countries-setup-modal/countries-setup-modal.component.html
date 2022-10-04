@@ -1,0 +1,53 @@
+<form [formGroup]="setupCountryForm" (ngSubmit)="submitSetupForm()">
+  <div class="modal-header">
+    <h5 class="modal-title fw-light">
+      <i class="fal fa-move me-2"></i>Update Country Information</h5>
+    <button type="button" class="btn-close" (click)="modalRef.close()"></button>
+  </div>
+  <div class="modal-body">
+    <mdb-form-control>
+      <input mdbInput mdbValidate type="text" formControlName="name" id="countryName" maxlength="32"
+             autocomplete="off" [readonly]="formDisabled" placeholder="Country Name"
+             class="form-control mb-0" autofocus/>
+      <label mdbLabel class="form-label " for="countryName">Country Name</label>
+    </mdb-form-control>
+    <app-form-field-error [formField]="setupCountryForm.controls.name"></app-form-field-error>
+    <mdb-form-control class="mt-3">
+      <input mdbInput mdbValidate type="text" formControlName="code" id="countryCode3" maxlength="3"
+             autocomplete="off" [readonly]="formDisabled" placeholder="ABC"
+             class="form-control mb-0" autofocus/>
+      <label mdbLabel class="form-label " for="countryCode3">ISO 3166-1 Alpha 3</label>
+    </mdb-form-control>
+    <app-form-field-error [formField]="setupCountryForm.controls.code"></app-form-field-error>
+    <mdb-form-control class="mt-3">
+      <input mdbInput mdbValidate type="text" formControlName="codeShort" id="countryCode2" maxlength="2"
+             autocomplete="off" [readonly]="formDisabled" placeholder="XX"
+             class="form-control mb-0" autofocus/>
+      <label mdbLabel class="form-label " for="countryCode2">Alpha 2</label>
+    </mdb-form-control>
+    <app-form-field-error [formField]="setupCountryForm.controls.codeShort"></app-form-field-error>
+    <mdb-form-control class="mt-3">
+      <input mdbInput mdbValidate type="number" formControlName="dialCode" id="countryDialCode" min="1" max="16777215"
+             autocomplete="off" [readonly]="formDisabled" placeholder="123"
+             class="form-control mb-0" autofocus/>
+      <label mdbLabel class="form-label " for="countryDialCode">Dial Code (+)</label>
+    </mdb-form-control>
+    <app-form-field-error [formField]="setupCountryForm.controls.dialCode"></app-form-field-error>
+    <mdb-form-control class="mt-3">
+      <input mdbInput mdbValidate type="text" formControlName="totp" id="totpCode" maxlength="6"
+             autocomplete="off" [readonly]="formDisabled" placeholder="000000"
+             (focus)="validator.focusTotpField($event)" (keyup)="totpSubmit($event)"
+             class="form-control mb-0" autofocus/>
+      <label mdbLabel class="form-label " for="totpCode">TOTP Code</label>
+    </mdb-form-control>
+    <app-form-field-error [formField]="setupCountryForm.controls.totp"></app-form-field-error>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-outline-primary me-2" mdbRipple rippleColor="primary" type="submit" *ngIf="!formSubmit"
+            [disabled]="formDisabled">Save Changes
+    </button>
+    <app-button-loader [btnClass]="'btn-outline-danger me-2'" [spinnerClass]="'text-danger'"
+                       *ngIf="formSubmit"></app-button-loader>
+    <button type="button" class="btn btn-outline-dark shadow-0" (click)="modalRef.close()">Cancel</button>
+  </div>
+</form>

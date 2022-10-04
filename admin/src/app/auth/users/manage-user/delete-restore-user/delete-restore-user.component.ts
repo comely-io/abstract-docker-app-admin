@@ -54,7 +54,7 @@ export class DeleteRestoreUserComponent implements OnInit {
 
     this.formDisabled = true;
     this.formSubmit = true;
-    this.app.api.callServer("post", "/auth/users/user", formData).then((success: ApiSuccess) => {
+    await this.app.api.callServer("post", "/auth/users/user", formData).then((success: ApiSuccess) => {
       if (success.result.hasOwnProperty("status") && success.result.status === true) {
         this.updateEvent.next(formData.action === "delete");
         this.modalRef.close();

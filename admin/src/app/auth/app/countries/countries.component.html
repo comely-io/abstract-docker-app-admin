@@ -15,7 +15,7 @@
           <div class="card-header">
             <h5 class="card-title mb-0 float-start fw-light">
               Total Countries: <span class="badge badge-info">{{countriesList?.count ?? "0"}}</span></h5>
-            <button class="btn btn-outline-danger btn-sm float-end">
+            <button class="btn btn-outline-danger btn-sm float-end" (click)="openSetupModal(undefined)">
               <i class="fal fa-plus-square me-1"></i>Insert
             </button>
           </div>
@@ -30,7 +30,8 @@
                 </ng-container>
                 <ng-container *ngIf="countriesList">
                   <app-countries-table type="available" [list]="countriesAvailableList"
-                                       (statusChangeQuery)="openStatusChangeModal($event)"></app-countries-table>
+                                       (statusChangeQuery)="openStatusChangeModal($event)"
+                                       (editCountryQuery)="openSetupModal($event)"></app-countries-table>
                 </ng-container>
               </mdb-tab>
               <mdb-tab title="Disabled">
@@ -42,7 +43,8 @@
                 </ng-container>
                 <ng-container *ngIf="countriesList">
                   <app-countries-table type="disabled" [list]="countriesDisabledList"
-                                       (statusChangeQuery)="openStatusChangeModal($event)"></app-countries-table>
+                                       (statusChangeQuery)="openStatusChangeModal($event)"
+                                       (editCountryQuery)="openSetupModal($event)"></app-countries-table>
                 </ng-container>
               </mdb-tab>
             </mdb-tabs>

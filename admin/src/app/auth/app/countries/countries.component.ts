@@ -5,6 +5,7 @@ import {ApiQueryFail, ApiSuccess} from "../../../../services/apiService";
 import {BehaviorSubject} from "rxjs";
 import {MdbModalService} from "mdb-angular-ui-kit/modal";
 import {CountriesMoveModalComponent, statusChangeQuery} from "./countries-move-modal/countries-move-modal.component";
+import {CountriesSetupModalComponent} from "./countries-setup-modal/countries-setup-modal.component";
 
 export interface countryListObject {
   [key: string]: country
@@ -48,9 +49,22 @@ export class CountriesComponent implements OnInit {
   public openStatusChangeModal(e: statusChangeQuery) {
     if (e.countries.length > 0) {
       this.modals.open(CountriesMoveModalComponent, {
-        data: e
+        data: {
+          countries: e.countries,
+          list: e.list,
+          updateEvent: this.listUpdated
+        }
       });
     }
+  }
+
+  public openSetupModal(e: country | undefined) {
+    this.modals.open(CountriesSetupModalComponent, {
+      data: {
+        country: e,
+        updateEvent: this.listUpdated
+      }
+    })
   }
 
   public async refreshCountriesList(cache: boolean = false, clearCurrentList: boolean = true) {

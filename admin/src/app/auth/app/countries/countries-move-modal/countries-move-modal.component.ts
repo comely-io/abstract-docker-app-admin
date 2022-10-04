@@ -60,7 +60,7 @@ export class CountriesMoveModalComponent implements OnInit {
 
     this.formDisabled = true;
     this.formSubmit = true;
-    this.app.api.callServer("post", "/auth/countries", formData).then((success: ApiSuccess) => {
+    await this.app.api.callServer("post", "/auth/countries", formData).then((success: ApiSuccess) => {
       if (success.result.hasOwnProperty("status") && success.result.status === true) {
         this.updateEvent.next(success.result.count);
         this.modalRef.close();

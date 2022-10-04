@@ -33,9 +33,11 @@
         <td class="text-center">{{country.dialCode}}</td>
         <td class="text-end">
           <div class="btn-group btn-group-sm shadow-0 m-0">
-            <button class="btn btn-outline-danger m-0" mdbRipple rippleColor="danger" mdbTooltip="Edit">
+            <button class="btn btn-outline-danger m-0" mdbRipple rippleColor="danger" mdbTooltip="Edit"
+                    (click)="editCountry(country)">
               <i class="fal fa-edit"></i></button>
             <button class="btn btn-outline-danger m-0" mdbRipple rippleColor="danger" mdbTooltip="Disable"
+                    (click)="changeSelectedStatus([country.code])"
                     *ngIf="type === 'available'">
               <i class="fal fa-trash"></i></button>
           </div>

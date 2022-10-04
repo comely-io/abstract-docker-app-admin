@@ -13,11 +13,16 @@ export class CountriesTableComponent implements OnInit, OnDestroy {
   @Input() type!: countriesListType;
   @Input() list!: Array<country>;
   @Output() statusChangeQuery: EventEmitter<statusChangeQuery> = new EventEmitter<statusChangeQuery>();
+  @Output() editCountryQuery: EventEmitter<country> = new EventEmitter<country>();
 
   public listCount: number = 0;
   public selectedCount: number = 0;
 
   constructor() {
+  }
+
+  public editCountry(country: country) {
+    this.editCountryQuery.emit(country);
   }
 
   public changeSelectedStatus(countries: Array<string> | undefined = undefined) {

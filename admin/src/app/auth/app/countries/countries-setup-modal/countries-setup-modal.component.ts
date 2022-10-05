@@ -21,7 +21,7 @@ export class CountriesSetupModalComponent implements OnInit {
   public formSubmit: boolean = false;
   public formDisabled: boolean = false;
   public setupCountryForm: FormGroup = new FormGroup({
-    status: new FormControl(),
+    list: new FormControl(),
     name: new FormControl(),
     code: new FormControl(),
     codeShort: new FormControl(),
@@ -37,6 +37,7 @@ export class CountriesSetupModalComponent implements OnInit {
     let inputErrors: number = 0;
     let formData: any = {
       action: "setup",
+      list: "",
       name: "",
       code: "",
       codeShort: "",
@@ -133,6 +134,7 @@ export class CountriesSetupModalComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.country) {
+      this.setupCountryForm.controls.list.setValue(this.country.available === 1 ? "available" : "disabled");
       this.setupCountryForm.controls.name.setValue(this.country.name);
       this.setupCountryForm.controls.code.setValue(this.country.code);
       this.setupCountryForm.controls.codeShort.setValue(this.country.codeShort);

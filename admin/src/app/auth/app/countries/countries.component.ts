@@ -75,7 +75,7 @@ export class CountriesComponent implements OnInit {
     this.countriesListLoading = true;
     await this.app.api.callServer("get", "/auth/countries", {
       action: "list",
-      cache: cache,
+      cached: cache,
     }).then((success: ApiSuccess) => {
       this.countriesList = <countryList>success.result.countries;
       this.countriesAvailableList = [];

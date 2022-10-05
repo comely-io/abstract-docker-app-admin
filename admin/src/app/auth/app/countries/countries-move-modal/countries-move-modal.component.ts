@@ -39,6 +39,7 @@ export class CountriesMoveModalComponent implements OnInit {
     let formData: any = {
       action: "status",
       countries: this.countries.join(","),
+      list: this.list,
       totp: ""
     };
 

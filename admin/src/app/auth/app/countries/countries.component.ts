@@ -14,8 +14,6 @@ export interface countryListObject {
 export interface countryList {
   count: number,
   countries: countryListObject,
-  available?: boolean | null,
-  cachedOn: number
 }
 
 export interface countryEntry {
@@ -67,7 +65,7 @@ export class CountriesComponent implements OnInit {
     })
   }
 
-  public async refreshCountriesList(cache: boolean = false, clearCurrentList: boolean = true) {
+  public async refreshCountriesList(clearCurrentList: boolean = true) {
     if (clearCurrentList) {
       this.countriesList = undefined;
     }
@@ -75,7 +73,6 @@ export class CountriesComponent implements OnInit {
     this.countriesListLoading = true;
     await this.app.api.callServer("get", "/auth/countries", {
       action: "list",
-      cached: cache,
     }).then((success: ApiSuccess) => {
       this.countriesList = <countryList>success.result.countries;
       this.countriesAvailableList = [];

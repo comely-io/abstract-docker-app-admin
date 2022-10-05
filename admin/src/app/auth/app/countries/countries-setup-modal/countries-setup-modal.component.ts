@@ -45,6 +45,19 @@ export class CountriesSetupModalComponent implements OnInit {
       totp: ""
     };
 
+    // List
+    try {
+      let list = this.setupCountryForm.get("list")?.value;
+      if (typeof list !== "string" || ["available", "disabled"].indexOf(list) < 0) {
+        throw new Error('Invalid country list selection');
+      }
+
+      formData.list = list;
+    } catch (e) {
+      this.setupCountryForm.get("list")?.setErrors({message: e.message});
+      inputErrors++;
+    }
+
     // Name
     try {
       let name = this.validator.validateInput(this.setupCountryForm.get("name")?.value);
@@ -90,6 +103,8 @@ export class CountriesSetupModalComponent implements OnInit {
       if (isNaN(dialCode) || dialCode < 1 || dialCode > 16777215) {
         throw new Error('Invalid dial code');
       }
+
+      formData.dialCode = dialCode;
     } catch (e) {
       this.setupCountryForm.get("dialCode")?.setErrors({message: e.message});
       inputErrors++;

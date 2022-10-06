@@ -73,8 +73,10 @@ import {UserBaggageComponent} from './auth/users/manage-user/user-baggage/user-b
 import {SetBaggageComponent} from './auth/users/manage-user/user-baggage/set-baggage/set-baggage.component';
 import {DeleteBaggageComponent} from './auth/users/manage-user/user-baggage/delete-baggage/delete-baggage.component';
 import {CountriesTableComponent} from './auth/app/countries/countries-table/countries-table.component';
-import { CountriesMoveModalComponent } from './auth/app/countries/countries-move-modal/countries-move-modal.component';
-import { CountriesSetupModalComponent } from './auth/app/countries/countries-setup-modal/countries-setup-modal.component';
+import {CountriesMoveModalComponent} from './auth/app/countries/countries-move-modal/countries-move-modal.component';
+import {CountriesSetupModalComponent} from './auth/app/countries/countries-setup-modal/countries-setup-modal.component';
+import {MailsComponent} from './auth/mails/mails.component';
+import {MailsConfigComponent} from './auth/mails/mails-config/mails-config.component';
 
 @NgModule({
   declarations: [
@@ -116,6 +118,8 @@ import { CountriesSetupModalComponent } from './auth/app/countries/countries-set
     CountriesTableComponent,
     CountriesMoveModalComponent,
     CountriesSetupModalComponent,
+    MailsComponent,
+    MailsConfigComponent,
   ],
   imports: [
     BrowserModule,

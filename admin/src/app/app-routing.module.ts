@@ -19,6 +19,8 @@ import {UserGroupsComponent} from "./auth/users/user-groups/user-groups.componen
 import {CreateUserComponent} from "./auth/users/create-user/create-user.component";
 import {ManageUserComponent} from "./auth/users/manage-user/manage-user.component";
 import {CountriesComponent} from "./auth/app/countries/countries.component";
+import {MailsComponent} from "./auth/mails/mails.component";
+import {MailsConfigComponent} from "./auth/mails/mails-config/mails-config.component";
 
 const routes: Routes = [
   {path: '', component: SigninComponent},
@@ -49,6 +51,14 @@ const routes: Routes = [
           {path: 'manage', component: ManageUserComponent},
           {path: 'groups', component: UserGroupsComponent},
           {path: 'create', component: CreateUserComponent}
+        ]
+      },
+      {
+        path: 'mails',
+        component: MailsComponent,
+        children: [
+          {path: '', redirectTo: 'config', pathMatch: 'full'},
+          {path: 'config', component: MailsConfigComponent},
         ]
       },
       {

@@ -144,7 +144,7 @@ export class ValidatorService {
     }
 
     if (email.length > maxLen) {
-      throw new Error('E-mail address must not exceed 32 characters');
+      throw new Error(`E-mail address must not exceed ${maxLen} characters`);
     }
 
     return email;
@@ -174,6 +174,41 @@ export class ValidatorService {
     }
 
     return (extended ? /^[\x00-\xFF]*$/ : /^[\x00-\x7F]*$/).test(str);
+  }
+
+  /**
+   * Checks if argument is a valid domain name or IPv4 address
+   * @param hostname
+   * @param allowIpAddr
+   */
+  public isValidHostname(hostname: any, allowIpAddr: boolean = false): boolean {
+    if (typeof hostname !== "string" || !hostname.length) {
+      return false;
+    }
+
+    hostname = hostname.toLowerCase();
+    if (/^[a-z\d\-]+(\.[a-z\d\-]+)*$/.test(hostname)) {
+      return true; // Validated as Domain
+    }
+
+
+    if (allowIpAddr) {
+      return this.isValidIPv4(hostname);
+    }
+
+    return false;
+  }
+
+  /**
+   * Checks if argument is a valid IPv4 address
+   * @param address
+   */
+  public isValidIPv4(address: any): boolean {
+    if (typeof address !== "string" || !address.length) {
+      return false;
+    }
+
+    return /^((\d|[1-9]\d|1\d{2}|2[0-4]\d|25[0-5])\.){3}(\d|[1-9]\d|1\d{2}|2[0-4]\d|25[0-5])$/.test(address);
   }
 
   /**

@@ -13,6 +13,7 @@ export interface PlainObject {
 }
 
 export interface AppFlashMessages {
+  dashboard: Array<string>,
   authSessionSignin?: string,
   userRetrieveFail?: string,
   staffRetrieveFail?: string
@@ -58,7 +59,7 @@ export class AppService {
     this.events = new AppEvents();
     this.api = new ApiService(this);
     this.auth = new AuthService(this);
-    this.flash = {};
+    this.flash = {dashboard: []};
   }
 
   public handleAPIError(error: ApiQueryFail | any, options?: ApiErrorHandleOpts): void {

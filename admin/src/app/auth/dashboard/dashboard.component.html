@@ -1,1 +1,22 @@
-<p>dashboard works!</p>
+<section class="vh-100 bg-inner-red pt-4" style="min-height: 100% !important;">
+  <div class="container mb-3" *ngIf="flashMessages.length > 0">
+    <div class="row">
+      <div class="col-12">
+        <ng-container *ngFor="let fM of flashMessages; let i = index">
+          <div class="alert alert-warning alert-dismissible fade show p-3" role="alert">
+            <i class="fal fa-exclamation-circle me-2"></i><span [innerHTML]="fM"></span>
+            <button (click)="hideFlashWarning(i)" type="button" class="btn-close"
+                    aria-label="Close"></button>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <p>Dashboard works!</p>
+      </div>
+    </div>
+  </div>
+</section>

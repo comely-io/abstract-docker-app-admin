@@ -78,6 +78,8 @@ import {CountriesSetupModalComponent} from './auth/app/countries/countries-setup
 import {MailsComponent} from './auth/mails/mails.component';
 import {MailsConfigComponent} from './auth/mails/mails-config/mails-config.component';
 import { TotpModalComponent } from './shared/totp-modal/totp-modal.component';
+import { PublicApiComponent } from './auth/public-api/public-api.component';
+import { AccessConfigComponent } from './auth/public-api/access-config/access-config.component';
 
 @NgModule({
   declarations: [
@@ -122,6 +124,8 @@ import { TotpModalComponent } from './shared/totp-modal/totp-modal.component';
     MailsComponent,
     MailsConfigComponent,
     TotpModalComponent,
+    PublicApiComponent,
+    AccessConfigComponent,
   ],
   imports: [
     BrowserModule,

@@ -21,6 +21,8 @@ import {ManageUserComponent} from "./auth/users/manage-user/manage-user.componen
 import {CountriesComponent} from "./auth/app/countries/countries.component";
 import {MailsComponent} from "./auth/mails/mails.component";
 import {MailsConfigComponent} from "./auth/mails/mails-config/mails-config.component";
+import {PublicApiComponent} from "./auth/public-api/public-api.component";
+import {AccessConfigComponent} from "./auth/public-api/access-config/access-config.component";
 
 const routes: Routes = [
   {path: '', component: SigninComponent},
@@ -59,6 +61,14 @@ const routes: Routes = [
         children: [
           {path: '', redirectTo: 'config', pathMatch: 'full'},
           {path: 'config', component: MailsConfigComponent},
+        ]
+      },
+      {
+        path: 'public-api',
+        component: PublicApiComponent,
+        children: [
+          {path: '', redirectTo: 'config', pathMatch: 'full'},
+          {path: 'config', component: AccessConfigComponent},
         ]
       },
       {

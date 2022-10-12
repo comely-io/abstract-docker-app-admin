@@ -1,0 +1,52 @@
+<section class="vh-100 bg-inner-blue" style="min-height: 100% !important;">
+  <div class="container">
+    <div class="row d-flex justify-content-center">
+      <div class="col-12 col-md-10 my-5">
+        <div class="card shadow-0">
+          <div class="card-header bg-light">
+            <h5 class="card-title fw-light mb-0 float-start"><i class="fal fa-globe me-2"></i>Public API Access
+            </h5>
+            <button type="button" class="btn btn-sm btn-danger float-end" [disabled]="formDisabled"
+                    (click)="saveChangesClick()">Save Changes
+            </button>
+          </div>
+          <div class="card-body">
+            <ng-container *ngIf="!configTriggers">
+              <div class="text-center text-muted">
+                <app-spinner-icon spinnerClass="text-muted me-2"></app-spinner-icon>
+                Loading...
+              </div>
+            </ng-container>
+            <ng-container *ngIf="configTriggers">
+              <div class="alert alert-success p-2 mb-3" *ngIf="totpUpdateSuccess">
+                Public API Access Configuration updated successfully!
+              </div>
+              <div class="row row-cols-2 row-cols-md-4 g-4">
+                <div class="col" *ngFor="let trigger of configTriggers | keyvalue">
+                  <div class="card shadow-1">
+                    <div class="card-body">
+                      <i *ngIf="hasIcon(trigger.key)" class="me-2"
+                         [ngClass]="getIcon(trigger.key)"></i>{{getLabel(trigger.key)}}
+                    </div>
+                    <div class="card-footer text-end bg-light">
+                      <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn"
+                                [ngClass]="trigger.value ? 'btn-success' : 'btn-outline-danger'" mdbRipple
+                                (click)="switchTrigger(trigger.key)" [disabled]="formDisabled">On
+                        </button>
+                        <button type="button" class="btn"
+                                [ngClass]="!trigger.value ? 'btn-danger' : 'btn-outline-success'" mdbRipple
+                                (click)="switchTrigger(trigger.key)" [disabled]="formDisabled">Off
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

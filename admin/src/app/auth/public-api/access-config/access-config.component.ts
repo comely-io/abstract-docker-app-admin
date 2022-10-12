@@ -98,7 +98,6 @@ export class AccessConfigComponent implements OnInit {
       }
     });
 
-
     this.formDisabled = false;
     this.totpModalControl.next({disabled: false, loading: false});
   }

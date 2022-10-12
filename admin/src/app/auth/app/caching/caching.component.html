@@ -1,0 +1,102 @@
+<section class="bg-inner-blue vh-100" style="min-height: 100% !important;">
+  <div class="container">
+    <div class="row d-flex justify-content-center py-5">
+      <div class="col-md-8">
+        <div class="card mb-3">
+          <div class="card-header noselect">
+            <h5 class="card-title mb-0 fw-light float-start">
+              <i class="fal fa-object-group me-2"></i>Cached Objects
+            </h5>
+            <button class="btn btn-sm btn-outline-dark float-end" mdbTooltip="Refresh Table"
+                    [disabled]="formDisabled || checkingCacheItems" (click)="checkCacheItems()"><i
+              class="fal fa-repeat"></i></button>
+          </div>
+          <div class="card-body" *ngIf="cacheServerError">
+            <div class="alert alert-danger">
+              <i class="fal fa-exclamation-circle me-2"></i>{{cacheServerError}}
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-sm table-hover table-striped">
+              <thead class="table-dark">
+              <tr>
+                <th scope="col" class="fw-light text-end">#</th>
+                <th scope="col" class="fw-light">Item Label</th>
+                <th scope="col" class="fw-light text-end">Cached On</th>
+                <th scope="col" class="fw-light text-end">Actions</th>
+              </tr>
+              </thead>
+              <tbody>
+              <ng-container *ngFor="let item of cachedItems; let i = index">
+                <tr>
+                  <td class="text-end">{{i + 1}}</td>
+                  <td class="text-start">{{item.label}}</td>
+                  <td class="text-end">
+                    <ng-container *ngIf="checkingCacheItems; else cachedItemStatus">
+                      <app-spinner-icon spinnerClass="text-muted"></app-spinner-icon>
+                    </ng-container>
+                    <ng-template #cachedItemStatus>
+                      <app-timestamp-display *ngIf="item.found && item.cachedOn > 0" class="text-danger"
+                                             [epoch]="item.cachedOn"></app-timestamp-display>
+                      <span class="text-danger" *ngIf="item.error" [mdbTooltip]="item.error">Error</span>
+                      <span class="text-success" *ngIf="item.found === false || (!item.error && item.cachedOn <= 0)">Not Cached</span>
+                    </ng-template>
+                  </td>
+                  <td class="text-end">
+                    <button class="btn btn-sm btn-outline-danger" mdbRipple rippleColor="danger" mdbTooltip="Delete"
+                            [disabled]="!item.found || item.cachedOn <= 0 || formDisabled"
+                            (click)="deleteObjectModal(item.id, item.label)"><i
+                      class="fal fa-trash-alt"></i>
+                    </button>
+                  </td>
+                </tr>
+              </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-header noselect">
+            <h5 class="card-title mb-0 fw-light"><i class="fal fa-cogs me-2"></i>Configuration</h5>
+          </div>
+          <div class="table-response">
+            <table class="table table-striped table-sm table-hover mb-0">
+              <tbody>
+              <ng-container *ngIf="cacheConfig">
+                <tr>
+                  <td class="fw-400">Engine:</td>
+                  <td class="text-danger">{{cacheConfig.engine}}</td>
+                </tr>
+                <tr>
+                  <td class="fw-400">Hostname:</td>
+                  <td class="text-info">{{cacheConfig.host}}</td>
+                </tr>
+                <tr>
+                  <td class="fw-400">Port:</td>
+                  <td class="">{{cacheConfig.port}}</td>
+                </tr>
+              </ng-container>
+              <tr>
+                <td class="fw-400">Status:</td>
+                <td class="">
+                  <app-spinner-icon spinnerClass="text-primary" *ngIf="cacheStatus === 'checking'"></app-spinner-icon>
+                  <span [ngClass]="cacheStatus === 'connected' ? 'text-success' : 'text-danger'"
+                        *ngIf="cacheStatus !== 'checking'">{{cacheStatus|titlecase}}</span>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+            <div class="card-body">
+              <button class="btn btn-block btn-danger" [disabled]="formDisabled" (click)="flushAllModal()"><i
+                class="fal fa-trash me-2"></i>Flush
+                Cache
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

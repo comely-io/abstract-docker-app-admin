@@ -46,8 +46,10 @@ export class CachingComponent implements OnInit {
   private totpCodeReceived: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
 
   constructor(private app: AppService, private aP: AdminPanelService, private modals: MdbModalService) {
-    this.cachedItems.push({id: "app.mailConfig", label: "Mail Configuration", cachedOn: 0})
-    this.cachedItems.push({id: "app.publicAPIAccess", label: "Public API Access", cachedOn: 0})
+    this.cachedItems.push({id: "app.systemConfig", label: "System Configuration", cachedOn: 0});
+    this.cachedItems.push({id: "app.programConfig", label: "Program Configuration", cachedOn: 0});
+    this.cachedItems.push({id: "app.mailConfig", label: "Mail Configuration", cachedOn: 0});
+    this.cachedItems.push({id: "app.publicAPIAccess", label: "Public API Access", cachedOn: 0});
   }
 
   public flushAllModal(): void {

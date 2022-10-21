@@ -82,9 +82,7 @@ import {PublicApiComponent} from './auth/public-api/public-api.component';
 import {AccessConfigComponent} from './auth/public-api/access-config/access-config.component';
 import {CachingComponent} from './auth/app/caching/caching.component';
 import {ProgramConfigComponent} from './auth/app/program-config/program-config.component';
-import { SystemConfigComponent } from './auth/app/program-config/system-config/system-config.component';
-import { Oauth2ConfigComponent } from './auth/app/program-config/oauth2-config/oauth2-config.component';
-import { RecaptchaConfigComponent } from './auth/app/program-config/recaptcha-config/recaptcha-config.component';
+import {SystemConfigComponent} from './auth/app/program-config/system-config/system-config.component';
 
 @NgModule({
   declarations: [
@@ -134,8 +132,6 @@ import { RecaptchaConfigComponent } from './auth/app/program-config/recaptcha-co
     CachingComponent,
     ProgramConfigComponent,
     SystemConfigComponent,
-    Oauth2ConfigComponent,
-    RecaptchaConfigComponent,
   ],
   imports: [
     BrowserModule,

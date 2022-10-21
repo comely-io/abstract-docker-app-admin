@@ -7,7 +7,182 @@
             <app-system-config></app-system-config>
           </mdb-tab>
           <mdb-tab title="OAuth 2.0">
-            ...
+            <form [formGroup]="oAuth2Forms">
+              <ng-container *ngIf="!programConfig">
+                <div class="text-center text-muted noselect">
+                  <app-spinner-icon spinnerClass="text-muted me-1"></app-spinner-icon>
+                  Loading...
+                </div>
+              </ng-container>
+              <ng-container *ngIf="programConfig">
+                <div class="col-12 bg-inner-blue rounded p-2 mb-3 text-end">
+                  <button type="submit" class="btn btn-sm btn-danger" mdbRipple rippleColor="danger">Save Changes
+                  </button>
+                </div>
+                <div class="row row-cols-1 row-cols-md-2 g-4">
+                  <!---// Apple //--->
+                  <div class="col">
+                    <div class="card card-classic">
+                      <div class="card-header noselect px-3 py-2">
+                        <p class="card-title fw-light mb-0">
+                          <i class="fab fa-apple me-2"></i>Apple
+                        </p>
+                      </div>
+                      <div class="card-body p-3">
+                        <div class="btn-group btn-group-sm mb-4">
+                          <button type="button" class="btn"
+                                  [ngClass]="oA2AppleStatus ? 'btn-success' : 'btn-outline-danger'"
+                                  mdbRipple
+                                  (click)="oA2AppleStatus  = true" [disabled]="formsDisabled">
+                            Enabled
+                          </button>
+                          <button type="button" class="btn"
+                                  [ngClass]="!oA2AppleStatus ? 'btn-danger' : 'btn-outline-success'"
+                                  mdbRipple
+                                  (click)="oA2AppleStatus  = false" [disabled]="formsDisabled">
+                            Disabled
+                          </button>
+                        </div>
+                        <mdb-form-control>
+                          <input mdbInput mdbValidate type="text" formControlName="appleAppId" id="appleAppId"
+                                 maxlength="128" [readonly]="formsDisabled" placeholder="Secret"
+                                 class="form-control mb-0" autofocus/>
+                          <label mdbLabel class="form-label " for="appleAppId">App ID</label>
+                        </mdb-form-control>
+                        <app-form-field-error [formField]="oAuth2Forms.controls.appleAppId"></app-form-field-error>
+                        <mdb-form-control class="mt-3">
+                          <input mdbInput mdbValidate type="text" formControlName="appleAppKey" id="appleAppKey"
+                                 maxlength="128" [readonly]="formsDisabled" placeholder="Secret"
+                                 class="form-control mb-0" autofocus/>
+                          <label mdbLabel class="form-label " for="appleAppKey">App Key</label>
+                        </mdb-form-control>
+                        <app-form-field-error [formField]="oAuth2Forms.controls.appleAppKey"></app-form-field-error>
+                      </div>
+                    </div>
+                  </div>
+                  <!---// Google //--->
+                  <div class="col">
+                    <div class="card card-classic">
+                      <div class="card-header noselect px-3 py-2">
+                        <p class="card-title fw-light mb-0">
+                          <i class="fab fa-google me-2"></i>Google
+                        </p>
+                      </div>
+                      <div class="card-body p-3">
+                        <div class="btn-group btn-group-sm mb-4">
+                          <button type="button" class="btn"
+                                  [ngClass]="oA2GoogleStatus ? 'btn-success' : 'btn-outline-danger'"
+                                  mdbRipple
+                                  (click)="oA2GoogleStatus  = true" [disabled]="formsDisabled">
+                            Enabled
+                          </button>
+                          <button type="button" class="btn"
+                                  [ngClass]="!oA2GoogleStatus ? 'btn-danger' : 'btn-outline-success'"
+                                  mdbRipple
+                                  (click)="oA2GoogleStatus  = false" [disabled]="formsDisabled">
+                            Disabled
+                          </button>
+                        </div>
+                        <mdb-form-control>
+                          <input mdbInput mdbValidate type="text" formControlName="googleAppId" id="googleAppId"
+                                 maxlength="128" [readonly]="formsDisabled" placeholder="Secret"
+                                 class="form-control mb-0" autofocus/>
+                          <label mdbLabel class="form-label " for="googleAppId">App ID</label>
+                        </mdb-form-control>
+                        <app-form-field-error [formField]="oAuth2Forms.controls.googleAppId"></app-form-field-error>
+                        <mdb-form-control class="mt-3">
+                          <input mdbInput mdbValidate type="text" formControlName="googleAppKey" id="googleAppKey"
+                                 maxlength="128" [readonly]="formsDisabled" placeholder="Secret"
+                                 class="form-control mb-0" autofocus/>
+                          <label mdbLabel class="form-label " for="googleAppKey">App Key</label>
+                        </mdb-form-control>
+                        <app-form-field-error [formField]="oAuth2Forms.controls.googleAppKey"></app-form-field-error>
+                      </div>
+                    </div>
+                  </div>
+                  <!---// Facebook //--->
+                  <div class="col">
+                    <div class="card card-classic">
+                      <div class="card-header noselect px-3 py-2">
+                        <p class="card-title fw-light mb-0">
+                          <i class="fab fa-facebook me-2"></i>Facebook
+                        </p>
+                      </div>
+                      <div class="card-body p-3">
+                        <div class="btn-group btn-group-sm mb-4">
+                          <button type="button" class="btn"
+                                  [ngClass]="oA2FbStatus ? 'btn-success' : 'btn-outline-danger'"
+                                  mdbRipple
+                                  (click)="oA2FbStatus  = true" [disabled]="formsDisabled">
+                            Enabled
+                          </button>
+                          <button type="button" class="btn"
+                                  [ngClass]="!oA2FbStatus ? 'btn-danger' : 'btn-outline-success'"
+                                  mdbRipple
+                                  (click)="oA2FbStatus  = false" [disabled]="formsDisabled">
+                            Disabled
+                          </button>
+                        </div>
+                        <mdb-form-control>
+                          <input mdbInput mdbValidate type="text" formControlName="fbAppId" id="fbAppId"
+                                 maxlength="128" [readonly]="formsDisabled" placeholder="Secret"
+                                 class="form-control mb-0" autofocus/>
+                          <label mdbLabel class="form-label " for="fbAppId">App ID</label>
+                        </mdb-form-control>
+                        <app-form-field-error [formField]="oAuth2Forms.controls.fbAppId"></app-form-field-error>
+                        <mdb-form-control class="mt-3">
+                          <input mdbInput mdbValidate type="text" formControlName="fbAppKey" id="fbAppKey"
+                                 maxlength="128" [readonly]="formsDisabled" placeholder="Secret"
+                                 class="form-control mb-0" autofocus/>
+                          <label mdbLabel class="form-label " for="fbAppKey">App Key</label>
+                        </mdb-form-control>
+                        <app-form-field-error [formField]="oAuth2Forms.controls.fbAppKey"></app-form-field-error>
+                      </div>
+                    </div>
+                  </div>
+                  <!---// Twitter //--->
+                  <div class="col">
+                    <div class="card card-classic">
+                      <div class="card-header noselect px-3 py-2">
+                        <p class="card-title fw-light mb-0">
+                          <i class="fab fa-twitter me-2"></i>Twitter
+                        </p>
+                      </div>
+                      <div class="card-body p-3">
+                        <div class="btn-group btn-group-sm mb-4">
+                          <button type="button" class="btn"
+                                  [ngClass]="oA2TwStatus ? 'btn-success' : 'btn-outline-danger'"
+                                  mdbRipple
+                                  (click)="oA2TwStatus  = true" [disabled]="formsDisabled">
+                            Enabled
+                          </button>
+                          <button type="button" class="btn"
+                                  [ngClass]="!oA2TwStatus ? 'btn-danger' : 'btn-outline-success'"
+                                  mdbRipple
+                                  (click)="oA2TwStatus  = false" [disabled]="formsDisabled">
+                            Disabled
+                          </button>
+                        </div>
+                        <mdb-form-control>
+                          <input mdbInput mdbValidate type="text" formControlName="twAppId" id="twAppId"
+                                 maxlength="128" [readonly]="formsDisabled" placeholder="Secret"
+                                 class="form-control mb-0" autofocus/>
+                          <label mdbLabel class="form-label " for="twAppId">App ID</label>
+                        </mdb-form-control>
+                        <app-form-field-error [formField]="oAuth2Forms.controls.twAppId"></app-form-field-error>
+                        <mdb-form-control class="mt-3">
+                          <input mdbInput mdbValidate type="text" formControlName="twAppKey" id="twAppKey"
+                                 maxlength="128" [readonly]="formsDisabled" placeholder="Secret"
+                                 class="form-control mb-0" autofocus/>
+                          <label mdbLabel class="form-label " for="twAppKey">App Key</label>
+                        </mdb-form-control>
+                        <app-form-field-error [formField]="oAuth2Forms.controls.twAppKey"></app-form-field-error>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+            </form>
           </mdb-tab>
           <mdb-tab title="ReCaptcha">
             ...

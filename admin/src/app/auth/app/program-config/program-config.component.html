@@ -206,7 +206,63 @@
             </form>
           </mdb-tab>
           <mdb-tab title="ReCaptcha">
-            ...
+            <form [formGroup]="reCaptchaForms" (ngSubmit)="submitReCaptchaForm()">
+              <div class="alert alert-success py-2 mb-3" *ngIf="reCaptchaUpdateSuccess">
+                <i class="fal fa-check-circle me-2"></i>ReCaptcha configuration updated successfully!
+              </div>
+              <ng-container *ngIf="!programConfig">
+                <div class="text-center text-muted noselect">
+                  <app-spinner-icon spinnerClass="text-muted me-1"></app-spinner-icon>
+                  Loading...
+                </div>
+              </ng-container>
+              <ng-container *ngIf="programConfig">
+                <div class="col-12 bg-inner-blue rounded p-2 mb-3 text-end">
+                  <button type="button" class="btn btn-sm btn-danger" mdbRipple rippleColor="danger"
+                          *ngIf="!formSubmit"
+                          (click)="submitReCaptchaForm()">Save Changes
+                  </button>
+                  <app-button-loader btnClass="btn-sm btn-outline-danger" spinnerClass="text-danger"
+                                     *ngIf="formSubmit"></app-button-loader>
+                </div>
+                <div class="row row-cols-1 row-cols-md-2 g-4">
+                  <div class="col">
+                    <div class="card card-classic">
+                      <div class="card-header noselect px-3 py-2">
+                        <p class="card-title fw-light mb-0">
+                          <i class="fab fa-google me-2"></i>ReCaptcha
+                        </p>
+                      </div>
+                      <div class="card-body p-3">
+                        <mdb-form-control>
+                          <mdb-select [disabled]="formsDisabled" formControlName="status" id="reCaptchaStatus">
+                            <mdb-option value="0">Disabled</mdb-option>
+                            <mdb-option value="1">Enabled</mdb-option>
+                            <mdb-option value="2">Dynamic</mdb-option>
+                          </mdb-select>
+                          <label mdbLabel class="form-label " for="reCaptchaStatus">Status</label>
+                        </mdb-form-control>
+                        <app-form-field-error [formField]="reCaptchaForms.controls.status"></app-form-field-error>
+                        <mdb-form-control class="mt-3">
+                          <input mdbInput mdbValidate type="text" formControlName="publicKey" id="reCaptchaPublic"
+                                 maxlength="128" [readonly]="formsDisabled" placeholder="Secret"
+                                 class="form-control mb-0" autofocus/>
+                          <label mdbLabel class="form-label " for="reCaptchaPublic">Public Key</label>
+                        </mdb-form-control>
+                        <app-form-field-error [formField]="reCaptchaForms.controls.publicKey"></app-form-field-error>
+                        <mdb-form-control class="mt-3">
+                          <input mdbInput mdbValidate type="text" formControlName="privateKey" id="reCaptchaPrivate"
+                                 maxlength="128" [readonly]="formsDisabled" placeholder="Secret"
+                                 class="form-control mb-0" autofocus/>
+                          <label mdbLabel class="form-label " for="reCaptchaPrivate">Private Key</label>
+                        </mdb-form-control>
+                        <app-form-field-error [formField]="reCaptchaForms.controls.privateKey"></app-form-field-error>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+            </form>
           </mdb-tab>
         </mdb-tabs>
       </div>

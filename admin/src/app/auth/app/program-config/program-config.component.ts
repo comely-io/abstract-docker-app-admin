@@ -84,6 +84,70 @@ export class ProgramConfigComponent implements OnInit {
   constructor(private app: AppService, private aP: AdminPanelService, private modals: MdbModalService) {
   }
 
+  public submitReCaptchaForm() {
+    if (!this.programConfig) {
+      return;
+    }
+
+    this.reCaptchaUpdateSuccess = false;
+    let inputErrors: number = 0;
+    let formData: PlainObject = {
+      action: "recaptcha",
+      status: 0,
+      publicKey: "",
+      privateKey: ""
+    };
+
+    formData.status = parseInt(this.reCaptchaForms.controls.status.value);
+    if (isNaN(formData.status)) {
+      formData.status = 0;
+    }
+
+    formData.publicKey = this.reCaptchaForms.controls.publicKey.value;
+    if (typeof formData.publicKey !== "string" || !formData.publicKey.length) {
+      formData.publicKey = "";
+    }
+
+    formData.privateKey = this.reCaptchaForms.controls.privateKey.value;
+    if (typeof formData.privateKey !== "string" || !formData.privateKey.length) {
+      formData.privateKey = "";
+    }
+
+    if (formData.status > 0) {
+      try {
+        if (!formData.publicKey.length) {
+          throw new Error('Public key is required if enabled');
+        }
+      } catch (e) {
+        this.reCaptchaForms.controls.publicKey.setErrors({message: e.message});
+        inputErrors++;
+      }
+
+      try {
+        if (!formData.privateKey.length) {
+          throw new Error('Private key is required if enabled');
+        }
+      } catch (e) {
+        this.reCaptchaForms.controls.privateKey.setErrors({message: e.message});
+        inputErrors++;
+      }
+    }
+
+    // Errors?
+    if (inputErrors !== 0) {
+      return;
+    }
+
+    this.compiledFormData = formData;
+    this.modals.open(TotpModalComponent, {
+      data: {
+        body: `<span class="text-info">TOTP is required to update <strong>ReCaptcha Configuration</strong>.</span>`,
+        totpModalControl: this.totpModalControl,
+        totpCodeAccept: this.totpCodeReceived
+      }
+    });
+  }
+
   public submitOAuth2Form() {
     if (!this.programConfig) {
       return;
@@ -178,7 +242,11 @@ export class ProgramConfigComponent implements OnInit {
         }
 
         // ReCaptcha Configs
-
+        if (this.programConfig.reCaptcha) {
+          this.reCaptchaForms.controls.status.setValue(this.programConfig.reCaptcha.status.toString());
+          this.reCaptchaForms.controls.publicKey.setValue(this.programConfig.reCaptcha.publicKey ?? 0);
+          this.reCaptchaForms.controls.privateKey.setValue(this.programConfig.reCaptcha.privateKey ?? 0);
+        }
       }
     }).catch((error: ApiQueryFail) => {
       this.app.handleAPIError(error, <ApiErrorHandleOpts>{

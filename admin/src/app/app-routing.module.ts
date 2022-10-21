@@ -24,6 +24,7 @@ import {MailsConfigComponent} from "./auth/mails/mails-config/mails-config.compo
 import {PublicApiComponent} from "./auth/public-api/public-api.component";
 import {AccessConfigComponent} from "./auth/public-api/access-config/access-config.component";
 import {CachingComponent} from "./auth/app/caching/caching.component";
+import {ProgramConfigComponent} from "./auth/app/program-config/program-config.component";
 
 const routes: Routes = [
   {path: '', component: SigninComponent},
@@ -40,7 +41,8 @@ const routes: Routes = [
         path: 'app',
         component: AuthAppComponent,
         children: [
-          {path: '', redirectTo: 'docker', pathMatch: 'full'},
+          {path: '', redirectTo: 'config', pathMatch: 'full'},
+          {path: 'config', component: ProgramConfigComponent},
           {path: 'docker', component: DockerComponent},
           {path: 'countries', component: CountriesComponent},
           {path: 'caching', component: CachingComponent}

@@ -25,6 +25,7 @@ import {PublicApiComponent} from "./auth/public-api/public-api.component";
 import {AccessConfigComponent} from "./auth/public-api/access-config/access-config.component";
 import {CachingComponent} from "./auth/app/caching/caching.component";
 import {ProgramConfigComponent} from "./auth/app/program-config/program-config.component";
+import {DbBackupsComponent} from "./auth/app/db-backups/db-backups.component";
 
 const routes: Routes = [
   {path: '', component: SigninComponent},
@@ -45,7 +46,8 @@ const routes: Routes = [
           {path: 'config', component: ProgramConfigComponent},
           {path: 'docker', component: DockerComponent},
           {path: 'countries', component: CountriesComponent},
-          {path: 'caching', component: CachingComponent}
+          {path: 'caching', component: CachingComponent},
+          {path: 'dbs', component: DbBackupsComponent}
         ]
       },
       {

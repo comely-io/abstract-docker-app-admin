@@ -83,6 +83,7 @@ import {AccessConfigComponent} from './auth/public-api/access-config/access-conf
 import {CachingComponent} from './auth/app/caching/caching.component';
 import {ProgramConfigComponent} from './auth/app/program-config/program-config.component';
 import {SystemConfigComponent} from './auth/app/program-config/system-config/system-config.component';
+import {DbBackupsComponent} from './auth/app/db-backups/db-backups.component';
 
 @NgModule({
   declarations: [
@@ -132,6 +133,7 @@ import {SystemConfigComponent} from './auth/app/program-config/system-config/sys
     CachingComponent,
     ProgramConfigComponent,
     SystemConfigComponent,
+    DbBackupsComponent,
   ],
   imports: [
     BrowserModule,

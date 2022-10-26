@@ -24,7 +24,7 @@
                   <dt class="fw-normal col-sm-4"><i class="fal fa-lock me-1"></i>Temporary Password:</dt>
                   <dd class="col-sm-8">{{createdAdminAcc.tempPass}}</dd>
                 </dl>
-                <a routerLink="/auth/staff/edit?admin={{createdAdminAcc.id}}" class="btn btn-primary mt-3">
+                <a routerLink="/auth/staff/edit" [queryParams]="{admin: createdAdminAcc.id}" class="btn btn-primary mt-3">
                   Setup Permissions &raquo;
                 </a>
               </div>

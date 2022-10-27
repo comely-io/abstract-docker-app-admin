@@ -1,1 +1,158 @@
-<p>db-backups works!</p>
+<section class="bg-inner-red vh-100" style="min-height: 100% !important;">
+  <div class="container">
+    <div class="row d-flex justify-content-center">
+      <div class="col-12 col-md-10 my-4 bg-white shadow-2 pb-3">
+        <mdb-tabs>
+          <mdb-tab title="Databases">
+            <ng-container *ngIf="!dbConfig">
+              <div class="text-center text-muted">
+                <app-spinner-icon spinnerClass="text-muted me-2"></app-spinner-icon>
+                Loading...
+              </div>
+            </ng-container>
+            <ng-container *ngIf="dbConfig">
+              <div class="row row-cols-2 row-cols-md-4 g-4">
+                <ng-container *ngFor="let dbCred of dbConfig | keyvalue">
+                  <div class="col">
+                    <div class="card shadow-2">
+                      <div class="card-header noselect bg-secondary text-white" mdbTooltip="Configured Database">
+                        <p class="mb-0"><i class="fal fa-database me-2"></i>{{dbCred.key}}</p>
+                      </div>
+                      <div class="table-responsive">
+                        <table class="table table-sm table-hover table-striped">
+                          <tbody>
+                          <tr>
+                            <td class="" mdbTooltip="Driver">
+                              <i class="fal fa-network-wired me-2"></i><span
+                              class="text-info">{{dbCred.value.driver}}</span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td class="" mdbTooltip="Hostname">
+                              <i class="fal fa-server me-2"></i><span class="text-success">{{dbCred.value.host}}</span>
+                            </td>
+                          </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+            </ng-container>
+          </mdb-tab>
+          <mdb-tab title="Backups">
+            <div class="row">
+              <div class="col-md-8 mb-3">
+                <div class="alert alert-success mb-3 py-2" *ngIf="backupFormSuccess">
+                  <i class="fal fa-check-circle me-2"></i>Database backup job has been queued successfully.
+                </div>
+                <div class="alert alert-success mb-3 py-2" *ngIf="backupDeleted">
+                  <i class="fal fa-check-circle me-2"></i>Database backup has been deleted successfully.
+                </div>
+                <div class="alert alert-warning mb-3 py-2" *ngIf="backupQueueBusy">
+                  <i class="fal fa-exclamation-circle me-2"></i>There is a pending database backup job in queue.
+                </div>
+                <div class="alert alert-danger mb-3 py-2" *ngIf="!backupsPrivilege">
+                  <i class="fal fa-exclamation-circle me-2"></i>You do not have privilege to download or create database
+                  backups.
+                </div>
+                <div class="card shadow-2">
+                  <div class="card-header bg-light">
+                    <p class="card-title noselect mb-0 fw-light">
+                      <i class="fal fa-cloud-download me-2"></i>MySQL DB Backups
+                    </p>
+                  </div>
+                  <div class="table-responsive">
+                    <table class="table table-hover table-striped table-sm mb-0">
+                      <thead class="table-dark">
+                      <tr>
+                        <th class="fw-light">Epoch</th>
+                        <th class="fw-light">Database</th>
+                        <th class="fw-light">Flag</th>
+                        <th class="fw-light">Size</th>
+                        <th class="fw-light">Download</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <ng-container *ngIf="!loadedDbBackups()">
+                        <tr>
+                          <td class="text-muted text-center" colspan="5">
+                            <app-spinner-icon spinnerClass="text-muted me-2"></app-spinner-icon>
+                            Loading...
+                          </td>
+                        </tr>
+                      </ng-container>
+                      <ng-container *ngIf="loadedDbBackups() && this.dbBackups">
+                        <ng-container *ngFor="let backup of this.dbBackups">
+                          <tr>
+                            <td class="text-end">
+                              <app-timestamp-display [epoch]="backup.epoch"></app-timestamp-display>
+                            </td>
+                            <td class="text-start">{{backup.db}}</td>
+                            <td class="text-center">
+                              <i class="fal fa-clock text-secondary" mdbTooltip="Auto-Backup / Scheduled"
+                                 *ngIf="backup.manual === 0"></i>
+                              <i class="fas fa-user-crown text-warning" mdbTooltip="Manual Backup"
+                                 *ngIf="backup.manual === 1"></i>
+                            </td>
+                            <td class="text-end">
+                              <span mdbTooltip="{{backup.size}} Bytes">{{sizeBytesToMb(backup.size)}} MB</span>
+                            </td>
+                            <td class="text-end">
+                              <div class="btn-group btn-group-sm shadow-0">
+                                <button class="btn btn-outline-secondary" [disabled]="formDisabled || !backupsPrivilege"
+                                        mdbRipple rippleColor="secondary"
+                                        mdbTooltip="Download Backup"><i class="fal fa-cloud-download-alt"></i></button>
+                                <button class="btn btn-outline-secondary" [disabled]="formDisabled || !backupsPrivilege"
+                                        mdbRipple rippleColor="secondary" *ngIf="backup.manual === 1"
+                                        (click)="deleteBackup(backup.id)"
+                                        mdbTooltip="Delete Backup"><i class="fal fa-trash-alt"></i></button>
+                              </div>
+                            </td>
+                          </tr>
+                        </ng-container>
+                        <tr *ngIf="this.dbBackups.length < 1">
+                          <td class="text-muted" colspan="5">There are no downloadable MySQL database dumps.</td>
+                        </tr>
+                      </ng-container>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4 mb-3">
+                <form [formGroup]="dbBackupForm">
+                  <div class="card shadow-2">
+                    <div class="card-header bg-light">
+                      <p class="card-title noselect mb-0 fw-light">
+                        <i class="fal fa-compress me-2"></i>Create Backup
+                      </p>
+                    </div>
+                    <div class="card-body">
+                      <mdb-form-control>
+                        <mdb-select [disabled]="formDisabled || !backupsPrivilege" formControlName="database">
+                          <mdb-option *ngFor="let mysqlDb of mySqlDbs"
+                                      [value]="mysqlDb.label">{{mysqlDb.label}}</mdb-option>
+                        </mdb-select>
+                        <label mdbLabel class="form-label ">MySQL Database</label>
+                      </mdb-form-control>
+                      <app-form-field-error [formField]="dbBackupForm.controls.database"></app-form-field-error>
+                    </div>
+                    <div class="card-footer text-end">
+                      <button class="btn btn-outline-danger" mdbRipple rippleColor="danger" (click)="submitBackupForm()"
+                              [disabled]="formDisabled || !backupsPrivilege" *ngIf="!formSubmit">Queue Backup
+                      </button>
+                      <app-button-loader btnClass="btn-sm btn-outline-danger" spinnerClass="text-danger"
+                                         *ngIf="formSubmit"></app-button-loader>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </mdb-tab>
+        </mdb-tabs>
+      </div>
+    </div>
+  </div>
+</section>

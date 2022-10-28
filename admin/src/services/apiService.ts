@@ -10,13 +10,15 @@ export interface ApiConfig {
 }
 
 export type ApiPayloadData = PlainObject;
+export const ApiDownloadFileTypes = ["json", "zip", "octet"] as const;
 
 export interface ApiCallOptions {
   authSession?: boolean,
   useSessionToken?: AuthSessionMeta,
   timeOut?: number,
   hmacExcludeParams?: Array<string>,
-  handleWarnings?: boolean
+  handleWarnings?: boolean,
+  allowFileDownload?: boolean,
 }
 
 export interface ApiResponseMeta {
@@ -31,6 +33,7 @@ export interface ApiResponseBase {
 }
 
 export interface ApiSuccess extends ApiResponseBase {
+  signalFileDownload?: boolean,
   result: PlainObject
 }
 
@@ -121,6 +124,13 @@ export class ApiService {
     return [].concat.apply([], query).join("&");
   }
 
+  /**
+   * Call API server
+   * @param method
+   * @param endpoint
+   * @param data
+   * @param options
+   */
   public callServer(method: HttpMethod, endpoint: string, data: ApiPayloadData, options?: ApiCallOptions): Promise<ApiSuccess> {
     return new Promise<ApiSuccess>((success, fail) => {
       let httpService = this.app.http;
@@ -199,6 +209,52 @@ export class ApiService {
         if (!response.success || typeof response.body !== "string") {
           apiQueryFail.error = `API call to ${method.toUpperCase()} ${endpoint} failed with HTTP status code ${response.code}; Check network XHR logs`;
           return fail(apiQueryFail);
+        }
+
+        // Check Content-Deposition header
+        let contentDisposition = response.headers.get("content-disposition");
+        if (typeof contentDisposition === "string" && contentDisposition.match(/^attachment;/)) {
+          try {
+            if (options?.allowFileDownload !== true) {
+              throw new Error(`File downloads are disabled for this query`);
+            }
+
+            let filename: string | undefined;
+            let filenameMatch = /filename="?(.+)"?;?/.exec(contentDisposition);
+            if (filenameMatch && filenameMatch.length > 1) {
+              filename = filenameMatch[1];
+            }
+
+            if (!filename) {
+              throw new Error(`File name is expected to be specified from the server side`);
+            }
+
+            let contentType = response.headers.get("content-type");
+            let downloadType: string | undefined = undefined;
+            if (typeof contentType !== "string") {
+              throw new Error(`Cannot download file; Content-Type not received`);
+            }
+
+            ApiDownloadFileTypes.forEach((type: string) => {
+              if (contentType?.match(new RegExp(`^application\/` + type))) {
+                downloadType = type;
+              }
+            });
+
+            if (!downloadType) {
+              throw new Error(`Unsupported downloadable content type`);
+            }
+
+            let blob = new Blob(["\ufeff", response.body], {type: contentType + ";charset=UTF-8"});
+            let download = document.createElement("a");
+            download.setAttribute("href", window.URL.createObjectURL(blob));
+            download.setAttribute("download", filename);
+            download.click();
+            return success(<ApiSuccess>{signalFileDownload: true});
+          } catch (e) {
+            apiQueryFail.error = e.message;
+            return fail(apiQueryFail);
+          }
         }
 
         // Check Content-Type header

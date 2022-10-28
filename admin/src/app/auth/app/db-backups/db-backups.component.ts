@@ -56,6 +56,19 @@ export class DbBackupsComponent implements OnInit {
   constructor(private app: AppService, private aP: AdminPanelService, private modals: MdbModalService) {
   }
 
+  public async downloadBackup(id: number) {
+    this.formDisabled = true;
+    await this.app.api.callServer("get", "/auth/dbs", {
+      action: "download",
+      id: id
+    }, {allowFileDownload: true}).then((success: ApiSuccess) => {
+
+    }).catch((error: ApiQueryFail) => {
+      this.app.handleAPIError(error);
+    });
+    this.formDisabled = false;
+  }
+
   public deleteBackup(id: number) {
     this.backupFormSuccess = false;
     this.backupDeleted = false;

@@ -159,7 +159,7 @@ export class ValidatorService {
       return false;
     }
 
-    return /^\w+@[a-z\d]+(\.[a-z\d]{2,8}){1,3}$/.test(email);
+    return /^[a-z\d]+([.\-_]?\w+)?@[a-z\d]+(\.[a-z\d]{2,8}){1,3}$/i.test(email);
   }
 
   /**

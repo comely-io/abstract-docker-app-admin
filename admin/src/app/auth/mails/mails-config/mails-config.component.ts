@@ -272,9 +272,9 @@ export class MailsConfigComponent implements OnInit, OnDestroy {
         this.configForm.controls.smtpUsername.setValue(mailConfig.username);
         this.configForm.controls.smtpPassword.setValue(mailConfig.password);
         this.configForm.controls.smtpServerName.setValue(mailConfig.serverName);
-        this.configForm.controls.apiKey.setValue(mailConfig.apiKey);
-        this.configForm.controls.apiBaggageOne.setValue(mailConfig.apiBaggageOne);
-        this.configForm.controls.apiBaggageTwo.setValue(mailConfig.apiBaggageTwo);
+        this.configForm.controls.mgApiKey.setValue(mailConfig.mgApiKey);
+        this.configForm.controls.mgApiDomain.setValue(mailConfig.mgApiDomain);
+        this.configForm.controls.mgApiRegion.setValue(mailConfig.mgEurope === false ? "us" : "eu");
       }
     }).catch((error: ApiQueryFail) => {
       this.app.handleAPIError(error, <ApiErrorHandleOpts>{

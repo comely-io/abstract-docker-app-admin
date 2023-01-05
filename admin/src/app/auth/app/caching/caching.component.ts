@@ -1,10 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AppService} from "../../../../services/appService";
 import {AdminPanelService} from "../../../../services/adminPanelService";
 import {MdbModalService} from "mdb-angular-ui-kit/modal";
 import {ApiQueryFail, ApiSuccess} from "../../../../services/apiService";
 import {TotpModalComponent, totpModalControl} from "../../../shared/totp-modal/totp-modal.component";
-import {BehaviorSubject} from "rxjs";
+import {BehaviorSubject, Subscription} from "rxjs";
 
 type cacheStatus = "checking" | "disabled" | "connected" | "failed";
 type totpQueryCmd = "flush" | "delete";
@@ -33,7 +33,7 @@ interface cachedItem {
   templateUrl: './caching.component.html',
   styleUrls: ['./caching.component.scss']
 })
-export class CachingComponent implements OnInit {
+export class CachingComponent implements OnInit, OnDestroy {
   public formDisabled: boolean = true;
   public cacheConfig?: cacheConfig;
   public cacheStatus: cacheStatus = "checking";
@@ -44,6 +44,7 @@ export class CachingComponent implements OnInit {
   private totpQueryCmd?: totpQuery;
   private totpModalControl: BehaviorSubject<totpModalControl> = new BehaviorSubject<totpModalControl>({});
   private totpCodeReceived: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
+  private watchTotp?: Subscription;
 
   constructor(private app: AppService, private aP: AdminPanelService, private modals: MdbModalService) {
     this.cachedItems.push({id: "app.systemConfig", label: "System Configuration", cachedOn: 0});
@@ -271,7 +272,7 @@ export class CachingComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.totpCodeReceived.subscribe((totpCode: string | null) => {
+    this.watchTotp = this.totpCodeReceived.subscribe((totpCode: string | null) => {
       if (typeof totpCode !== "string" || totpCode.length !== 6) {
         return;
       }
@@ -297,5 +298,9 @@ export class CachingComponent implements OnInit {
       {page: 'Caching Engine', active: true}
     ]);
     this.aP.titleChange.next(["Caching Engine", "Application"]);
+  }
+
+  ngOnDestroy() {
+    this.watchTotp?.unsubscribe();
   }
 }

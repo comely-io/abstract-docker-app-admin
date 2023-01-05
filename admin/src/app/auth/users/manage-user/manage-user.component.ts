@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ApiErrorHandleOpts, AppService, PlainObject} from "../../../../services/appService";
 import {AdminPanelService} from "../../../../services/adminPanelService";
 import {ApiQueryFail, ApiSuccess} from "../../../../services/apiService";
@@ -10,7 +10,7 @@ import {ValidatorService} from "../../../../services/validatorService";
 import {MdbCheckboxChange} from "mdb-angular-ui-kit/checkbox";
 import {MdbModalRef, MdbModalService} from "mdb-angular-ui-kit/modal";
 import {DeleteRestoreUserComponent} from "./delete-restore-user/delete-restore-user.component";
-import {BehaviorSubject} from "rxjs";
+import {BehaviorSubject, Subscription} from "rxjs";
 import {MdbTabChange} from "mdb-angular-ui-kit/tabs/tabs.component";
 
 export type userStatus = "active" | "disabled";
@@ -72,7 +72,8 @@ interface userFlagEntry {
   templateUrl: './manage-user.component.html',
   styleUrls: ['./manage-user.component.scss']
 })
-export class ManageUserComponent implements OnInit {
+export class ManageUserComponent implements OnInit, OnDestroy {
+  private queryWatch?: Subscription;
   private userId!: number;
   public user!: userAccount;
   public userProfile?: userProfile;
@@ -164,12 +165,13 @@ export class ManageUserComponent implements OnInit {
 
   public deleteRestoreEvent?: BehaviorSubject<boolean | null>;
   public deleteRestoreUserModal?: MdbModalRef<DeleteRestoreUserComponent> = undefined;
+  private deleteRestoreEventWatch?: Subscription;
 
   public baggageTabOpenEvent: BehaviorSubject<boolean | null> = new BehaviorSubject<boolean | null>(null);
 
   constructor(private app: AppService, private aP: AdminPanelService, private route: ActivatedRoute, private modals: MdbModalService) {
     this.validator = app.validator;
-    this.route.queryParams.subscribe((params: Params) => {
+    this.queryWatch = this.route.queryParams.subscribe((params: Params) => {
       this.userId = parseInt(params["id"]);
     });
   }
@@ -1083,7 +1085,8 @@ export class ManageUserComponent implements OnInit {
     }
 
     this.deleteRestoreEvent = new BehaviorSubject<boolean | null>(null);
-    this.deleteRestoreEvent.subscribe((value: boolean | null) => {
+    this.deleteRestoreEventWatch?.unsubscribe();
+    this.deleteRestoreEventWatch = this.deleteRestoreEvent.subscribe((value: boolean | null) => {
       if (typeof value === "boolean") {
         this.user.archived = value ? 1 : 0;
       }
@@ -1110,5 +1113,10 @@ export class ManageUserComponent implements OnInit {
     ]);
 
     this.aP.titleChange.next(["Edit Account", "Users"]);
+  }
+
+  ngOnDestroy() {
+    this.queryWatch?.unsubscribe();
+    this.deleteRestoreEventWatch?.unsubscribe();
   }
 }

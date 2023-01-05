@@ -1,11 +1,11 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AppService} from "../../../../services/appService";
 import {AdminPanelService} from "../../../../services/adminPanelService";
 import {ValidatorService} from "../../../../services/validatorService";
 import {MdbModalService} from "mdb-angular-ui-kit/modal";
 import {ApiQueryFail, ApiSuccess} from "../../../../services/apiService";
 import {TotpModalComponent, totpModalControl} from "../../../shared/totp-modal/totp-modal.component";
-import {BehaviorSubject} from "rxjs";
+import {BehaviorSubject, Subscription} from "rxjs";
 
 interface configTriggers {
   [key: string]: boolean
@@ -25,12 +25,13 @@ interface triggerLabel {
   templateUrl: './access-config.component.html',
   styleUrls: ['./access-config.component.scss']
 })
-export class AccessConfigComponent implements OnInit {
+export class AccessConfigComponent implements OnInit, OnDestroy {
   public totpUpdateSuccess: boolean = false;
   public formDisabled: boolean = false;
 
   private totpModalControl: BehaviorSubject<totpModalControl> = new BehaviorSubject<totpModalControl>({});
   private totpCodeReceived: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
+  private totpWatch?: Subscription;
   public validator: ValidatorService;
   public configTriggers?: configTriggers;
 
@@ -148,7 +149,7 @@ export class AccessConfigComponent implements OnInit {
 
   ngOnInit(): void {
     // Events
-    this.totpCodeReceived.subscribe((totpCode: string | null) => {
+    this.totpWatch = this.totpCodeReceived.subscribe((totpCode: string | null) => {
       if (totpCode) {
         this.saveChanges(totpCode).then();
       }
@@ -162,5 +163,9 @@ export class AccessConfigComponent implements OnInit {
       {page: 'Access Configuration', active: true}
     ]);
     this.aP.titleChange.next(["Access Configuration", "Public API"]);
+  }
+
+  ngOnDestroy() {
+    this.totpWatch?.unsubscribe();
   }
 }

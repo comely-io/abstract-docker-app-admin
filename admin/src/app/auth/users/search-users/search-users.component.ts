@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ApiErrorHandleOpts, AppService} from "../../../../services/appService";
 import {AdminPanelService} from "../../../../services/adminPanelService";
 import {FormControl, FormGroup} from "@angular/forms";
@@ -8,6 +8,7 @@ import {userGroup} from "../user-groups/user-groups.component";
 import {ApiQueryFail, ApiSuccess} from "../../../../services/apiService";
 import {ValidatorService} from "../../../../services/validatorService";
 import {ActivatedRoute, Params} from "@angular/router";
+import {Subscription} from "rxjs";
 
 type sortResults = "desc" | "asc";
 type searchArchived = "exclude" | "just" | "include";
@@ -36,7 +37,8 @@ interface searchQuery {
   templateUrl: './search-users.component.html',
   styleUrls: ['./search-users.component.scss']
 })
-export class SearchUsersComponent implements OnInit {
+export class SearchUsersComponent implements OnInit, OnDestroy {
+  private queryWatch?: Subscription;
   public flashError?: string;
   public validator: ValidatorService;
 
@@ -222,7 +224,7 @@ export class SearchUsersComponent implements OnInit {
     this.flashError = this.app.flash.userRetrieveFail;
     this.app.flash.userRetrieveFail = undefined;
 
-    this.route.queryParams.subscribe((params: Params) => {
+    this.queryWatch = this.route.queryParams.subscribe((params: Params) => {
       if (params.hasOwnProperty("referrer")) {
         this.searchUsersForm.controls.referrer.setValue(params.referrer);
         this.searchAdvCollapse = true;
@@ -244,5 +246,9 @@ export class SearchUsersComponent implements OnInit {
       {page: 'Search', active: true}
     ]);
     this.aP.titleChange.next(["Search Users", "Users"]);
+  }
+
+  ngOnDestroy() {
+    this.queryWatch?.unsubscribe();
   }
 }

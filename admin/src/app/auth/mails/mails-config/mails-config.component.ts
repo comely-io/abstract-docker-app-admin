@@ -1,10 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ApiErrorHandleOpts, AppService, PlainObject} from "../../../../services/appService";
 import {AdminPanelService} from "../../../../services/adminPanelService";
 import {FormControl, FormGroup} from "@angular/forms";
 import {ApiQueryFail, ApiSuccess} from "../../../../services/apiService";
 import {ValidatorService} from "../../../../services/validatorService";
-import {BehaviorSubject} from "rxjs";
+import {BehaviorSubject, Subscription} from "rxjs";
 import {MdbModalService} from "mdb-angular-ui-kit/modal";
 import {TotpModalComponent, totpModalControl} from "../../../shared/totp-modal/totp-modal.component";
 
@@ -13,13 +13,14 @@ import {TotpModalComponent, totpModalControl} from "../../../shared/totp-modal/t
   templateUrl: './mails-config.component.html',
   styleUrls: ['./mails-config.component.scss']
 })
-export class MailsConfigComponent implements OnInit {
+export class MailsConfigComponent implements OnInit, OnDestroy {
   public validator: ValidatorService;
   public configUpdatedSuccess: boolean = false;
   public optUseTLS: boolean = false;
 
   private totpModalControl: BehaviorSubject<totpModalControl> = new BehaviorSubject<totpModalControl>({});
   private totpCodeReceived: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
+  private totpWatch?: Subscription;
   private compiledFormData?: PlainObject;
 
   public formSubmit: boolean = false;
@@ -299,7 +300,7 @@ export class MailsConfigComponent implements OnInit {
 
   ngOnInit(): void {
     // Events
-    this.totpCodeReceived.subscribe((totpCode: string | null) => {
+    this.totpWatch = this.totpCodeReceived.subscribe((totpCode: string | null) => {
       if (typeof this.compiledFormData !== "object") {
         return;
       }
@@ -328,5 +329,9 @@ export class MailsConfigComponent implements OnInit {
       {page: 'Configuration', active: true}
     ]);
     this.aP.titleChange.next(["Configuration", "Mailer"]);
+  }
+
+  ngOnDestroy() {
+    this.totpWatch?.unsubscribe();
   }
 }

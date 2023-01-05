@@ -1,20 +1,23 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {AppService} from "../../services/appService";
 import {AdminPanelService, breadcrumb} from "../../services/adminPanelService";
 import {Title} from "@angular/platform-browser";
 import {ApiWarningMsg} from "../../services/apiService";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.scss']
 })
-export class AuthComponent implements OnInit {
+export class AuthComponent implements OnInit, OnDestroy {
   public appName: string;
   public displaySidenav: boolean;
   public screenSize: number;
   public breadcrumbs: Array<breadcrumb> = [];
   public apiWarnings: Array<ApiWarningMsg> = [];
+
+  private watchers: Array<Subscription> = [];
 
   constructor(private app: AppService, private adminPanel: AdminPanelService, private titleChange: Title, private cdr: ChangeDetectorRef) {
     this.appName = app.appName;
@@ -37,7 +40,7 @@ export class AuthComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.adminPanel.breadcrumbs.subscribe((change: Array<breadcrumb>) => {
+    this.watchers.push(this.adminPanel.breadcrumbs.subscribe((change: Array<breadcrumb>) => {
       let breadcrumbs = [];
       breadcrumbs.push({page: "Home", link: "dashboard", icon: "fal fa-home"});
       change.forEach(function (breadcrumb: breadcrumb) {
@@ -46,18 +49,18 @@ export class AuthComponent implements OnInit {
 
       this.breadcrumbs = breadcrumbs;
       this.cdr.detectChanges();
-    });
+    }));
 
-    this.adminPanel.titleChange.subscribe((pageTitle: Array<string>) => {
+    this.watchers.push(this.adminPanel.titleChange.subscribe((pageTitle: Array<string>) => {
       this.titleChange.setTitle(pageTitle.concat([this.appName]).join(" / "))
       this.cdr.detectChanges();
-    });
+    }));
 
-    this.app.router.events.subscribe(() => {
+    this.watchers.push(this.app.router.events.subscribe(() => {
       this.apiWarnings = [];
-    });
+    }));
 
-    this.app.events.apiCallWarnings().subscribe((warnings: ApiWarningMsg[]) => {
+    this.watchers.push(this.app.events.apiCallWarnings().subscribe((warnings: ApiWarningMsg[]) => {
       if (warnings.length) {
         warnings.forEach((msg: ApiWarningMsg) => {
           this.apiWarnings.push(msg);
@@ -65,6 +68,12 @@ export class AuthComponent implements OnInit {
 
         this.cdr.detectChanges();
       }
+    }));
+  }
+
+  ngOnDestroy() {
+    this.watchers.forEach((watcher: Subscription) => {
+      watcher.unsubscribe();
     });
   }
 }

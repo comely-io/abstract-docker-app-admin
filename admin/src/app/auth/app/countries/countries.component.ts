@@ -1,8 +1,8 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AppService} from "../../../../services/appService";
 import {AdminPanelService} from "../../../../services/adminPanelService";
 import {ApiQueryFail, ApiSuccess} from "../../../../services/apiService";
-import {BehaviorSubject} from "rxjs";
+import {BehaviorSubject, Subscription} from "rxjs";
 import {MdbModalService} from "mdb-angular-ui-kit/modal";
 import {CountriesMoveModalComponent, statusChangeQuery} from "./countries-move-modal/countries-move-modal.component";
 import {CountriesSetupModalComponent} from "./countries-setup-modal/countries-setup-modal.component";
@@ -33,11 +33,13 @@ export interface country extends countryEntry {
   templateUrl: './countries.component.html',
   styleUrls: ['./countries.component.scss']
 })
-export class CountriesComponent implements OnInit {
+export class CountriesComponent implements OnInit, OnDestroy {
   public countriesListLoading: boolean = false;
   public countriesList?: countryList;
   public countriesAvailableList: Array<country> = [];
   public countriesDisabledList: Array<country> = [];
+
+  private watchCountries?: Subscription;
 
   public listUpdated: BehaviorSubject<number | string | null> = new BehaviorSubject<number | string | null>(null);
 
@@ -99,7 +101,7 @@ export class CountriesComponent implements OnInit {
   ngOnInit(): void {
     this.refreshCountriesList(true).then();
 
-    this.listUpdated.subscribe((changes: number | string | null) => {
+    this.watchCountries = this.listUpdated.subscribe((changes: number | string | null) => {
       if (typeof changes === "number" && changes > 0) {
         this.refreshCountriesList(false).then();
         this.app.notify.success(`${changes} countries have been updated!`);
@@ -116,5 +118,9 @@ export class CountriesComponent implements OnInit {
       {page: 'Countries', active: true, icon: 'fal fa-globe'}
     ]);
     this.aP.titleChange.next(["Countries List", "Application"]);
+  }
+
+  ngOnDestroy() {
+    this.watchCountries?.unsubscribe();
   }
 }

@@ -6,6 +6,7 @@ import {MdbModalRef, MdbModalService} from "mdb-angular-ui-kit/modal";
 import {CreateGroupComponent} from "./create-group/create-group.component";
 import {EditGroupComponent} from "./edit-group/edit-group.component";
 import {DeleteGroupComponent} from "./delete-group/delete-group.component";
+import {Subscription} from "rxjs";
 
 export interface userGroup {
   id: number,
@@ -20,6 +21,7 @@ export interface userGroup {
   styleUrls: ['./user-groups.component.scss']
 })
 export class UserGroupsComponent implements OnInit, OnDestroy {
+  private watchReload?: Subscription;
   public groupsFetching: boolean = false;
   public usersGroups: Array<userGroup> = [];
 
@@ -93,7 +95,7 @@ export class UserGroupsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.fetchGroups().then();
 
-    this.app.events.usersGroupReload().subscribe(() => {
+    this.watchReload = this.app.events.usersGroupReload().subscribe(() => {
       this.fetchGroups().then();
     })
 
@@ -105,6 +107,7 @@ export class UserGroupsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.watchReload?.unsubscribe();
     this.app.events.clearUsersGroupReload();
   }
 }

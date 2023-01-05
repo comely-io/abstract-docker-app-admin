@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {staffMember} from "../list/list.component";
 import {FormControl, FormGroup} from "@angular/forms";
 import {paginationFilters} from "../../../shared/pagination/pagination.component";
@@ -6,6 +6,7 @@ import {ApiErrorHandleOpts, AppService} from "../../../../services/appService";
 import {AdminPanelService} from "../../../../services/adminPanelService";
 import {ActivatedRoute, Params} from "@angular/router";
 import {ApiQueryFail, ApiSuccess} from "../../../../services/apiService";
+import {Subscription} from "rxjs";
 
 type sortByCol = "issued_on" | "last_used_on";
 
@@ -45,11 +46,13 @@ interface searchQuery {
   templateUrl: './admin-sessions.component.html',
   styleUrls: ['./admin-sessions.component.scss']
 })
-export class AdminSessionsComponent implements OnInit {
+export class AdminSessionsComponent implements OnInit, OnDestroy {
   public staffList?: Array<staffMember> = [];
   public searchAdvCollapse: boolean = false;
   public searchIsDisabled: boolean = true;
   public searchIsLoading: boolean = false;
+
+  private queryWatch?: Subscription;
 
   public fetchedSessions: Array<adminSession> = [];
   public paginationFilters: paginationFilters = {
@@ -184,7 +187,7 @@ export class AdminSessionsComponent implements OnInit {
     });
 
     // Selected admin?
-    this.route.queryParams.subscribe((params: Params) => {
+    this.queryWatch = this.route.queryParams.subscribe((params: Params) => {
       if (params.hasOwnProperty("admin")) {
         let selectedStaffId: number = parseInt(params["admin"]);
         if (selectedStaffId > 0) {
@@ -228,5 +231,9 @@ export class AdminSessionsComponent implements OnInit {
       {page: 'Browse Sessions', active: true, icon: 'fal fa-users-crown'}
     ]);
     this.adminPanel.titleChange.next(["Browse Sessions", "Staff"]);
+  }
+
+  ngOnDestroy() {
+    this.queryWatch?.unsubscribe();
   }
 }

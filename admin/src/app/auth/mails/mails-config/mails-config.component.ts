@@ -36,9 +36,9 @@ export class MailsConfigComponent implements OnInit, OnDestroy {
     smtpUsername: new FormControl(),
     smtpPassword: new FormControl(),
     smtpServerName: new FormControl(),
-    apiKey: new FormControl(),
-    apiBaggageOne: new FormControl(),
-    apiBaggageTwo: new FormControl()
+    mgApiKey: new FormControl(),
+    mgApiDomain: new FormControl(),
+    mgApiRegion: new FormControl(),
   });
 
   constructor(private app: AppService, private aP: AdminPanelService, private modals: MdbModalService) {
@@ -59,7 +59,7 @@ export class MailsConfigComponent implements OnInit, OnDestroy {
     // Service
     try {
       formData.service = this.validator.validateInput(this.configForm.controls.service.value, true).toLowerCase();
-      if (["disabled", "paused", "smtp", "mailgun", "sendgrid"].indexOf(formData.service) < 0) {
+      if (["disabled", "paused", "smtp", "mailgun"].indexOf(formData.service) < 0) {
         throw new Error('Invalid mailer service');
       }
     } catch (e) {
@@ -171,41 +171,41 @@ export class MailsConfigComponent implements OnInit, OnDestroy {
         inputErrors++;
       }
     } else {
-      if (this.isSelectedAPI()) {
+      if (formData.service === 'mailgun') {
         // API Key
         try {
-          formData["apiKey"] = this.validator.validateInput(this.configForm.controls.apiKey.value);
-          if (formData.apiKey.length < 8) {
+          formData["mgApiKey"] = this.validator.validateInput(this.configForm.controls.mgApiKey.value, true);
+          if (formData.mgApiKey.length < 8) {
             throw new Error('API key is too short');
           }
 
-          if (formData.apiKey.length > 64) {
+          if (formData.mgApiKey.length > 64) {
             throw new Error('API key cannot exceed 64 bytes');
           }
         } catch (e) {
-          this.configForm.controls.apiKey.setErrors({message: e.message});
+          this.configForm.controls.mgApiKey.setErrors({message: e.message});
           inputErrors++;
         }
 
-        // API Baggage One
+        // Domain
         try {
-          formData["apiBaggageOne"] = this.validator.validateInput(this.configForm.controls.apiBaggageOne.value, false);
-          if (formData.apiBaggageOne.length > 128) {
-            throw new Error('API baggage data cannot exceed 128 bytes');
+          formData["mgApiDomain"] = this.validator.validateInput(this.configForm.controls.mgApiDomain.value, true);
+          if (!this.validator.isValidHostname(formData.mgApiDomain)) {
+            throw new Error('Invalid domain for MailGun API');
           }
         } catch (e) {
-          this.configForm.controls.apiBaggageOne.setErrors({message: e.message});
+          this.configForm.controls.mgApiDomain.setErrors({message: e.message});
           inputErrors++;
         }
 
-        // API Baggage Two
+        // Region
         try {
-          formData["apiBaggageTwo"] = this.validator.validateInput(this.configForm.controls.apiBaggageTwo.value, false);
-          if (formData.apiBaggageTwo.length > 128) {
-            throw new Error('API baggage data cannot exceed 128 bytes');
+          formData["mgApiRegion"] = this.validator.validateInput(this.configForm.controls.mgApiRegion.value, true).toLowerCase();
+          if (["us", "eu"].indexOf(formData.mgApiRegion) < 0) {
+            throw new Error('Invalid region for MailGun API');
           }
         } catch (e) {
-          this.configForm.controls.apiBaggageTwo.setErrors({message: e.message});
+          this.configForm.controls.mgApiRegion.setErrors({message: e.message});
           inputErrors++;
         }
       }
@@ -255,15 +255,6 @@ export class MailsConfigComponent implements OnInit, OnDestroy {
     this.formSubmit = false;
     this.formDisabled = false;
     this.totpModalControl.next({disabled: false, loading: false});
-  }
-
-  public isSelectedAPI(): boolean {
-    let current: any = this.configForm.controls.service?.value;
-    if (typeof current === "string") {
-      return ["mailgun", "sendgrid"].indexOf(current) >= 0;
-    }
-
-    return false;
   }
 
   public async loadConfig() {

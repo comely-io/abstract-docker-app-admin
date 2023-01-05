@@ -6,7 +6,8 @@
           <div class="card-header bg-light">
             <h5 class="card-title fw-light mb-0 float-start"><i class="fal fa-mailbox me-2"></i>Mailer Configuration
             </h5>
-            <button type="button" class="btn btn-sm btn-danger float-end" (click)="submitConfigForm()">Save Changes</button>
+            <button type="button" class="btn btn-sm btn-danger float-end" (click)="submitConfigForm()">Save Changes
+            </button>
           </div>
           <div class="card-body">
             <form [formGroup]="configForm" (ngSubmit)="submitConfigForm()">
@@ -64,7 +65,6 @@
                       <mdb-option value="paused">Paused</mdb-option>
                       <mdb-option value="smtp">SMTP</mdb-option>
                       <mdb-option value="mailgun">MailGun (API)</mdb-option>
-                      <mdb-option value="sendgrid">SendGrid (API)</mdb-option>
                     </mdb-select>
                     <label mdbLabel class="form-label">Mailer Service</label>
                   </mdb-form-control>
@@ -122,31 +122,31 @@
                     </mdb-form-control>
                     <app-form-field-error [formField]="configForm.controls.smtpServerName"></app-form-field-error>
                   </div>
-                  <div class="mt-3" *ngIf="isSelectedAPI()">
+                  <div class="mt-3" *ngIf="this.configForm.controls.service.value === 'mailgun'">
                     <mdb-form-control>
-                      <input mdbInput mdbValidate type="text" formControlName="apiKey" id="apiKey"
+                      <input mdbInput mdbValidate type="text" formControlName="mgApiKey" id="mgApiKey"
                              maxlength="64"
-                             [readonly]="formDisabled" placeholder="secret API key"
+                             [readonly]="formDisabled" placeholder="MailGun API key"
                              class="form-control mb-0" autofocus/>
-                      <label mdbLabel class="form-label " for="apiKey">API Key</label>
+                      <label mdbLabel class="form-label " for="mgApiKey">API Key</label>
                     </mdb-form-control>
-                    <app-form-field-error [formField]="configForm.controls.apiKey"></app-form-field-error>
-                    <mdb-form-control class="mt-3">
-                      <input mdbInput mdbValidate type="text" formControlName="apiBaggageOne" id="apiBaggageOne"
+                    <app-form-field-error [formField]="configForm.controls.mgApiKey"></app-form-field-error>
+                    <mdb-form-control>
+                      <input mdbInput mdbValidate type="text" formControlName="mgApiDomain" id="mgApiDomain"
                              maxlength="64"
-                             [readonly]="formDisabled" placeholder="Baggage Field One"
+                             [readonly]="formDisabled" placeholder="Domain"
                              class="form-control mb-0" autofocus/>
-                      <label mdbLabel class="form-label " for="apiBaggageOne">Baggage Data</label>
+                      <label mdbLabel class="form-label " for="mgApiDomain">Domain</label>
                     </mdb-form-control>
-                    <app-form-field-error [formField]="configForm.controls.apiBaggageOne"></app-form-field-error>
-                    <mdb-form-control class="mt-3">
-                      <input mdbInput mdbValidate type="text" formControlName="apiBaggageTwo" id="apiBaggageTwo"
-                             maxlength="64"
-                             [readonly]="formDisabled" placeholder="Baggage Field Two"
-                             class="form-control mb-0" autofocus/>
-                      <label mdbLabel class="form-label " for="apiBaggageTwo">Baggage Data 2</label>
+                    <app-form-field-error [formField]="configForm.controls.mgApiDomain"></app-form-field-error>
+                    <mdb-form-control>
+                      <mdb-select [disabled]="formDisabled" formControlName="mgApiRegion">
+                        <mdb-option value="us">United States</mdb-option>
+                        <mdb-option value="eu">Europe</mdb-option>
+                      </mdb-select>
+                      <label mdbLabel class="form-label">API Region</label>
                     </mdb-form-control>
-                    <app-form-field-error [formField]="configForm.controls.apiBaggageTwo"></app-form-field-error>
+                    <app-form-field-error [formField]="configForm.controls.mgApiRegion"></app-form-field-error>
                   </div>
                 </div>
               </div>

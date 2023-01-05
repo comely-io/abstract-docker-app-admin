@@ -131,7 +131,7 @@
                       <label mdbLabel class="form-label " for="mgApiKey">API Key</label>
                     </mdb-form-control>
                     <app-form-field-error [formField]="configForm.controls.mgApiKey"></app-form-field-error>
-                    <mdb-form-control>
+                    <mdb-form-control class="mt-3">
                       <input mdbInput mdbValidate type="text" formControlName="mgApiDomain" id="mgApiDomain"
                              maxlength="64"
                              [readonly]="formDisabled" placeholder="Domain"
@@ -139,7 +139,7 @@
                       <label mdbLabel class="form-label " for="mgApiDomain">Domain</label>
                     </mdb-form-control>
                     <app-form-field-error [formField]="configForm.controls.mgApiDomain"></app-form-field-error>
-                    <mdb-form-control>
+                    <mdb-form-control class="mt-3">
                       <mdb-select [disabled]="formDisabled" formControlName="mgApiRegion">
                         <mdb-option value="us">United States</mdb-option>
                         <mdb-option value="eu">Europe</mdb-option>

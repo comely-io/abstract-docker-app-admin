@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ApiErrorHandleOpts, AppService} from "../../../../services/appService";
 import {AdminPanelService} from "../../../../services/adminPanelService";
 import {ActivatedRoute, Params} from "@angular/router";
@@ -6,6 +6,7 @@ import {ApiQueryFail, ApiSuccess} from "../../../../services/apiService";
 import {staffMember} from "../list/list.component";
 import {FormControl, FormGroup} from "@angular/forms";
 import {ValidatorService} from "../../../../services/validatorService";
+import {Subscription} from "rxjs";
 
 
 interface permissionEntity {
@@ -24,7 +25,8 @@ interface permissionChange {
   templateUrl: './edit-admin.component.html',
   styleUrls: ['./edit-admin.component.scss']
 })
-export class EditAdminComponent implements OnInit {
+export class EditAdminComponent implements OnInit, OnDestroy {
+  private queryWatch?: Subscription;
   private staffId!: number;
   public staff!: staffMember;
   public loadedPermissions?: Map<string, permissionEntity>;
@@ -72,7 +74,7 @@ export class EditAdminComponent implements OnInit {
    */
   constructor(private app: AppService, private aP: AdminPanelService, private route: ActivatedRoute) {
     this.validator = app.validator;
-    this.route.queryParams.subscribe((params: Params) => {
+    this.queryWatch = this.route.queryParams.subscribe((params: Params) => {
       this.staffId = parseInt(params["admin"]);
     });
   }
@@ -414,5 +416,9 @@ export class EditAdminComponent implements OnInit {
       {page: 'Management', active: true, icon: 'fal fa-users-crown'}
     ]);
     this.aP.titleChange.next(["Manage Account & Permissions", "Staff"]);
+  }
+
+  ngOnDestroy() {
+    this.queryWatch?.unsubscribe();
   }
 }

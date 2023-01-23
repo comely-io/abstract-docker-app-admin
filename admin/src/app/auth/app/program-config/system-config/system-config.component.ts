@@ -1,8 +1,8 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormControl, FormGroup} from "@angular/forms";
 import {ApiErrorHandleOpts, AppService, PlainObject} from "../../../../../services/appService";
 import {ApiQueryFail, ApiSuccess} from "../../../../../services/apiService";
-import {BehaviorSubject} from "rxjs";
+import {BehaviorSubject, Subscription} from "rxjs";
 import {TotpModalComponent, totpModalControl} from "../../../../shared/totp-modal/totp-modal.component";
 import {MdbModalService} from "mdb-angular-ui-kit/modal";
 import {ValidatorService} from "../../../../../services/validatorService";
@@ -24,7 +24,7 @@ interface systemConfig {
   templateUrl: './system-config.component.html',
   styleUrls: ['./system-config.component.scss']
 })
-export class SystemConfigComponent implements OnInit {
+export class SystemConfigComponent implements OnInit, OnDestroy {
 
   public validator: ValidatorService;
   public configUpdateSuccess: boolean = false;
@@ -33,6 +33,7 @@ export class SystemConfigComponent implements OnInit {
   public formsDisabled: boolean = false;
   private totpModalControl: BehaviorSubject<totpModalControl> = new BehaviorSubject<totpModalControl>({});
   private totpCodeReceived: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
+  private totpWatch?: Subscription;
   private compiledFormData?: PlainObject;
 
   public configForm: FormGroup = new FormGroup({
@@ -258,7 +259,7 @@ export class SystemConfigComponent implements OnInit {
 
   ngOnInit(): void {
     // Events
-    this.totpCodeReceived.subscribe((totpCode: string | null) => {
+    this.totpWatch = this.totpCodeReceived.subscribe((totpCode: string | null) => {
       if (typeof this.compiledFormData !== "object") {
         return;
       }
@@ -268,5 +269,9 @@ export class SystemConfigComponent implements OnInit {
     });
 
     this.loadSystemConfig().then();
+  }
+
+  ngOnDestroy() {
+    this.totpWatch?.unsubscribe();
   }
 }

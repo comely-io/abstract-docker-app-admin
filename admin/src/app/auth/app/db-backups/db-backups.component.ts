@@ -1,10 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ApiErrorHandleOpts, AppService, PlainObject} from "../../../../services/appService";
 import {AdminPanelService} from "../../../../services/adminPanelService";
 import {ApiQueryFail, ApiSuccess} from "../../../../services/apiService";
 import {FormControl, FormGroup} from "@angular/forms";
 import {MdbModalService} from "mdb-angular-ui-kit/modal";
-import {BehaviorSubject} from "rxjs";
+import {BehaviorSubject, Subscription} from "rxjs";
 import {TotpModalComponent, totpModalControl} from "../../../shared/totp-modal/totp-modal.component";
 
 interface DbConfigObject {
@@ -34,7 +34,7 @@ interface DbBackup {
   templateUrl: './db-backups.component.html',
   styleUrls: ['./db-backups.component.scss']
 })
-export class DbBackupsComponent implements OnInit {
+export class DbBackupsComponent implements OnInit, OnDestroy {
   public formDisabled: boolean = false;
   public formSubmit: boolean = false;
 
@@ -45,6 +45,7 @@ export class DbBackupsComponent implements OnInit {
   public backupDeleted: boolean = false;
   private totpModalControl: BehaviorSubject<totpModalControl> = new BehaviorSubject<totpModalControl>({});
   private totpCodeReceived: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
+  private watchTotp?: Subscription;
   private compiledFormData?: PlainObject;
 
   public dbBackups?: Array<DbBackup>;
@@ -218,7 +219,7 @@ export class DbBackupsComponent implements OnInit {
 
   ngOnInit(): void {
     // Events
-    this.totpCodeReceived.subscribe((totpCode: string | null) => {
+    this.watchTotp = this.totpCodeReceived.subscribe((totpCode: string | null) => {
       if (typeof this.compiledFormData !== "object") {
         return;
       }
@@ -247,4 +248,7 @@ export class DbBackupsComponent implements OnInit {
     this.aP.titleChange.next(["Databases", "Application"]);
   }
 
+  ngOnDestroy() {
+    this.watchTotp?.unsubscribe();
+  }
 }

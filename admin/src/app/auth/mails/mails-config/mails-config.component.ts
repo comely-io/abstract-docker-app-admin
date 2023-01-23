@@ -1,10 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ApiErrorHandleOpts, AppService, PlainObject} from "../../../../services/appService";
 import {AdminPanelService} from "../../../../services/adminPanelService";
 import {FormControl, FormGroup} from "@angular/forms";
 import {ApiQueryFail, ApiSuccess} from "../../../../services/apiService";
 import {ValidatorService} from "../../../../services/validatorService";
-import {BehaviorSubject} from "rxjs";
+import {BehaviorSubject, Subscription} from "rxjs";
 import {MdbModalService} from "mdb-angular-ui-kit/modal";
 import {TotpModalComponent, totpModalControl} from "../../../shared/totp-modal/totp-modal.component";
 
@@ -13,13 +13,14 @@ import {TotpModalComponent, totpModalControl} from "../../../shared/totp-modal/t
   templateUrl: './mails-config.component.html',
   styleUrls: ['./mails-config.component.scss']
 })
-export class MailsConfigComponent implements OnInit {
+export class MailsConfigComponent implements OnInit, OnDestroy {
   public validator: ValidatorService;
   public configUpdatedSuccess: boolean = false;
   public optUseTLS: boolean = false;
 
   private totpModalControl: BehaviorSubject<totpModalControl> = new BehaviorSubject<totpModalControl>({});
   private totpCodeReceived: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
+  private totpWatch?: Subscription;
   private compiledFormData?: PlainObject;
 
   public formSubmit: boolean = false;
@@ -35,9 +36,9 @@ export class MailsConfigComponent implements OnInit {
     smtpUsername: new FormControl(),
     smtpPassword: new FormControl(),
     smtpServerName: new FormControl(),
-    apiKey: new FormControl(),
-    apiBaggageOne: new FormControl(),
-    apiBaggageTwo: new FormControl()
+    mgApiKey: new FormControl(),
+    mgApiDomain: new FormControl(),
+    mgApiRegion: new FormControl(),
   });
 
   constructor(private app: AppService, private aP: AdminPanelService, private modals: MdbModalService) {
@@ -58,7 +59,7 @@ export class MailsConfigComponent implements OnInit {
     // Service
     try {
       formData.service = this.validator.validateInput(this.configForm.controls.service.value, true).toLowerCase();
-      if (["disabled", "paused", "smtp", "mailgun", "sendgrid"].indexOf(formData.service) < 0) {
+      if (["disabled", "paused", "smtp", "mailgun"].indexOf(formData.service) < 0) {
         throw new Error('Invalid mailer service');
       }
     } catch (e) {
@@ -170,41 +171,41 @@ export class MailsConfigComponent implements OnInit {
         inputErrors++;
       }
     } else {
-      if (this.isSelectedAPI()) {
+      if (formData.service === 'mailgun') {
         // API Key
         try {
-          formData["apiKey"] = this.validator.validateInput(this.configForm.controls.apiKey.value);
-          if (formData.apiKey.length < 8) {
+          formData["mgApiKey"] = this.validator.validateInput(this.configForm.controls.mgApiKey.value, true);
+          if (formData.mgApiKey.length < 8) {
             throw new Error('API key is too short');
           }
 
-          if (formData.apiKey.length > 64) {
+          if (formData.mgApiKey.length > 64) {
             throw new Error('API key cannot exceed 64 bytes');
           }
         } catch (e) {
-          this.configForm.controls.apiKey.setErrors({message: e.message});
+          this.configForm.controls.mgApiKey.setErrors({message: e.message});
           inputErrors++;
         }
 
-        // API Baggage One
+        // Domain
         try {
-          formData["apiBaggageOne"] = this.validator.validateInput(this.configForm.controls.apiBaggageOne.value, false);
-          if (formData.apiBaggageOne.length > 128) {
-            throw new Error('API baggage data cannot exceed 128 bytes');
+          formData["mgApiDomain"] = this.validator.validateInput(this.configForm.controls.mgApiDomain.value, true);
+          if (!this.validator.isValidHostname(formData.mgApiDomain)) {
+            throw new Error('Invalid domain for MailGun API');
           }
         } catch (e) {
-          this.configForm.controls.apiBaggageOne.setErrors({message: e.message});
+          this.configForm.controls.mgApiDomain.setErrors({message: e.message});
           inputErrors++;
         }
 
-        // API Baggage Two
+        // Region
         try {
-          formData["apiBaggageTwo"] = this.validator.validateInput(this.configForm.controls.apiBaggageTwo.value, false);
-          if (formData.apiBaggageTwo.length > 128) {
-            throw new Error('API baggage data cannot exceed 128 bytes');
+          formData["mgApiRegion"] = this.validator.validateInput(this.configForm.controls.mgApiRegion.value, true).toLowerCase();
+          if (["us", "eu"].indexOf(formData.mgApiRegion) < 0) {
+            throw new Error('Invalid region for MailGun API');
           }
         } catch (e) {
-          this.configForm.controls.apiBaggageTwo.setErrors({message: e.message});
+          this.configForm.controls.mgApiRegion.setErrors({message: e.message});
           inputErrors++;
         }
       }
@@ -256,15 +257,6 @@ export class MailsConfigComponent implements OnInit {
     this.totpModalControl.next({disabled: false, loading: false});
   }
 
-  public isSelectedAPI(): boolean {
-    let current: any = this.configForm.controls.service?.value;
-    if (typeof current === "string") {
-      return ["mailgun", "sendgrid"].indexOf(current) >= 0;
-    }
-
-    return false;
-  }
-
   public async loadConfig() {
     this.formDisabled = true;
     await this.app.api.callServer("get", "/auth/config/mails", {}).then((success: ApiSuccess) => {
@@ -280,9 +272,9 @@ export class MailsConfigComponent implements OnInit {
         this.configForm.controls.smtpUsername.setValue(mailConfig.username);
         this.configForm.controls.smtpPassword.setValue(mailConfig.password);
         this.configForm.controls.smtpServerName.setValue(mailConfig.serverName);
-        this.configForm.controls.apiKey.setValue(mailConfig.apiKey);
-        this.configForm.controls.apiBaggageOne.setValue(mailConfig.apiBaggageOne);
-        this.configForm.controls.apiBaggageTwo.setValue(mailConfig.apiBaggageTwo);
+        this.configForm.controls.mgApiKey.setValue(mailConfig.mgApiKey);
+        this.configForm.controls.mgApiDomain.setValue(mailConfig.mgApiDomain);
+        this.configForm.controls.mgApiRegion.setValue(mailConfig.mgEurope === false ? "us" : "eu");
       }
     }).catch((error: ApiQueryFail) => {
       this.app.handleAPIError(error, <ApiErrorHandleOpts>{
@@ -299,7 +291,7 @@ export class MailsConfigComponent implements OnInit {
 
   ngOnInit(): void {
     // Events
-    this.totpCodeReceived.subscribe((totpCode: string | null) => {
+    this.totpWatch = this.totpCodeReceived.subscribe((totpCode: string | null) => {
       if (typeof this.compiledFormData !== "object") {
         return;
       }
@@ -328,5 +320,9 @@ export class MailsConfigComponent implements OnInit {
       {page: 'Configuration', active: true}
     ]);
     this.aP.titleChange.next(["Configuration", "Mailer"]);
+  }
+
+  ngOnDestroy() {
+    this.totpWatch?.unsubscribe();
   }
 }

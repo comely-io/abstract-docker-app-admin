@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormControl, FormGroup} from "@angular/forms";
 import {ApiErrorHandleOpts, AppService} from "../../../../services/appService";
 import {ApiQueryFail, ApiSuccess} from "../../../../services/apiService";
@@ -6,6 +6,7 @@ import {staffMember} from "../list/list.component";
 import {paginationFilters} from "../../../shared/pagination/pagination.component";
 import {AdminPanelService} from "../../../../services/adminPanelService";
 import {ActivatedRoute, Params} from "@angular/router";
+import {Subscription} from "rxjs";
 
 interface searchResult {
   totalRows: number,
@@ -38,7 +39,8 @@ interface searchLogs {
   templateUrl: './log.component.html',
   styleUrls: ['./log.component.scss']
 })
-export class LogComponent implements OnInit {
+export class LogComponent implements OnInit, OnDestroy {
+  private queryWatch?: Subscription;
   public staffList?: Array<staffMember> = [];
   public searchIsDisabled: boolean = true;
   public searchIsLoading: boolean = false;
@@ -202,7 +204,7 @@ export class LogComponent implements OnInit {
 
   ngOnInit(): void {
     // Selected admin?
-    this.route.queryParams.subscribe((params: Params) => {
+    this.queryWatch = this.route.queryParams.subscribe((params: Params) => {
       if (params.hasOwnProperty("admin")) {
         let selectedStaffId: number = parseInt(params["admin"]);
         if (selectedStaffId > 0) {
@@ -224,5 +226,9 @@ export class LogComponent implements OnInit {
       {page: 'Activity Log', active: true, icon: 'fal fa-users-crown'}
     ]);
     this.adminPanel.titleChange.next(["Activity Log", "Staff"]);
+  }
+
+  ngOnDestroy() {
+    this.queryWatch?.unsubscribe();
   }
 }

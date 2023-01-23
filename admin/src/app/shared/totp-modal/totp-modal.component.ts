@@ -1,9 +1,9 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {AppService} from "../../../services/appService";
 import {MdbModalRef} from "mdb-angular-ui-kit/modal";
 import {FormControl, FormGroup} from "@angular/forms";
 import {ValidatorService} from "../../../services/validatorService";
-import {BehaviorSubject} from "rxjs";
+import {BehaviorSubject, Subscription} from "rxjs";
 
 export interface totpModalControl {
   totpError?: string,
@@ -17,10 +17,12 @@ export interface totpModalControl {
   templateUrl: './totp-modal.component.html',
   styleUrls: ['./totp-modal.component.scss']
 })
-export class TotpModalComponent implements OnInit {
+export class TotpModalComponent implements OnInit, OnDestroy {
   @Input() body!: string;
   @Input() totpModalControl!: BehaviorSubject<totpModalControl>;
   @Input() totpCodeAccept!: BehaviorSubject<string | null>;
+
+  private watchTotpControl?: Subscription;
 
   public formDisabled: boolean = false;
   public formSubmit: boolean = false;
@@ -63,7 +65,7 @@ export class TotpModalComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.totpModalControl.subscribe((control: totpModalControl) => {
+    this.watchTotpControl = this.totpModalControl.subscribe((control: totpModalControl) => {
       if (typeof control.totpError === "string" && control.totpError.length) {
         this.totpForm.controls.totp.setErrors({message: control.totpError});
       }
@@ -82,5 +84,9 @@ export class TotpModalComponent implements OnInit {
         }
       }
     });
+  }
+
+  ngOnDestroy() {
+    this.watchTotpControl?.unsubscribe();
   }
 }

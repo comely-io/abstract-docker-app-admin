@@ -1,5 +1,5 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {BehaviorSubject} from "rxjs";
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {BehaviorSubject, Subscription} from "rxjs";
 import {AppService} from "../../../../../services/appService";
 import {userAccount} from "../manage-user.component";
 import {ApiQueryFail, ApiSuccess} from "../../../../../services/apiService";
@@ -19,9 +19,10 @@ export interface userBaggageItem {
   templateUrl: './user-baggage.component.html',
   styleUrls: ['./user-baggage.component.scss']
 })
-export class UserBaggageComponent implements OnInit {
+export class UserBaggageComponent implements OnInit, OnDestroy {
   @Input() user!: userAccount;
   @Input() baggageTabOpenEvent!: BehaviorSubject<boolean | null>;
+  private watchers: Array<Subscription> = [];
 
   public setValueModal?: MdbModalRef<SetBaggageComponent>;
   public deleteValueModal?: MdbModalRef<DeleteBaggageComponent>;
@@ -63,13 +64,14 @@ export class UserBaggageComponent implements OnInit {
         item: foundItem.key
       }
     });
-    this.deleteValueModal?.onClose.subscribe((data: any) => {
+
+    this.watchers.push(this.deleteValueModal?.onClose.subscribe((data: any) => {
       if (typeof data === "object") {
         if (data.hasOwnProperty("reloadBaggage") && data.reloadBaggage) {
           this.loadBaggage().then();
         }
       }
-    });
+    }));
   }
 
   public openSetModal(key: string | undefined = undefined) {
@@ -82,13 +84,13 @@ export class UserBaggageComponent implements OnInit {
     }
 
     this.setValueModal = this.modals.open(SetBaggageComponent, {data: modalData});
-    this.setValueModal?.onClose.subscribe((data: any) => {
+    this.watchers.push(this.setValueModal?.onClose.subscribe((data: any) => {
       if (typeof data === "object") {
         if (data.hasOwnProperty("reloadBaggage") && data.reloadBaggage) {
           this.loadBaggage().then();
         }
       }
-    });
+    }));
   }
 
   public async loadBaggage() {
@@ -104,10 +106,16 @@ export class UserBaggageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.baggageTabOpenEvent.subscribe((value: boolean | null) => {
+    this.watchers.push(this.baggageTabOpenEvent.subscribe((value: boolean | null) => {
       if (typeof value === "boolean") {
         this.loadBaggage().then();
       }
+    }));
+  }
+
+  ngOnDestroy() {
+    this.watchers.forEach((watcher: Subscription) => {
+      watcher.unsubscribe();
     });
   }
 }

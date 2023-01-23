@@ -1,9 +1,9 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ApiErrorHandleOpts, AppService, PlainObject} from "../../../../services/appService";
 import {AdminPanelService} from "../../../../services/adminPanelService";
 import {ApiQueryFail, ApiSuccess} from "../../../../services/apiService";
 import {FormControl, FormGroup} from "@angular/forms";
-import {BehaviorSubject} from "rxjs";
+import {BehaviorSubject, Subscription} from "rxjs";
 import {TotpModalComponent, totpModalControl} from "../../../shared/totp-modal/totp-modal.component";
 import {MdbModalService} from "mdb-angular-ui-kit/modal";
 
@@ -45,7 +45,7 @@ interface OAuth2Status {
   templateUrl: './program-config.component.html',
   styleUrls: ['./program-config.component.scss']
 })
-export class ProgramConfigComponent implements OnInit {
+export class ProgramConfigComponent implements OnInit, OnDestroy {
   public programConfig?: ProgramConfig;
 
   public oAuth2UpdateSuccess: boolean = false;
@@ -55,6 +55,7 @@ export class ProgramConfigComponent implements OnInit {
   private totpModalControl: BehaviorSubject<totpModalControl> = new BehaviorSubject<totpModalControl>({});
   private totpCodeReceived: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
   private compiledFormData?: PlainObject;
+  private watchTotp?: Subscription;
 
   public oAuth2Status: OAuth2Status = {
     global: false,
@@ -310,7 +311,7 @@ export class ProgramConfigComponent implements OnInit {
 
   ngOnInit(): void {
     // Events
-    this.totpCodeReceived.subscribe((totpCode: string | null) => {
+    this.watchTotp = this.totpCodeReceived.subscribe((totpCode: string | null) => {
       if (typeof this.compiledFormData !== "object") {
         return;
       }
@@ -326,5 +327,9 @@ export class ProgramConfigComponent implements OnInit {
       {page: 'Configuration', active: true, icon: "fal fa-cogs"}
     ]);
     this.aP.titleChange.next(["Configuration", "Application"]);
+  }
+
+  ngOnDestroy() {
+    this.watchTotp?.unsubscribe();
   }
 }

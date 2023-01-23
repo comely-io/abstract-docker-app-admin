@@ -15,6 +15,20 @@ export class ValidatorService {
   }
 
   /**
+   * Validates a username
+   * @param arg
+   */
+  public isValidUsername(arg: any): boolean {
+    try {
+      this.validateUsername(arg);
+      return true;
+    } catch (e) {
+    }
+
+    return false;
+  }
+
+  /**
    * Clear out totp input field on focus
    * @param e
    */

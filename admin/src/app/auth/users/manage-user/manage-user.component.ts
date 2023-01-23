@@ -15,6 +15,13 @@ import {MdbTabChange} from "mdb-angular-ui-kit/tabs/tabs.component";
 
 export type userStatus = "active" | "disabled";
 
+export interface userAccountIds {
+  id: number,
+  username: string,
+  email?: string,
+  phone?: string,
+}
+
 export interface userAccount {
   id: number,
   referrerId?: number | null,

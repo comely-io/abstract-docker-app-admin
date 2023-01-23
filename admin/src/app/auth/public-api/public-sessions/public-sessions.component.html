@@ -1,1 +1,166 @@
-<p>public API sessions works!</p>
+<section class="pt-5 pb-3 bg-inner-red" style="min-height: 100vh !important;">
+  <div class="container-fluid">
+    <div class="row justify-content-md-center mb-5">
+      <div class="col-lg-8 col-xl-6">
+        <form [formGroup]="searchSessionsForm" (ngSubmit)="submitSearchForm()">
+          <div class="card card-classic">
+            <div class="card-header">
+              <h5 class="card-title mb-0"><i class="fal fa-search me-2"></i>Search Public Sessions</h5>
+            </div>
+            <div class="card-body">
+              <mdb-form-control>
+                <input mdbInput mdbValidate type="text" formControlName="token" id="searchToken"
+                       maxlength="64"
+                       [readonly]="searchIsDisabled" placeholder="[0-9]+|[a-f0-9]{2,64}"
+                       class="form-control mb-0" autofocus/>
+                <label mdbLabel class="form-label " for="searchToken">Session ID/Token</label>
+              </mdb-form-control>
+              <app-form-field-error [formField]="searchSessionsForm.controls.token"></app-form-field-error>
+              <div class="text-end mt-2 cursor-pointer">
+                <a (click)="this.searchAdvCollapse = true" *ngIf="!this.searchAdvCollapse">▼ Advanced Search</a>
+                <a (click)="this.searchAdvCollapse = false" *ngIf="this.searchAdvCollapse">▲ Less Options</a>
+              </div>
+              <ng-container *ngIf="this.searchAdvCollapse">
+                <mdb-form-control class="mt-3">
+                  <input mdbInput mdbValidate type="text" formControlName="ipAddress" id="searchIP"
+                         maxlength="45"
+                         [readonly]="searchIsDisabled" placeholder="Partial/Complete IPv4 or IPv6 address"
+                         class="form-control mb-0" autofocus/>
+                  <label mdbLabel class="form-label " for="searchIP">IP Address</label>
+                </mdb-form-control>
+                <app-form-field-error [formField]="searchSessionsForm.controls.ipAddress"></app-form-field-error>
+                <mdb-form-control class="mt-3">
+                  <input mdbInput mdbValidate type="text" formControlName="fingerprint" id="searchFingerPrint"
+                         maxlength="64"
+                         [readonly]="searchIsDisabled" placeholder="Partial/Complete Fingerprint"
+                         class="form-control mb-0" autofocus/>
+                  <label mdbLabel class="form-label " for="searchFingerPrint">Browser Fingerprint</label>
+                </mdb-form-control>
+                <app-form-field-error [formField]="searchSessionsForm.controls.fingerprint"></app-form-field-error>
+                <mdb-form-control class="mt-3">
+                  <input mdbInput mdbValidate type="text" formControlName="user" id="searchUser"
+                         maxlength="128"
+                         [readonly]="searchIsDisabled" placeholder="Username | E-mail | Phone"
+                         class="form-control mb-0" autofocus/>
+                  <label mdbLabel class="form-label " for="searchUser">Authenticated User</label>
+                </mdb-form-control>
+                <app-form-field-error [formField]="searchSessionsForm.controls.user"></app-form-field-error>
+                <mdb-form-control class="mt-3">
+                  <mdb-select [disabled]="searchIsDisabled" value="" formControlName="archived">
+                    <mdb-option value="exclude">Excluded archived sessions</mdb-option>
+                    <mdb-option value="include">Include archived sessions</mdb-option>
+                    <mdb-option value="just">Only archived sessions</mdb-option>
+                  </mdb-select>
+                  <label mdbLabel class="form-label ">Archived Sessions</label>
+                </mdb-form-control>
+                <app-form-field-error [formField]="searchSessionsForm.controls.archived"></app-form-field-error>
+                <mdb-form-control class="mt-3">
+                  <mdb-select [disabled]="searchIsDisabled" formControlName="sort">
+                    <mdb-option value="desc">Descending (Latest First)</mdb-option>
+                    <mdb-option value="asc">Ascending (Oldest First)</mdb-option>
+                  </mdb-select>
+                  <label mdbLabel class="form-label ">Sort By</label>
+                </mdb-form-control>
+                <app-form-field-error [formField]="searchSessionsForm.controls.sort"></app-form-field-error>
+              </ng-container>
+            </div>
+            <div class="card-footer">
+              <button class="btn btn-outline-danger" type="submit" *ngIf="!searchIsLoading"
+                      [disabled]="searchIsDisabled"><i class="fal fa-search me-1"></i>Apply
+                Filters
+              </button>
+              <app-button-loader [btnClass]="'btn-outline-danger'" [spinnerClass]="'text-danger'"
+                                 *ngIf="searchIsLoading"></app-button-loader>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="card card-classic">
+          <div class="card-header">
+            <app-pagination [totalRows]="paginationFilters.totalRows" [currentPage]="paginationFilters.currentPage"
+                            [perPage]="paginationFilters.perPage"
+                            [pagesDisplayLimit]="4"
+                            [perPageOpts]="[50,100,250]"
+                            [defaultPerPageOpt]="this.searchQuery.perPage"
+                            [shapeCircle]="false" (changePage)="changePage($event)"
+                            (changePerPage)="changePerPage($event)"></app-pagination>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-sm table-striped table-hover table-inherit mb-0 no-wrap-table">
+              <thead class="table-dark">
+              <tr>
+                <th scope="row" class="text-center fw-light">ID</th>
+                <th scope="row" class="text-center fw-light">Token</th>
+                <th scope="row" class="text-center fw-light">Checksum</th>
+                <th scope="row" class="text-center fw-light">Archived</th>
+                <th scope="row" class="text-center fw-light">IP Address</th>
+                <th scope="row" class="text-center fw-light">Browser</th>
+                <th scope="row" class="text-center fw-light">Authenticated</th>
+                <th scope="row" class="text-center fw-light">Issued On</th>
+                <th scope="row" class="text-center fw-light">Last Used</th>
+              </tr>
+              </thead>
+              <tbody>
+              <ng-container *ngIf="this.fetchedSessions">
+                <ng-container *ngFor="let session of this.fetchedSessions">
+                  <tr>
+                    <td class="text-end">
+                      <a class="">{{session.id}}</a>
+                    </td>
+                    <td class="text-end">
+                      <a class="">{{session.token[0]}}...{{session.token[1]}}</a>
+                    </td>
+                    <td class="text-center">
+                      <span class="text-success" mdbTooltip="Verified" *ngIf="this.session.checksumVerified"><i
+                        class="fal fa-check-circle"></i></span>
+                      <span class="text-danger" mdbTooltip="Error" *ngIf="!this.session.checksumVerified"><i
+                        class="fal fa-bug"></i></span>
+                    </td>
+                    <td class="text-center">
+                      <span class="text-muted" mdbTooltip="Archived" *ngIf="this.session.archived">
+                        <i class="fal fa-trash-alt"></i>
+                      </span>
+                      <a class="text-success strikethrough" mdbTooltip="Not Archived" *ngIf="!this.session.archived">
+                        <i class="fal fa-trash-alt"></i>
+                      </a>
+                    </td>
+                    <td class="text-center">
+                      <i class="fal fal-browser me-2" [mdbTooltip]="session.userAgent"></i>
+                      <i class="fal fal-fingerprint" [mdbTooltip]="session.fingerprint"></i>
+                    </td>
+                    <td class="text-center">
+                      <ng-container *ngIf="session.authUserId > 0">
+                        <a routerLink="/auth/users/manage" [queryParams]="{id: session.authUserId}">
+                          <span *ngIf="session.authUser">{{session.authUser.username}}</span>
+                          <span *ngIf="!session.authUser">{{session.authUserId}}</span>
+                        </a>
+                      </ng-container>
+                      <ng-container *ngIf="session.authUserId <= 0">
+                        <span class="text-muted">Guest</span>
+                      </ng-container>
+                    </td>
+                    <td class="text-end">
+                      <app-timestamp-display [epoch]="session.issuedOn" cssClasses="text-end"></app-timestamp-display>
+                    </td>
+                    <td class="text-end">
+                      <app-timestamp-display [epoch]="session.lastUsedOn" cssClasses="text-end"></app-timestamp-display>
+                    </td>
+                  </tr>
+                </ng-container>
+              </ng-container>
+              <ng-container *ngIf="!this.fetchedSessions || this.fetchedSessions.length < 1">
+                <tr>
+                  <td colspan="9" class="text-muted">There are no public API sessions matching search criteria</td>
+                </tr>
+              </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

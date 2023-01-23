@@ -84,6 +84,8 @@ import {CachingComponent} from './auth/app/caching/caching.component';
 import {ProgramConfigComponent} from './auth/app/program-config/program-config.component';
 import {SystemConfigComponent} from './auth/app/program-config/system-config/system-config.component';
 import {DbBackupsComponent} from './auth/app/db-backups/db-backups.component';
+import {PublicSessionsComponent} from './auth/public-api/public-sessions/public-sessions.component';
+import {PublicQueriesComponent} from './auth/public-api/public-queries/public-queries.component';
 
 @NgModule({
   declarations: [
@@ -134,6 +136,8 @@ import {DbBackupsComponent} from './auth/app/db-backups/db-backups.component';
     ProgramConfigComponent,
     SystemConfigComponent,
     DbBackupsComponent,
+    PublicSessionsComponent,
+    PublicQueriesComponent,
   ],
   imports: [
     BrowserModule,

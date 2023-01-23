@@ -173,3 +173,16 @@ small {
 .strikethrough {
   text-decoration: line-through !important;
 }
+
+.fw-700, .fw-700 * {
+  font-weight: 700 !important;
+}
+
+.fw-600, .fw-600 * {
+  font-weight: 600 !important;
+}
+
+.fw-500, .fw-500 * {
+  font-weight: 500 !important;
+}
+

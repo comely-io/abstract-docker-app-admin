@@ -65,12 +65,15 @@
               </ng-container>
             </div>
             <div class="card-footer">
-              <button class="btn btn-outline-danger" type="submit" *ngIf="!searchIsLoading"
+              <button class="btn btn-outline-danger me-2" type="submit" *ngIf="!searchIsLoading"
                       [disabled]="searchIsDisabled"><i class="fal fa-search me-1"></i>Apply
                 Filters
               </button>
               <app-button-loader [btnClass]="'btn-outline-danger'" [spinnerClass]="'text-danger'"
                                  *ngIf="searchIsLoading"></app-button-loader>
+              <button class="btn btn-outline-secondary" type="button" *ngIf="showResetButton"
+                      (click)="resetSearchForm()">Reset
+              </button>
             </div>
           </div>
         </form>
@@ -108,34 +111,43 @@
                 <ng-container *ngFor="let session of this.fetchedSessions">
                   <tr>
                     <td class="text-end">
-                      <a class="">{{session.id}}</a>
+                      <a (click)="loadSessionModal(session.id)" class="text-primary cursor-pointer">{{session.id}}</a>
                     </td>
                     <td class="text-end">
-                      <a class="">{{session.token[0]}}...{{session.token[1]}}</a>
+                      <a (click)="loadSessionModal(session.id)" class="text-primary cursor-pointer">
+                        {{session.token[0]}}...{{session.token[1]}}</a>
                     </td>
                     <td class="text-center">
-                      <span class="text-success" mdbTooltip="Verified" *ngIf="this.session.checksumVerified"><i
+                      <span class="text-success" mdbTooltip="Verified" *ngIf="session.checksumVerified"><i
                         class="fal fa-check-circle"></i></span>
-                      <span class="text-danger" mdbTooltip="Error" *ngIf="!this.session.checksumVerified"><i
+                      <span class="text-danger" mdbTooltip="Error" *ngIf="!session.checksumVerified"><i
                         class="fal fa-bug"></i></span>
                     </td>
                     <td class="text-center">
-                      <span class="text-muted" mdbTooltip="Archived" *ngIf="this.session.archived">
+                      <span class="text-muted" mdbTooltip="Archived" *ngIf="session.archived">
                         <i class="fal fa-trash-alt"></i>
                       </span>
-                      <a class="text-success strikethrough" mdbTooltip="Not Archived" *ngIf="!this.session.archived">
-                        <i class="fal fa-trash-alt"></i>
+                      <a class="text-primary cursor-pointer strikethrough" (click)="archiveSession(session.id)"
+                         mdbTooltip="Not Archived" *ngIf="!session.archived">
+                        <i class="fal fa-trash-restore"></i>
                       </a>
                     </td>
+                    <td class="text-end">
+                      {{session.ipAddress}}
+                    </td>
                     <td class="text-center">
-                      <i class="fal fal-browser me-2" [mdbTooltip]="session.userAgent"></i>
-                      <i class="fal fal-fingerprint" [mdbTooltip]="session.fingerprint"></i>
+                      <a (click)="clickSearchFingerprint(session.fingerprint)" [mdbTooltip]="session.userAgent"
+                         class="cursor-pointer text-info">
+                        <i class="fal fa-fingerprint"></i>
+                      </a>
                     </td>
                     <td class="text-center">
                       <ng-container *ngIf="session.authUserId > 0">
                         <a routerLink="/auth/users/manage" [queryParams]="{id: session.authUserId}">
-                          <span *ngIf="session.authUser">{{session.authUser.username}}</span>
-                          <span *ngIf="!session.authUser">{{session.authUserId}}</span>
+                          <span *ngIf="session.authUserUsername">{{session.authUserUsername}}</span>
+                          <span *ngIf="!session.authUserUsername && !usernamesLoading">{{session.authUserId}}</span>
+                          <app-spinner-icon *ngIf="!session.authUserUsername && usernamesLoading"
+                                            spinnerClass="text-muted"></app-spinner-icon>
                         </a>
                       </ng-container>
                       <ng-container *ngIf="session.authUserId <= 0">

@@ -63,13 +63,8 @@ export interface ApiWarningMsg {
 }
 
 export class ApiService {
-  /*public readonly config: ApiConfig = {
-    server: "https://test-admin.comely.io:2087",
-    authHeaderToken: "admin-sess-token",
-    authHeaderSignature: "admin-signature"
-  };*/
   public readonly config: ApiConfig = {
-    server: "https://knm-admin.tadas.pk",
+    server: "https://test-admin.comely.io:2087",
     authHeaderToken: "admin-sess-token",
     authHeaderSignature: "admin-signature"
   };

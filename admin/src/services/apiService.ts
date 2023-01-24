@@ -51,8 +51,11 @@ export interface ApiException {
   trace?: Array<any>
 }
 
-export interface ApiWarningMsg {
+export interface ApiWarningMsg extends ApiErrorMsg {
   meta: ApiResponseMeta,
+}
+
+export interface ApiErrorMsg {
   type: number,
   typeStr: string,
   message: string,

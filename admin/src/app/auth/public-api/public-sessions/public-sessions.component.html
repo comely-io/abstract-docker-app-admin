@@ -39,8 +39,8 @@
                 <app-form-field-error [formField]="searchSessionsForm.controls.fingerprint"></app-form-field-error>
                 <mdb-form-control class="mt-3">
                   <input mdbInput mdbValidate type="text" formControlName="user" id="searchUser"
-                         maxlength="128"
-                         [readonly]="searchIsDisabled" placeholder="Username | E-mail | Phone"
+                         maxlength="64"
+                         [readonly]="searchIsDisabled" placeholder="Username"
                          class="form-control mb-0" autofocus/>
                   <label mdbLabel class="form-label " for="searchUser">Authenticated User</label>
                 </mdb-form-control>

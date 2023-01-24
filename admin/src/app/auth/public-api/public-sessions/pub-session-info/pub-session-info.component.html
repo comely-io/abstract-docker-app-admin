@@ -47,6 +47,16 @@
     <td class="wrapped-cell">{{session.userAgent}}</td>
   </tr>
   <tr>
+    <td class="fw-700"><i class="fal fa-abacus me-2"></i>Queries Count:</td>
+    <td class="">
+      <app-spinner-icon spinnerClass="text-muted" *ngIf="queriesCountLoading"></app-spinner-icon>
+      <ng-container *ngIf="!queriesCountLoading">
+        <a routerLink="/auth/public-api/queries" [queryParams]="{sessionId: session.id}"
+           target="_blank">{{queriesCount ?? 0}}</a>
+      </ng-container>
+    </td>
+  </tr>
+  <tr>
     <td class="fw-700"><i class="fal fa-fingerprint me-2"></i>Browser Fingerprint:</td>
     <td class="wrapped-cell">{{session.fingerprint}}<a (click)="searchFingerprint()" class="fs-xs ms-2 cursor-pointer">[search]</a>
     </td>

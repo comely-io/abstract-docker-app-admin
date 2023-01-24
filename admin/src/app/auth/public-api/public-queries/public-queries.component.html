@@ -1,1 +1,163 @@
-<p>public API queries works!</p>
+<section class="pt-5 pb-3 bg-inner-red" style="min-height: 100vh !important;">
+  <div class="container-fluid">
+    <div class="row justify-content-md-center mb-5">
+      <div class="col-lg-8 col-xl-6">
+        <form [formGroup]="searchQueriesForm" (ngSubmit)="submitSearchForm()">
+          <div class="card card-classic">
+            <div class="card-header">
+              <h5 class="card-title mb-0"><i class="fal fa-search me-2"></i>Search API Queries</h5>
+            </div>
+            <div class="card-body">
+              <mdb-form-control>
+                <input mdbInput mdbValidate type="text" formControlName="endpoint" id="endpoint"
+                       maxlength="512"
+                       [readonly]="searchIsDisabled" placeholder="/session/auth"
+                       class="form-control mb-0" autofocus/>
+                <label mdbLabel class="form-label " for="endpoint">Endpoint</label>
+              </mdb-form-control>
+              <app-form-field-error [formField]="searchQueriesForm.controls.endpoint"></app-form-field-error>
+              <div class="text-end mt-2 cursor-pointer">
+                <a (click)="this.searchAdvCollapse = true" *ngIf="!this.searchAdvCollapse">▼ Advanced Search</a>
+                <a (click)="this.searchAdvCollapse = false" *ngIf="this.searchAdvCollapse">▲ Less Options</a>
+              </div>
+              <ng-container *ngIf="this.searchAdvCollapse">
+                <mdb-form-control class="mt-3">
+                  <mdb-select [disabled]="searchIsDisabled" formControlName="method" id="searchMethod">
+                    <mdb-option value="">(any)</mdb-option>
+                    <mdb-option value="get">GET</mdb-option>
+                    <mdb-option value="post">POST</mdb-option>
+                    <mdb-option value="put">PUT</mdb-option>
+                    <mdb-option value="delete">DELETE</mdb-option>
+                  </mdb-select>
+                  <label mdbLabel class="form-label " for="searchMethod">HTTP Method</label>
+                </mdb-form-control>
+                <app-form-field-error [formField]="searchQueriesForm.controls.ipAddress"></app-form-field-error>
+                <mdb-form-control class="mt-3">
+                  <input mdbInput mdbValidate type="text" formControlName="ipAddress" id="searchIP"
+                         maxlength="45"
+                         [readonly]="searchIsDisabled" placeholder="Partial/Complete IPv4 or IPv6 address"
+                         class="form-control mb-0" autofocus/>
+                  <label mdbLabel class="form-label " for="searchIP">IP Address</label>
+                </mdb-form-control>
+                <app-form-field-error [formField]="searchQueriesForm.controls.ipAddress"></app-form-field-error>
+                <mdb-form-control class="mt-3">
+                  <input mdbInput mdbValidate type="text" formControlName="sessUserFlag" id="sessUserFlag"
+                         maxlength="64"
+                         [readonly]="searchIsDisabled" placeholder="Session ID or Username"
+                         class="form-control mb-0" autofocus/>
+                  <label mdbLabel class="form-label " for="sessUserFlag">Session ID / Username</label>
+                </mdb-form-control>
+                <app-form-field-error [formField]="searchQueriesForm.controls.sessUserFlag"></app-form-field-error>
+                <mdb-form-control class="mt-3">
+                  <mdb-select [disabled]="searchIsDisabled" formControlName="sort">
+                    <mdb-option value="desc">Descending (Latest First)</mdb-option>
+                    <mdb-option value="asc">Ascending (Oldest First)</mdb-option>
+                  </mdb-select>
+                  <label mdbLabel class="form-label ">Sort By</label>
+                </mdb-form-control>
+                <app-form-field-error [formField]="searchQueriesForm.controls.sort"></app-form-field-error>
+              </ng-container>
+            </div>
+            <div class="card-footer">
+              <button class="btn btn-outline-danger me-2" type="submit" *ngIf="!searchIsLoading"
+                      [disabled]="searchIsDisabled"><i class="fal fa-search me-1"></i>Apply
+                Filters
+              </button>
+              <app-button-loader [btnClass]="'btn-outline-danger'" [spinnerClass]="'text-danger'"
+                                 *ngIf="searchIsLoading"></app-button-loader>
+              <button class="btn btn-outline-secondary" type="button" *ngIf="showResetButton"
+                      (click)="resetSearchForm()">Reset
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="card card-classic">
+          <div class="card-header">
+            <app-pagination [totalRows]="paginationFilters.totalRows" [currentPage]="paginationFilters.currentPage"
+                            [perPage]="paginationFilters.perPage"
+                            [pagesDisplayLimit]="4"
+                            [perPageOpts]="[50,100,250,500]"
+                            [defaultPerPageOpt]="this.searchQuery.perPage"
+                            [shapeCircle]="false" (changePage)="changePage($event)"
+                            (changePerPage)="changePerPage($event)"></app-pagination>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-sm table-striped table-hover table-inherit mb-0 no-wrap-table">
+              <thead class="table-dark">
+              <tr>
+                <th scope="row" class="text-center fw-light">Ray #</th>
+                <th scope="row" class="text-center fw-light">Checksum</th>
+                <th scope="row" class="text-center fw-light">Method</th>
+                <th scope="row" class="text-center fw-light">Endpoint</th>
+                <th scope="row" class="text-center fw-light">IP Address</th>
+                <th scope="row" class="text-center fw-light">Received</th>
+                <th scope="row" class="text-center fw-light">Response Code</th>
+                <th scope="row" class="text-center fw-light">Response Length</th>
+                <th scope="row" class="text-center fw-light"><i class="fal fa-flag-alt me-2"></i>Session ID</th>
+                <th scope="row" class="text-center fw-light"><i class="fal fa-flag-alt me-2"></i>User</th>
+                <th scope="row" class="text-center fw-light">Details</th>
+              </tr>
+              </thead>
+              <tbody>
+              <ng-container *ngIf="this.fetchedQueries">
+                <ng-container *ngFor="let query of this.fetchedQueries">
+                  <tr>
+                    <td class="text-end">
+                      <a routerLink="/auth/public-api/queries/view" [queryParams]="{ray: query.id.toString(16)}"
+                         class="text-primary cursor-pointer">{{query.id.toString(16)}}</a>
+                    </td>
+                    <td class="text-center">
+                      <span class="text-success" mdbTooltip="Verified" *ngIf="query.checksumVerified"><i
+                        class="fal fa-check-circle"></i></span>
+                      <span class="text-danger" mdbTooltip="Error" *ngIf="!query.checksumVerified"><i
+                        class="fal fa-bug"></i></span>
+                    </td>
+                    <td class="text-center">{{query.method|uppercase}}</td>
+                    <td class="text-start">{{query.endpoint}}</td>
+                    <td class="text-end">{{query.ipAddress}}</td>
+                    <td class="text-end">
+                      <app-timestamp-display [epoch]="query.startOn" cssClasses="text-end"></app-timestamp-display>
+                    </td>
+                    <td class="text-center"
+                        [ngClass]="query.resCode && query.resCode >= 200 && query.resCode <= 299? 'text-success' : 'text-danger'">
+                      {{query.resCode}}
+                    </td>
+                    <td class="text-end">
+                      <span class="text-muted">{{query.resLen ?? 0}} <small class="fs-xs">bytes</small></span>
+                    </td>
+                    <td class="text-center">
+                      <a routerLink="/auth/public-api/sessions" target="_blank"
+                         *ngIf="query.flagApiSess && query.flagApiSess > 0"
+                         [queryParams]="{id: query.flagApiSess}">{{query.flagApiSess}}</a>
+                      <span class="text-muted" *ngIf="!query.flagApiSess">not-set</span>
+                    </td>
+                    <td class="text-center">
+                      <a routerLink="/auth/users/manage" target="_blank"
+                         *ngIf="query.flagUserId && query.flagUserId > 0"
+                         [queryParams]="{id: query.flagUserId}">{{query.flagUsername ?? query.flagUserId}}</a>
+                      <span class="text-muted" *ngIf="!query.flagUserId">not-set</span>
+                    </td>
+                    <td class="text-center">
+                      <a routerLink="/auth/public-api/queries/view" [queryParams]="{id: query.id}"
+                         class="text-primary cursor-pointer"><i class="fal fa-window-frame-open"></i></a>
+                    </td>
+                  </tr>
+                </ng-container>
+              </ng-container>
+              <ng-container *ngIf="!this.fetchedQueries || this.fetchedQueries.length < 1">
+                <tr>
+                  <td colspan="11" class="text-muted">There are no public API queries matching search criteria</td>
+                </tr>
+              </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -269,8 +269,8 @@ export class PublicSessionsComponent implements OnInit, OnDestroy {
     try {
       searchUser = this.validator.validateInput(this.searchSessionsForm.controls.user.value, false);
       if (searchUser) {
-        if (!this.validator.isValidPhNum(searchUser) && !this.validator.isValidEmail(searchUser) && !this.validator.isValidUsername(searchUser)) {
-          throw new Error('Invalid username OR e-mail OR phone');
+        if (!this.validator.isValidUsername(searchUser)) {
+          throw new Error('Invalid username');
         }
       }
     } catch (e) {

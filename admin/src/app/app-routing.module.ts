@@ -28,6 +28,7 @@ import {ProgramConfigComponent} from "./auth/app/program-config/program-config.c
 import {DbBackupsComponent} from "./auth/app/db-backups/db-backups.component";
 import {PublicSessionsComponent} from "./auth/public-api/public-sessions/public-sessions.component";
 import {PublicQueriesComponent} from "./auth/public-api/public-queries/public-queries.component";
+import {PublicApiQueryComponent} from "./auth/public-api/public-queries/public-api-query/public-api-query.component";
 
 const routes: Routes = [
   {path: '', component: SigninComponent},
@@ -79,6 +80,7 @@ const routes: Routes = [
           {path: 'config', component: AccessConfigComponent},
           {path: 'sessions', component: PublicSessionsComponent},
           {path: 'queries', component: PublicQueriesComponent},
+          {path: 'queries/view', component: PublicApiQueryComponent},
         ]
       },
       {

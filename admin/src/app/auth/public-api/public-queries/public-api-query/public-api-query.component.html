@@ -259,10 +259,7 @@
                           </tr>
                           <tr>
                             <td class="">Bound Data:</td>
-                            <td class="wrapped-cell">
-                              <span class="text-muted" *ngIf="!dbQuery['data']">N/A</span>
-                              <span class="text-muted" *ngIf="dbQuery['data']">{{dbQuery['data']}}</span>
-                            </td>
+                            <td class="wrapped-cell text-muted">{{dbQuery['data'] ?? 'N/A'}}</td>
                           </tr>
                           <tr>
                             <td class="">Effected Rows Count:</td>

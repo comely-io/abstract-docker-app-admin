@@ -80,7 +80,7 @@ const routes: Routes = [
           {path: 'config', component: AccessConfigComponent},
           {path: 'sessions', component: PublicSessionsComponent},
           {path: 'queries', component: PublicQueriesComponent},
-          {path: 'queries/view', component: PublicApiQueryComponent},
+          {path: 'query', component: PublicApiQueryComponent},
         ]
       },
       {

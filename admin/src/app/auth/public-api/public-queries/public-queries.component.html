@@ -107,7 +107,7 @@
                 <ng-container *ngFor="let query of this.fetchedQueries">
                   <tr>
                     <td class="text-end">
-                      <a routerLink="/auth/public-api/queries/view" [queryParams]="{ray: query.id.toString(16)}"
+                      <a routerLink="/auth/public-api/query" [queryParams]="{ray: query.id.toString(16)}"
                          class="text-primary cursor-pointer">{{query.id.toString(16)}}</a>
                     </td>
                     <td class="text-center">
@@ -142,7 +142,7 @@
                       <span class="text-muted" *ngIf="!query.flagUserId">not-set</span>
                     </td>
                     <td class="text-center">
-                      <a routerLink="/auth/public-api/queries/view" [queryParams]="{id: query.id}"
+                      <a routerLink="/auth/public-api/query" [queryParams]="{id: query.id}"
                          class="text-primary cursor-pointer"><i class="fal fa-window-frame-open"></i></a>
                     </td>
                   </tr>

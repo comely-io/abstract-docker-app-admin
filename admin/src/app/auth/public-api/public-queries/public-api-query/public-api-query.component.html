@@ -1,0 +1,244 @@
+<section class="pt-5 px-5 pb-3 bg-inner-red" style="min-height: 100vh !important;">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-8 col-xl-6">
+        <form [formGroup]="searchForm" (ngSubmit)="fetchQuery()">
+          <div class="input-group shadow-2 mb-3">
+            <input type="text" class="form-control" [readonly]="searchLoading" placeholder="Query Ray #"
+                   maxlength="64" formControlName="rayId"/>
+            <button class="btn btn-primary shadow-0" type="submit" mdbRipple rippleColor="primary">
+              <i class="fal fa-search me-2"></i>Lookup
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12 my-4 bg-white shadow-2">
+        <div class="alert alert-danger py-2 mt-3" *ngIf="searchErrorMsg">
+          <i class="fal fa-exclamation-circle me-2"></i>{{searchErrorMsg}}
+        </div>
+        <ng-container *ngIf="searchLoading">
+          <div class="text-center py-5 noselect">
+            <app-spinner-icon spinnerClass="text-primary"></app-spinner-icon>
+            <br>
+            <span class="text-muted">Fetching API Query...</span>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="query && loadedQueryMeta">
+          <mdb-tabs class="pb-3">
+            <mdb-tab>
+              <ng-template mdbTabTitle>
+                <i class="fal fa-table me-2"></i>Metadata
+              </ng-template>
+              <div class="alert alert-warning py-2" *ngIf="query.payloadError">
+                <i class="fal fa-exclamation-circle me-2"></i>{{query.payloadError}}
+              </div>
+              <div class="table-responsive">
+                <table class="table table-sm table-inherit no-wrap-table table-hover table-striped">
+                  <tbody>
+                  <tr>
+                    <td class="">Query #</td>
+                    <td class="">
+                      {{query.id.toString(16)}}<small class="fs-xs text-muted ms-2">dec: {{query.id}}</small>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="">Remote IP Address:</td>
+                    <td class="">{{query.ipAddress}}</td>
+                  </tr>
+                  <tr>
+                    <td class="">HTTP Method:</td>
+                    <td class="">
+                      <mark>{{query.method.toUpperCase()}}</mark>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="">Server Endpoint:</td>
+                    <td class="">{{query.endpoint}}</td>
+                  </tr>
+                  <tr>
+                    <td class="">Session #</td>
+                    <td class="">
+                      <span class="text-muted" *ngIf="!query.flagApiSess">not set</span>
+                      <a (click)="loadSessionModal()" *ngIf="query.flagApiSess"
+                         class="cursor-pointer text-primary">{{query.flagApiSess}}</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="">Authenticated As:</td>
+                    <td class="">
+                      <span class="text-muted" *ngIf="!query.flagUserId">not set</span>
+                      <a routerLink="/auth/users/manage" [queryParams]="{id: query.flagUserId}"
+                         *ngIf="query.flagApiSess"
+                         class="cursor-pointer text-primary">{{query.flagUsername ?? query.flagUserId}}</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="">Response:</td>
+                    <td class="">
+                      <span class="text-danger" *ngIf="!query.resCode">Undefined</span>
+                      <span *ngIf="query.resCode" class="fw-500"
+                            [ngClass]="query.resCode >= 200 && query.resCode <= 299 ? 'text-success' : 'text-danger'">{{query.resCode}}</span>
+                      <small class="fs-xs text-muted ms-2">{{query.resLen ?? -1}} bytes</small>
+                    </td>
+                  </tr>
+                  <tr *ngIf="query.timespan">
+                    <td class="">Execution Time:</td>
+                    <td class="">
+                      <span class="text-info">{{query.timespan}} secs</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="">Started On:</td>
+                    <td class="">
+                      <i class="fal fa-clock me-2"></i>
+                      <app-timestamp-display [epoch]="query.startOn"></app-timestamp-display>
+                    </td>
+                  </tr>
+                  <tr *ngIf="query.endOn">
+                    <td class="">Ended On:</td>
+                    <td class="">
+                      <i class="fal fa-clock me-2"></i>
+                      <app-timestamp-display [epoch]="query.endOn"></app-timestamp-display>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </mdb-tab>
+            <mdb-tab *ngIf="query.payload">
+              <ng-template mdbTabTitle>
+                Request
+              </ng-template>
+              <div class="table-responsive rounded">
+                <table class="table table-sm table-inherit no-wrap-table table-hover table-striped">
+                  <thead class="table-dark noselect cursor-pointer"
+                         (click)="loadedQueryMeta.reqHeadersDisplayed = !loadedQueryMeta.reqHeadersDisplayed">
+                  <tr>
+                    <td colspan="2"><i class="fas me-2"
+                                       [ngClass]="{'fa-caret-down': !loadedQueryMeta.reqHeadersDisplayed, 'fa-caret-up': loadedQueryMeta.reqHeadersDisplayed}"></i>Request
+                      Headers<span
+                        class="badge rounded-pill badge-secondary ms-2">{{loadedQueryMeta.reqHeadersCount}}</span></td>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <ng-container *ngIf="loadedQueryMeta.reqHeadersDisplayed">
+                    <ng-container *ngFor="let header of query.payload.reqHeaders | keyvalue">
+                      <tr>
+                        <td class="" style="min-width: 10%">{{header.key}}</td>
+                        <td class="wrapped-cell">{{header.value}}</td>
+                      </tr>
+                    </ng-container>
+                    <ng-container *ngIf="!query.payload.reqHeaders">
+                      <tr>
+                        <td colspan="2" class="text-muted">No request headers were captured</td>
+                      </tr>
+                    </ng-container>
+                  </ng-container>
+                  </tbody>
+                  <thead class="table-dark noselect cursor-pointer"
+                         (click)="loadedQueryMeta.reqBodyDisplayed = !loadedQueryMeta.reqBodyDisplayed">
+                  <tr>
+                    <td colspan="2"><i class="fas me-2"
+                                       [ngClass]="{'fa-caret-down': !loadedQueryMeta.reqBodyDisplayed, 'fa-caret-up': loadedQueryMeta.reqBodyDisplayed}"></i>Payload<span
+                      class="badge rounded-pill badge-secondary ms-2">{{loadedQueryMeta.reqBodyCount}}</span></td>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <ng-container *ngIf="loadedQueryMeta.reqBodyDisplayed">
+                    <ng-container *ngFor="let header of query.payload.reqBody | keyvalue">
+                      <tr>
+                        <td class="" style="min-width: 10%">{{header.key}}</td>
+                        <td class="wrapped-cell">{{header.value}}</td>
+                      </tr>
+                    </ng-container>
+                    <ng-container *ngIf="!query.payload.reqBody">
+                      <tr>
+                        <td colspan="2" class="text-muted">No payload data was captured</td>
+                      </tr>
+                    </ng-container>
+                  </ng-container>
+                  </tbody>
+                </table>
+              </div>
+            </mdb-tab>
+            <mdb-tab *ngIf="query.payload">
+              <ng-template mdbTabTitle>
+                <i class="fal fa-meta me-2"></i>Response
+              </ng-template>
+              <p class="mb-4 noselect">HTTP Response Code: <span
+                class="badge rounded-pill" *ngIf="query.resCode"
+                [ngClass]="query.resCode >= 200 && query.resCode <= 299 ? 'badge-success' : 'badge-danger'">{{query.resCode}}</span>
+                <span class="text-danger" *ngIf="!query.resCode">Undefined</span><br>
+                Encrypted Size: <small class="fs-xs text-muted">{{query.resLen ?? -1}} bytes</small></p>
+              <div class="table-responsive rounded">
+                <table class="table table-sm table-inherit no-wrap-table table-hover table-striped">
+                  <thead class="table-dark noselect cursor-pointer"
+                         (click)="loadedQueryMeta.resHeadersDisplayed = !loadedQueryMeta.resHeadersDisplayed">
+                  <tr>
+                    <td colspan="2"><i class="fas me-2"
+                                       [ngClass]="{'fa-caret-down': !loadedQueryMeta.reqHeadersDisplayed, 'fa-caret-up': loadedQueryMeta.reqHeadersDisplayed}"></i>Response
+                      Headers<span
+                        class="badge rounded-pill badge-secondary ms-2">{{loadedQueryMeta.resHeadersCount}}</span></td>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <ng-container *ngIf="loadedQueryMeta.resHeadersDisplayed">
+                    <ng-container *ngFor="let header of query.payload.resHeaders | keyvalue">
+                      <tr>
+                        <td class="" style="min-width: 10%">{{header.key}}</td>
+                        <td class="wrapped-cell">{{header.value}}</td>
+                      </tr>
+                    </ng-container>
+                    <ng-container *ngIf="!query.payload.resHeaders">
+                      <tr>
+                        <td colspan="2" class="text-muted">No response headers were captured</td>
+                      </tr>
+                    </ng-container>
+                  </ng-container>
+                  </tbody>
+                  <thead class="table-dark noselect cursor-pointer"
+                         (click)="loadedQueryMeta.resBodyDisplayed = !loadedQueryMeta.resBodyDisplayed">
+                  <tr>
+                    <td colspan="2"><i class="fas me-2"
+                                       [ngClass]="{'fa-caret-down': !loadedQueryMeta.resBodyDisplayed, 'fa-caret-up': loadedQueryMeta.resBodyDisplayed}"></i>Body<small
+                      class="text-white fs-xs ms-2" *ngIf="loadedQueryMeta.resBodyLen">({{loadedQueryMeta.resBodyLen}}
+                      bytes)</small></td>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <ng-container *ngIf="loadedQueryMeta.resBodyDisplayed">
+                    <ng-container *ngIf="query.payload.resBody">
+                      <tr>
+                        <td colspan="2" class="wrapped-cell ">{{query.payload.resBody}}</td>
+                      </tr>
+                    </ng-container>
+                    <ng-container *ngIf="!query.payload.resBody">
+                      <tr>
+                        <td colspan="2" class="text-muted">No payload was captured</td>
+                      </tr>
+                    </ng-container>
+                  </ng-container>
+                  </tbody>
+                </table>
+              </div>
+            </mdb-tab>
+            <mdb-tab *ngIf="query.payload">
+              <ng-template mdbTabTitle>
+                <i class="fal fa-meta me-2"></i>Errors<span class="badge rounded-pill badge-danger ms-2">0</span>
+              </ng-template>
+              payload
+            </mdb-tab>
+            <mdb-tab *ngIf="query.payload">
+              <ng-template mdbTabTitle>
+                <i class="fal fa-meta me-2"></i>DB Ops<span class="badge rounded-pill badge-info ms-2">0</span>
+              </ng-template>
+              payload
+            </mdb-tab>
+          </mdb-tabs>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</section>

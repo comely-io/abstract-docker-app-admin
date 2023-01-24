@@ -30,7 +30,7 @@
       <span class="text-muted" *ngIf="!session.authUserId">Guest</span>
       <ng-container *ngIf="session.authUserId > 0">
         <a routerLink="/auth/users/manage" [queryParams]="{id: session.authUserId}" target="_blank">
-          {{session.authUserUsername ?? session.authUserId}}
+          {{overrideUsername ?? session.authUserUsername ?? session.authUserId}}
         </a><span class="text-muted ms-1" mdbTooltip="No 2FA/TOTP authentication" *ngIf="!session.authSessionOtp"><i
         class="fal fa-check-double"></i></span><span class="text-success ms-1" mdbTooltip="2FA/TOTP Authenticated"
                                                      *ngIf="session.authSessionOtp"><i
@@ -58,7 +58,8 @@
   </tr>
   <tr>
     <td class="fw-700"><i class="fal fa-fingerprint me-2"></i>Browser Fingerprint:</td>
-    <td class="wrapped-cell">{{session.fingerprint}}<a (click)="searchFingerprint()" class="fs-xs ms-2 cursor-pointer">[search]</a>
+    <td class="wrapped-cell">{{session.fingerprint}}<a (click)="searchFingerprint()" *ngIf="isSessionsPage"
+                                                       class="fs-xs ms-2 cursor-pointer">[search]</a>
     </td>
   </tr>
   <tr>

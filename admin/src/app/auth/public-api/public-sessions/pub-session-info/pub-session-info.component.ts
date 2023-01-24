@@ -11,6 +11,8 @@ import {ApiQueryFail, ApiSuccess} from "../../../../../services/apiService";
 })
 export class PubSessionInfoComponent implements OnInit, OnDestroy {
   @Input() session!: publicSession;
+  @Input() isSessionsPage: boolean = true;
+  @Input() overrideUsername?: string;
 
   public queriesCountLoading: boolean = false;
   public queriesCount?: number;

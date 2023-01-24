@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ValidatorService} from "../../../../services/validatorService";
 import {ApiErrorHandleOpts, AppService} from "../../../../services/appService";
 import {FormControl, FormGroup} from "@angular/forms";
@@ -52,7 +52,7 @@ interface searchQuery {
   templateUrl: './public-queries.component.html',
   styleUrls: ['./public-queries.component.scss']
 })
-export class PublicQueriesComponent implements OnInit {
+export class PublicQueriesComponent implements OnInit, OnDestroy {
   private urlQueryWatch?: Subscription;
   public validator: ValidatorService;
   public usernamesLoading: boolean = false;
@@ -295,8 +295,12 @@ export class PublicQueriesComponent implements OnInit {
 
     this.aP.breadcrumbs.next([
       {page: 'Public API', active: true, icon: 'fal fa-globe'},
-      {page: 'Queries', active: true}
+      {page: 'API Queries', active: true}
     ]);
-    this.aP.titleChange.next(["Queries", "Public API"]);
+    this.aP.titleChange.next(["API Queries", "Public API"]);
+  }
+
+  ngOnDestroy() {
+    this.urlQueryWatch?.unsubscribe();
   }
 }

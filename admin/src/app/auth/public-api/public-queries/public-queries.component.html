@@ -142,7 +142,7 @@
                       <span class="text-muted" *ngIf="!query.flagUserId">not-set</span>
                     </td>
                     <td class="text-center">
-                      <a routerLink="/auth/public-api/query" [queryParams]="{id: query.id}"
+                      <a routerLink="/auth/public-api/query" [queryParams]="{ray: query.id.toString(16)}"
                          class="text-primary cursor-pointer"><i class="fal fa-window-frame-open"></i></a>
                     </td>
                   </tr>

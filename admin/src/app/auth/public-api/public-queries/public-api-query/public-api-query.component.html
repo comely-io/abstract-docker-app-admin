@@ -78,8 +78,8 @@
                     <td class="">Response:</td>
                     <td class="">
                       <span class="text-danger" *ngIf="!query.resCode">Undefined</span>
-                      <span *ngIf="query.resCode" class="fw-500"
-                            [ngClass]="query.resCode >= 200 && query.resCode <= 299 ? 'text-success' : 'text-danger'">{{query.resCode}}</span>
+                      <span class="badge rounded-pill" *ngIf="query.resCode"
+                        [ngClass]="query.resCode >= 200 && query.resCode <= 299 ? 'badge-success' : 'badge-danger'">{{query.resCode}}</span>
                       <small class="fs-xs text-muted ms-2">{{query.resLen ?? -1}} bytes</small>
                     </td>
                   </tr>

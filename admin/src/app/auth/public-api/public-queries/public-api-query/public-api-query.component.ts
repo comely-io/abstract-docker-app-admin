@@ -61,6 +61,17 @@ interface loadedQueryMeta {
   resHeadersCount: number,
   resBodyDisplayed: boolean,
   resBodyLen?: number,
+  dbQueriesCount: number,
+  dbQueriesGroups: groupedDbQueries
+}
+
+interface dbQueriesGroup {
+  hidden: boolean,
+  queries: Array<payloadDbQuery>
+}
+
+interface groupedDbQueries {
+  [key: string]: dbQueriesGroup
 }
 
 @Component({
@@ -121,6 +132,8 @@ export class PublicApiQueryComponent implements OnInit, OnDestroy {
       resBodyDisplayed: true,
       resHeadersCount: 0,
       resBodyLen: undefined,
+      dbQueriesCount: 0,
+      dbQueriesGroups: {}
     };
 
     if (query.payload) {
@@ -139,6 +152,20 @@ export class PublicApiQueryComponent implements OnInit, OnDestroy {
       if (query.payload.resBody) {
         this.loadedQueryMeta.resBodyLen = query.payload.resBody.length;
       }
+
+      if (query.payload.dbQueries && this.loadedQueryMeta) {
+        this.loadedQueryMeta.dbQueriesCount = query.payload.dbQueries.length;
+        query.payload.dbQueries.forEach((dbQuery: payloadDbQueries) => {
+          let database = dbQuery.db.toLowerCase();
+          if (this.loadedQueryMeta) {
+            if (!this.loadedQueryMeta.dbQueriesGroups.hasOwnProperty(database)) {
+              this.loadedQueryMeta.dbQueriesGroups[database] = {hidden: true, queries: []};
+            }
+
+            this.loadedQueryMeta.dbQueriesGroups[database].queries.push(dbQuery.query);
+          }
+        });
+      }
     }
 
     this.query = query;
@@ -147,6 +174,7 @@ export class PublicApiQueryComponent implements OnInit, OnDestroy {
   public async fetchQuery() {
     this.searchErrorMsg = undefined;
     this.query = undefined;
+    this.loadedQueryMeta = undefined;
 
     let queryId: string = "";
     try {

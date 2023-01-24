@@ -70,7 +70,7 @@
                     <td class="">
                       <span class="text-muted" *ngIf="!query.flagUserId">not set</span>
                       <a routerLink="/auth/users/manage" [queryParams]="{id: query.flagUserId}"
-                         *ngIf="query.flagApiSess"
+                         *ngIf="query.flagUserId"
                          class="cursor-pointer text-primary">{{query.flagUsername ?? query.flagUserId}}</a>
                     </td>
                   </tr>
@@ -226,15 +226,62 @@
             </mdb-tab>
             <mdb-tab *ngIf="query.payload">
               <ng-template mdbTabTitle>
-                <i class="fal fa-meta me-2"></i>Errors<span class="badge rounded-pill badge-danger ms-2">0</span>
+                <i class="fal fa-bug me-2"></i>Errors<span class="badge rounded-pill badge-danger ms-2">0</span>
               </ng-template>
-              payload
+              PENDING
             </mdb-tab>
             <mdb-tab *ngIf="query.payload">
               <ng-template mdbTabTitle>
-                <i class="fal fa-meta me-2"></i>DB Ops<span class="badge rounded-pill badge-info ms-2">0</span>
+                <i class="fal fa-database me-2"></i>DB Ops<span
+                class="badge rounded-pill badge-info ms-2">{{loadedQueryMeta.dbQueriesCount}}</span>
               </ng-template>
-              payload
+              <p *ngIf="!loadedQueryMeta.dbQueriesCount">There are no database ops in this query.</p>
+              <ng-container *ngIf="query.payload.dbQueries && query.payload.dbQueries.length > 0">
+                <ng-container *ngFor="let dbGroup of loadedQueryMeta.dbQueriesGroups |keyvalue">
+                  <div class="card shadow-0 mb-4">
+                    <div class="card-header bg-dark noselect cursor-pointer"
+                         (click)="loadedQueryMeta.dbQueriesGroups[dbGroup.key].hidden = !loadedQueryMeta.dbQueriesGroups[dbGroup.key].hidden">
+                      <h5 class="card-title text-white mb-0"><i class="fas fs-xs me-4"
+                                                                [ngClass]="{'fa-caret-down': loadedQueryMeta.dbQueriesGroups[dbGroup.key].hidden, 'fa-caret-up': !loadedQueryMeta.dbQueriesGroups[dbGroup.key].hidden}"></i><i
+                        class="fal fa-database me-2"></i>{{dbGroup.key}}<span
+                        class="badge rounded-pill badge-light ms-2">{{dbGroup.value.queries.length}}</span></h5>
+                    </div>
+                    <div class="table-responsive mb-0" *ngIf="!dbGroup.value.hidden">
+                      <table class="table table-inherit table-sm table-striped table-hover mb-0">
+                        <tbody>
+                        <ng-container *ngFor="let dbQuery of dbGroup.value.queries; let i =index">
+                          <tr>
+                            <td colspan="2" class="bg-info text-white py-1 fs-xs noselect">Query # {{i + 1}}</td>
+                          </tr>
+                          <tr>
+                            <td class="">Query:</td>
+                            <td class="wrapped-cell">{{dbQuery['sql']}}</td>
+                          </tr>
+                          <tr>
+                            <td class="">Bound Data:</td>
+                            <td class="wrapped-cell">
+                              <span class="text-muted" *ngIf="!dbQuery['data']">N/A</span>
+                              <span class="text-muted" *ngIf="dbQuery['data']">{{dbQuery['data']}}</span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td class="">Effected Rows Count:</td>
+                            <td class="wrapped-cell"
+                                [ngClass]="dbQuery['rows'] > 0 ? 'text-danger' : 'text-muted'">{{dbQuery['rows']}}</td>
+                          </tr>
+                          <tr>
+                            <td class="">Error:</td>
+                            <td class="wrapped-cell"
+                                [ngClass]="dbQuery['error'] ? 'text-danger' : 'text-muted'">{{dbQuery['error']|json}}
+                            </td>
+                          </tr>
+                        </ng-container>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </ng-container>
+              </ng-container>
             </mdb-tab>
           </mdb-tabs>
         </ng-container>

@@ -78,8 +78,8 @@
                     <td class="">Response:</td>
                     <td class="">
                       <span class="text-danger" *ngIf="!query.resCode">Undefined</span>
-                      <span class="badge rounded-pill" *ngIf="query.resCode"
-                        [ngClass]="query.resCode >= 200 && query.resCode <= 299 ? 'badge-success' : 'badge-danger'">{{query.resCode}}</span>
+                      <span class="badge rounded-pill noselect" *ngIf="query.resCode"
+                            [ngClass]="query.resCode >= 200 && query.resCode <= 299 ? 'badge-success' : 'badge-danger'">{{query.resCode}}</span>
                       <small class="fs-xs text-muted ms-2">{{query.resLen ?? -1}} bytes</small>
                     </td>
                   </tr>
@@ -168,7 +168,7 @@
                 <i class="fal fa-meta me-2"></i>Response
               </ng-template>
               <p class="mb-4 noselect">HTTP Response Code: <span
-                class="badge rounded-pill" *ngIf="query.resCode"
+                class="badge rounded-pill noselect" *ngIf="query.resCode"
                 [ngClass]="query.resCode >= 200 && query.resCode <= 299 ? 'badge-success' : 'badge-danger'">{{query.resCode}}</span>
                 <span class="text-danger" *ngIf="!query.resCode">Undefined</span><br>
                 Encrypted Size: <small class="fs-xs text-muted">{{query.resLen ?? -1}} bytes</small></p>
@@ -247,7 +247,7 @@
                         class="badge rounded-pill badge-light ms-2">{{dbGroup.value.queries.length}}</span></h5>
                     </div>
                     <div class="table-responsive mb-0" *ngIf="!dbGroup.value.hidden">
-                      <table class="table table-inherit table-sm table-striped table-hover mb-0">
+                      <table class="table no-wrap-table table-inherit table-sm table-striped table-hover mb-0">
                         <tbody>
                         <ng-container *ngFor="let dbQuery of dbGroup.value.queries; let i =index">
                           <tr>

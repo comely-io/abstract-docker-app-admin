@@ -86,8 +86,9 @@ import {SystemConfigComponent} from './auth/app/program-config/system-config/sys
 import {DbBackupsComponent} from './auth/app/db-backups/db-backups.component';
 import {PublicSessionsComponent} from './auth/public-api/public-sessions/public-sessions.component';
 import {PublicQueriesComponent} from './auth/public-api/public-queries/public-queries.component';
-import { PubSessionInfoComponent } from './auth/public-api/public-sessions/pub-session-info/pub-session-info.component';
-import { PublicApiQueryComponent } from './auth/public-api/public-queries/public-api-query/public-api-query.component';
+import {PubSessionInfoComponent} from './auth/public-api/public-sessions/pub-session-info/pub-session-info.component';
+import {PublicApiQueryComponent} from './auth/public-api/public-queries/public-api-query/public-api-query.component';
+import {UserLogsComponent} from './auth/users/user-logs/user-logs.component';
 
 @NgModule({
   declarations: [
@@ -142,6 +143,7 @@ import { PublicApiQueryComponent } from './auth/public-api/public-queries/public
     PublicQueriesComponent,
     PubSessionInfoComponent,
     PublicApiQueryComponent,
+    UserLogsComponent,
   ],
   imports: [
     BrowserModule,

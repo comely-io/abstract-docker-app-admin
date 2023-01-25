@@ -1,0 +1,116 @@
+<section class="pt-5 pb-3 bg-inner-red" style="min-height: 100% !important;">
+  <div class="container-fluid">
+    <div class="row justify-content-md-center mb-5">
+      <div class="col-lg-8 col-xl-6">
+        <form [formGroup]="searchLogsForm" (ngSubmit)="submitSearchForm()">
+          <div class="card card-classic">
+            <div class="card-header">
+              <h5 class="card-title mb-0"><i class="fal fa-search me-2"></i>Users Activity Log</h5>
+            </div>
+            <div class="card-body">
+              <mdb-form-control>
+                <input mdbInput mdbValidate type="text" formControlName="username" id="username"
+                       maxlength="32"
+                       [readonly]="searchIsDisabled" placeholder="Username"
+                       class="form-control mb-0" autofocus/>
+                <label mdbLabel class="form-label ">Username</label>
+              </mdb-form-control>
+              <app-form-field-error [formField]="searchLogsForm.controls.username"></app-form-field-error>
+              <mdb-form-control class="mt-3">
+                <input mdbInput mdbValidate type="text" formControlName="flags" id="flags"
+                       maxlength="32"
+                       [readonly]="searchIsDisabled" placeholder="something1, something 2"
+                       class="form-control mb-0" autofocus/>
+                <label mdbLabel class="form-label " for="flags">Search in Flags</label>
+              </mdb-form-control>
+              <app-form-field-error [formField]="searchLogsForm.controls.flags"></app-form-field-error>
+              <mdb-form-control class="mt-3">
+                <input mdbInput mdbValidate type="text" formControlName="filter" id="filter"
+                       maxlength="128"
+                       [readonly]="searchIsDisabled" placeholder="match something"
+                       class="form-control mb-0" autofocus/>
+                <label mdbLabel class="form-label " for="flags">Message Filter</label>
+              </mdb-form-control>
+              <app-form-field-error [formField]="searchLogsForm.controls.filter"></app-form-field-error>
+            </div>
+            <div class="card-footer">
+              <button class="btn btn-outline-danger" type="submit" *ngIf="!searchIsLoading"
+                      [disabled]="searchIsDisabled"><i class="fal fa-search me-1"></i>Apply
+                Filters
+              </button>
+              <app-button-loader [btnClass]="'btn-outline-danger'" [spinnerClass]="'text-danger'"
+                                 *ngIf="searchIsLoading"></app-button-loader>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="card card-classic">
+          <div class="card-header">
+            <app-pagination [totalRows]="paginationFilters.totalRows" [currentPage]="paginationFilters.currentPage"
+                            [perPage]="paginationFilters.perPage"
+                            [pagesDisplayLimit]="2"
+                            [perPageOpts]="[25,50,100, 250]"
+                            [defaultPerPageOpt]="this.searchLogs.perPage"
+                            [shapeCircle]="false" (changePage)="changePage($event)"
+                            (changePerPage)="changePerPage($event)"></app-pagination>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-sm table-striped table-hover no-wrap-table table-inherit mb-0">
+              <thead class="table-dark">
+              <tr>
+                <th scope="row" class="text-center fw-light">Timestamp</th>
+                <th scope="row" class="text-center fw-light">User</th>
+                <th scope="row" class="text-center fw-light">Session</th>
+                <th scope="row" class="text-center fw-light">Activity</th>
+                <th scope="row" class="text-center fw-light">Flags</th>
+                <th scope="row" class="text-center fw-light">Arbitrary Data</th>
+                <th scope="row" class="text-center fw-light">IP Address</th>
+              </tr>
+              </thead>
+              <tbody>
+              <ng-container *ngIf="this.fetchedLogs">
+                <ng-container *ngFor="let log of fetchedLogs">
+                  <tr>
+                    <td class="text-end">
+                      <app-timestamp-display [epoch]="log.timeStamp" cssClasses="text-end"></app-timestamp-display>
+                    </td>
+                    <td class="text-center">
+                      <app-spinner-icon spinnerClass="text-muted" *ngIf="usernamesLoading"></app-spinner-icon>
+                      <a routerLink="/auth/users/manage" target="_blank" *ngIf="!usernamesLoading"
+                         [queryParams]="{id: log.user}">{{log.username ?? log.user}}</a>
+                    </td>
+                    <td class="text-center">
+                      <a (click)="loadSessionModal(log)" class="cursor-pointer text-primary">{{log.session}}</a>
+                    </td>
+                    <td class="text-start">{{log.log}}</td>
+                    <td class="text-center">
+                      <ng-container *ngIf="log.flags">
+                        <span class="badge bg-primary me-1" *ngFor="let flag of log.flags">{{flag}}</span>
+                      </ng-container>
+                      <span *ngIf="!log.flags" class="text-muted">n/a</span>
+                    </td>
+                    <td class="text-center text-muted">
+                      {{log?.data?.length ?? '0'}} <small class="fs-xs">bytes</small>
+                    </td>
+                    <td class="text-end">
+                      {{log.ipAddress}}
+                    </td>
+                  </tr>
+                </ng-container>
+              </ng-container>
+              <ng-container *ngIf="!this.fetchedLogs || this.fetchedLogs.length < 1">
+                <tr>
+                  <td colspan="7" class="text-muted">There are no activity logs matching search criteria</td>
+                </tr>
+              </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

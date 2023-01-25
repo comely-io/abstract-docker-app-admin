@@ -29,6 +29,7 @@ import {DbBackupsComponent} from "./auth/app/db-backups/db-backups.component";
 import {PublicSessionsComponent} from "./auth/public-api/public-sessions/public-sessions.component";
 import {PublicQueriesComponent} from "./auth/public-api/public-queries/public-queries.component";
 import {PublicApiQueryComponent} from "./auth/public-api/public-queries/public-api-query/public-api-query.component";
+import {UserLogsComponent} from "./auth/users/user-logs/user-logs.component";
 
 const routes: Routes = [
   {path: '', component: SigninComponent},
@@ -61,7 +62,8 @@ const routes: Routes = [
           {path: 'search', component: SearchUsersComponent},
           {path: 'manage', component: ManageUserComponent},
           {path: 'groups', component: UserGroupsComponent},
-          {path: 'create', component: CreateUserComponent}
+          {path: 'create', component: CreateUserComponent},
+          {path: 'log', component: UserLogsComponent}
         ]
       },
       {

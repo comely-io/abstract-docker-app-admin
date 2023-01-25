@@ -111,19 +111,17 @@
               <ng-template mdbTabTitle>
                 Request
               </ng-template>
-              <div class="table-responsive rounded">
-                <table class="table table-sm table-inherit no-wrap-table table-hover table-striped">
-                  <thead class="table-dark noselect cursor-pointer"
-                         (click)="loadedQueryMeta.reqHeadersDisplayed = !loadedQueryMeta.reqHeadersDisplayed">
-                  <tr>
-                    <td colspan="2"><i class="fas me-2"
-                                       [ngClass]="{'fa-caret-down': !loadedQueryMeta.reqHeadersDisplayed, 'fa-caret-up': loadedQueryMeta.reqHeadersDisplayed}"></i>Request
-                      Headers<span
-                        class="badge rounded-pill badge-secondary ms-2">{{loadedQueryMeta.reqHeadersCount}}</span></td>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <ng-container *ngIf="loadedQueryMeta.reqHeadersDisplayed">
+              <div class="card shadow-0 mb-4">
+                <div class="card-header bg-dark noselect cursor-pointer"
+                     (click)="loadedQueryMeta.reqHeadersDisplayed = !loadedQueryMeta.reqHeadersDisplayed">
+                  <h5 class="card-title text-white mb-0"><i class="fas fs-xs me-4"
+                                                            [ngClass]="{'fa-caret-down': !loadedQueryMeta.reqHeadersDisplayed, 'fa-caret-up': loadedQueryMeta.reqHeadersDisplayed}"></i>Request
+                    Headers<span
+                      class="badge rounded-pill badge-secondary ms-2">{{loadedQueryMeta.reqHeadersCount}}</span></h5>
+                </div>
+                <div class="table-responsive" *ngIf="loadedQueryMeta.reqHeadersDisplayed">
+                  <table class="table table-sm table-inherit no-wrap-table table-hover table-striped">
+                    <tbody>
                     <ng-container *ngFor="let header of query.payload.reqHeaders | keyvalue">
                       <tr>
                         <td class="" style="min-width: 10%">{{header.key}}</td>
@@ -135,22 +133,24 @@
                         <td colspan="2" class="text-muted">No request headers were captured</td>
                       </tr>
                     </ng-container>
-                  </ng-container>
-                  </tbody>
-                  <thead class="table-dark noselect cursor-pointer"
-                         (click)="loadedQueryMeta.reqBodyDisplayed = !loadedQueryMeta.reqBodyDisplayed">
-                  <tr>
-                    <td colspan="2"><i class="fas me-2"
-                                       [ngClass]="{'fa-caret-down': !loadedQueryMeta.reqBodyDisplayed, 'fa-caret-up': loadedQueryMeta.reqBodyDisplayed}"></i>Payload<span
-                      class="badge rounded-pill badge-secondary ms-2">{{loadedQueryMeta.reqBodyCount}}</span></td>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <ng-container *ngIf="loadedQueryMeta.reqBodyDisplayed">
-                    <ng-container *ngFor="let header of query.payload.reqBody | keyvalue">
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="card shadow-0 mb-4">
+                <div class="card-header bg-dark noselect cursor-pointer"
+                     (click)="loadedQueryMeta.reqBodyDisplayed = !loadedQueryMeta.reqBodyDisplayed">
+                  <h5 class="card-title text-white mb-0"><i class="fas fs-xs me-4"
+                                                            [ngClass]="{'fa-caret-down': !loadedQueryMeta.reqBodyDisplayed, 'fa-caret-up': loadedQueryMeta.reqBodyDisplayed}"></i>Payload<span
+                    class="badge rounded-pill badge-secondary ms-2">{{loadedQueryMeta.reqBodyCount}}</span></h5>
+                </div>
+                <div class="table-responsive" *ngIf="loadedQueryMeta.reqBodyDisplayed">
+                  <table class="table table-sm table-inherit no-wrap-table table-hover table-striped">
+                    <tbody>
+                    <ng-container *ngFor="let param of query.payload.reqBody | keyvalue">
                       <tr>
-                        <td class="" style="min-width: 10%">{{header.key}}</td>
-                        <td class="wrapped-cell">{{header.value}}</td>
+                        <td class="" style="min-width: 10%">{{param.key}}</td>
+                        <td class="wrapped-cell">{{param.value}}</td>
                       </tr>
                     </ng-container>
                     <ng-container *ngIf="!query.payload.reqBody">
@@ -158,9 +158,9 @@
                         <td colspan="2" class="text-muted">No payload data was captured</td>
                       </tr>
                     </ng-container>
-                  </ng-container>
-                  </tbody>
-                </table>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </mdb-tab>
             <mdb-tab *ngIf="query.payload">
@@ -172,19 +172,17 @@
                 [ngClass]="query.resCode >= 200 && query.resCode <= 299 ? 'badge-success' : 'badge-danger'">{{query.resCode}}</span>
                 <span class="text-danger" *ngIf="!query.resCode">Undefined</span><br>
                 Encrypted Size: <small class="fs-xs text-muted">{{query.resLen ?? -1}} bytes</small></p>
-              <div class="table-responsive rounded">
-                <table class="table table-sm table-inherit no-wrap-table table-hover table-striped">
-                  <thead class="table-dark noselect cursor-pointer"
-                         (click)="loadedQueryMeta.resHeadersDisplayed = !loadedQueryMeta.resHeadersDisplayed">
-                  <tr>
-                    <td colspan="2"><i class="fas me-2"
-                                       [ngClass]="{'fa-caret-down': !loadedQueryMeta.reqHeadersDisplayed, 'fa-caret-up': loadedQueryMeta.reqHeadersDisplayed}"></i>Response
-                      Headers<span
-                        class="badge rounded-pill badge-secondary ms-2">{{loadedQueryMeta.resHeadersCount}}</span></td>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <ng-container *ngIf="loadedQueryMeta.resHeadersDisplayed">
+              <div class="card shadow-0 mb-4">
+                <div class="card-header bg-dark noselect cursor-pointer"
+                     (click)="loadedQueryMeta.resHeadersDisplayed = !loadedQueryMeta.resHeadersDisplayed">
+                  <h5 class="card-title text-white mb-0"><i class="fas fs-xs me-4"
+                                                            [ngClass]="{'fa-caret-down': !loadedQueryMeta.resHeadersDisplayed, 'fa-caret-up': loadedQueryMeta.resHeadersDisplayed}"></i>Response
+                    Headers<span
+                      class="badge rounded-pill badge-secondary ms-2">{{loadedQueryMeta.resHeadersCount}}</span></h5>
+                </div>
+                <div class="table-responsive" *ngIf="loadedQueryMeta.resHeadersDisplayed">
+                  <table class="table table-sm table-inherit no-wrap-table table-hover table-striped">
+                    <tbody>
                     <ng-container *ngFor="let header of query.payload.resHeaders | keyvalue">
                       <tr>
                         <td class="" style="min-width: 10%">{{header.key}}</td>
@@ -193,42 +191,73 @@
                     </ng-container>
                     <ng-container *ngIf="!query.payload.resHeaders">
                       <tr>
-                        <td colspan="2" class="text-muted">No response headers were captured</td>
+                        <td colspan="2" class="text-muted">No request headers were captured</td>
                       </tr>
                     </ng-container>
-                  </ng-container>
-                  </tbody>
-                  <thead class="table-dark noselect cursor-pointer"
-                         (click)="loadedQueryMeta.resBodyDisplayed = !loadedQueryMeta.resBodyDisplayed">
-                  <tr>
-                    <td colspan="2"><i class="fas me-2"
-                                       [ngClass]="{'fa-caret-down': !loadedQueryMeta.resBodyDisplayed, 'fa-caret-up': loadedQueryMeta.resBodyDisplayed}"></i>Body<small
-                      class="text-white fs-xs ms-2" *ngIf="loadedQueryMeta.resBodyLen">({{loadedQueryMeta.resBodyLen}}
-                      bytes)</small></td>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <ng-container *ngIf="loadedQueryMeta.resBodyDisplayed">
-                    <ng-container *ngIf="query.payload.resBody">
-                      <tr>
-                        <td colspan="2" class="wrapped-cell ">{{query.payload.resBody}}</td>
-                      </tr>
-                    </ng-container>
-                    <ng-container *ngIf="!query.payload.resBody">
-                      <tr>
-                        <td colspan="2" class="text-muted">No payload was captured</td>
-                      </tr>
-                    </ng-container>
-                  </ng-container>
-                  </tbody>
-                </table>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="card shadow-0 mb-4">
+                <div class="card-header bg-dark noselect cursor-pointer"
+                     (click)="loadedQueryMeta.resBodyDisplayed = !loadedQueryMeta.resBodyDisplayed">
+                  <h5 class="card-title text-white mb-0"><i class="fas fs-xs me-4"
+                                                            [ngClass]="{'fa-caret-down': !loadedQueryMeta.resBodyDisplayed, 'fa-caret-up': loadedQueryMeta.resBodyDisplayed}"></i>Body<small
+                    class="text-light fw-300 fs-xs ms-2"
+                    *ngIf="loadedQueryMeta.resBodyLen">({{loadedQueryMeta.resBodyLen}}
+                    bytes)</small></h5>
+                </div>
+                <div class="card-body bg-light text-wrapped" *ngIf="loadedQueryMeta.resBodyDisplayed">
+                  {{query.payload.resBody ?? 'No payload was captured'}}
+                </div>
               </div>
             </mdb-tab>
             <mdb-tab *ngIf="query.payload">
               <ng-template mdbTabTitle>
-                <i class="fal fa-bug me-2"></i>Errors<span class="badge rounded-pill badge-danger ms-2">0</span>
+                <i class="fal fa-bug me-2"></i>Errors<span
+                class="badge rounded-pill badge-danger ms-2">{{loadedQueryMeta.errorsCount}}</span>
               </ng-template>
-              PENDING
+              <div class="mb-4 text-muted" *ngIf="!query.payload.errors">
+                There are no error messages captured
+              </div>
+              <div class="mb-4" *ngIf="query.payload.errors">
+                <table class="table table-sm table-hover table-inherit table-striped no-wrap-table">
+                  <tbody>
+                  <ng-container *ngFor="let errorMsg of query.payload.errors; let i = index">
+                    <tr>
+                      <td rowspan="5" class="text-end" style="min-width: 5%">
+                        <span class="badge rounded-pill badge-secondary">#{{i + 1}}</span>
+                      </td>
+                      <td colspan="2" class="text-danger wrapped-cell">{{errorMsg.message}}</td>
+                    </tr>
+                    <tr>
+                      <td class="" style="min-width: 10%">Type:</td>
+                      <td class=""><span class="badge rounded-pill"
+                                         [ngClass]="[1,2,256,512,8192,16384].indexOf(errorMsg.type) > -1 ? 'badge-danger' : 'badge-warning'">{{errorMsg.typeStr.toUpperCase()}}</span><small
+                        class="fs-xs text-muted ms-2">dec: {{errorMsg.type}}</small></td>
+                    </tr>
+                    <tr>
+                      <td class="">Traceroute:</td>
+                      <td class="">
+                        <span class="" mdbTooltip="Filepath">{{errorMsg.file}}</span>#<span
+                        class="" mdbTooltip="Line #">{{errorMsg.line}}</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="">Triggered:</td>
+                      <td class=""
+                          [ngClass]="{'text-danger': !errorMsg.triggered, 'text-muted': errorMsg.triggered}">{{errorMsg.triggered ? 'Yes' : 'Debug only'}}</td>
+                    </tr>
+                    <tr>
+                      <td class="">Timestamp:</td>
+                      <td class="">
+                        <app-timestamp-display [epoch]="errorMsg.timeStamp"></app-timestamp-display>
+                      </td>
+                    </tr>
+                  </ng-container>
+                  </tbody>
+                </table>
+              </div>
             </mdb-tab>
             <mdb-tab *ngIf="query.payload">
               <ng-template mdbTabTitle>
@@ -244,7 +273,7 @@
                       <h5 class="card-title text-white mb-0"><i class="fas fs-xs me-4"
                                                                 [ngClass]="{'fa-caret-down': loadedQueryMeta.dbQueriesGroups[dbGroup.key].hidden, 'fa-caret-up': !loadedQueryMeta.dbQueriesGroups[dbGroup.key].hidden}"></i><i
                         class="fal fa-database me-2"></i>{{dbGroup.key}}<span
-                        class="badge rounded-pill badge-light ms-2">{{dbGroup.value.queries.length}}</span></h5>
+                        class="badge rounded-pill badge-secondary ms-2">{{dbGroup.value.queries.length}}</span></h5>
                     </div>
                     <div class="table-responsive mb-0" *ngIf="!dbGroup.value.hidden">
                       <table class="table no-wrap-table table-inherit table-sm table-striped table-hover mb-0">

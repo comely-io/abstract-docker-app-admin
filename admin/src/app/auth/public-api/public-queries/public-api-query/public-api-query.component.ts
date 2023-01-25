@@ -63,6 +63,7 @@ interface loadedQueryMeta {
   resBodyLen?: number,
   dbQueriesCount: number,
   dbQueriesGroups: groupedDbQueries
+  errorsCount: number,
 }
 
 interface dbQueriesGroup {
@@ -133,7 +134,8 @@ export class PublicApiQueryComponent implements OnInit, OnDestroy {
       resHeadersCount: 0,
       resBodyLen: undefined,
       dbQueriesCount: 0,
-      dbQueriesGroups: {}
+      dbQueriesGroups: {},
+      errorsCount: 0,
     };
 
     if (query.payload) {
@@ -165,6 +167,10 @@ export class PublicApiQueryComponent implements OnInit, OnDestroy {
             this.loadedQueryMeta.dbQueriesGroups[database].queries.push(dbQuery.query);
           }
         });
+      }
+
+      if (query.payload.errors) {
+        this.loadedQueryMeta.errorsCount = query.payload.errors.length;
       }
     }
 

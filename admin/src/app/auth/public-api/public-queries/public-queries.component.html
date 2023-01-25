@@ -124,13 +124,13 @@
                       <app-timestamp-display [epoch]="query.startOn" cssClasses="text-end"></app-timestamp-display>
                     </td>
                     <td class="text-center">
-                      <span class="text-muted">{{query.timespan ?? -1}} <small class="fs-xs">secs</small></span>
+                      <span class="text-secondary">{{query.timespan ?? -1}} <small class="fs-xs">secs</small></span>
                     </td>
                     <td class="text-center"
                         [ngClass]="query.resCode && query.resCode >= 200 && query.resCode <= 299? 'text-success' : 'text-danger'">
                       {{query.resCode}}
                     </td>
-                    <td class="text-end">
+                    <td class="text-center">
                       <span class="text-muted">{{query.resLen ?? 0}} <small class="fs-xs">bytes</small></span>
                     </td>
                     <td class="text-center">
@@ -154,7 +154,7 @@
               </ng-container>
               <ng-container *ngIf="!this.fetchedQueries || this.fetchedQueries.length < 1">
                 <tr>
-                  <td colspan="11" class="text-muted">There are no public API queries matching search criteria</td>
+                  <td colspan="12" class="text-muted">There are no public API queries matching search criteria</td>
                 </tr>
               </ng-container>
               </tbody>

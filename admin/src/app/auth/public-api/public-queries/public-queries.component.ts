@@ -27,6 +27,7 @@ export interface publicQuery {
   flagUserId?: number
   flagUsername?: string,
   checksumVerified?: boolean,
+  timespan?: string
 }
 
 interface searchResult {

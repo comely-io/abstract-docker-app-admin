@@ -49,7 +49,6 @@ export interface publicQueryPayload {
 interface publicQueryFull extends publicQuery {
   payload?: publicQueryPayload,
   payloadError?: string,
-  timespan?: string
 }
 
 interface loadedQueryMeta {
@@ -88,11 +87,43 @@ export class PublicApiQueryComponent implements OnInit, OnDestroy {
     rayId: new FormControl()
   });
 
+  public showNextPrevButtons: boolean = false;
+
   public query?: publicQueryFull;
   public loadedQueryMeta?: loadedQueryMeta;
   private loadingSession: boolean = false;
 
   constructor(private app: AppService, private aP: AdminPanelService, private route: ActivatedRoute, private modals: MdbModalService) {
+  }
+
+  private getCurrentSearchRayId(): undefined | number {
+    let rayId = this.searchForm.controls.rayId.value;
+    if (/^[a-f0-9]{1,64}$/.test(rayId)) {
+      return parseInt(rayId, 16);
+    }
+
+    return undefined;
+  }
+
+  public inputSearchRayId() {
+    let current = this.getCurrentSearchRayId();
+    this.showNextPrevButtons = !!(current && current > 0);
+  }
+
+  public loadNextQuery() {
+    let current = this.getCurrentSearchRayId();
+    if (current && current > 0) {
+      this.searchForm.controls.rayId.setValue((current + 1).toString(16));
+      this.fetchQuery().then();
+    }
+  }
+
+  public loadPrevQuery() {
+    let current = this.getCurrentSearchRayId();
+    if (current && current > 1) {
+      this.searchForm.controls.rayId.setValue((current - 1).toString(16));
+      this.fetchQuery().then();
+    }
   }
 
   public async loadSessionModal() {
@@ -175,6 +206,7 @@ export class PublicApiQueryComponent implements OnInit, OnDestroy {
     }
 
     this.query = query;
+    this.showNextPrevButtons = true;
   }
 
   public async fetchQuery() {

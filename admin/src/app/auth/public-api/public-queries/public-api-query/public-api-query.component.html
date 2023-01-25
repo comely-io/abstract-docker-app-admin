@@ -4,7 +4,16 @@
       <div class="col-lg-8 col-xl-6">
         <form [formGroup]="searchForm" (ngSubmit)="fetchQuery()">
           <div class="input-group shadow-2 mb-3">
-            <input type="text" class="form-control" [readonly]="searchLoading" placeholder="Query Ray #"
+            <ng-container *ngIf="showNextPrevButtons">
+              <button class="btn btn-sm btn-outline-primary shadow-0" (click)="loadPrevQuery()" type="button" mdbRipple
+                      rippleColor="primary"><i
+                class="fas fa-minus"></i></button>
+              <button class="btn btn-sm btn-outline-primary shadow-0" (click)="loadNextQuery()" type="button" mdbRipple
+                      rippleColor="primary"><i
+                class="fas fa-plus"></i></button>
+            </ng-container>
+            <input type="text" class="form-control" [readonly]="searchLoading" (keyup)="inputSearchRayId()"
+                   placeholder="Query Ray #"
                    maxlength="64" formControlName="rayId"/>
             <button class="btn btn-primary shadow-0" type="submit" mdbRipple rippleColor="primary">
               <i class="fal fa-search me-2"></i>Lookup

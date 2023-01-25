@@ -95,6 +95,7 @@
                 <th scope="row" class="text-center fw-light">Endpoint</th>
                 <th scope="row" class="text-center fw-light">IP Address</th>
                 <th scope="row" class="text-center fw-light">Received</th>
+                <th scope="row" class="text-center fw-light">Timespan</th>
                 <th scope="row" class="text-center fw-light">Response Code</th>
                 <th scope="row" class="text-center fw-light">Response Length</th>
                 <th scope="row" class="text-center fw-light"><i class="fal fa-flag-alt me-2"></i>Session ID</th>
@@ -121,6 +122,9 @@
                     <td class="text-end">{{query.ipAddress}}</td>
                     <td class="text-end">
                       <app-timestamp-display [epoch]="query.startOn" cssClasses="text-end"></app-timestamp-display>
+                    </td>
+                    <td class="text-center">
+                      <span class="text-muted">{{query.timespan ?? -1}} <small class="fs-xs">secs</small></span>
                     </td>
                     <td class="text-center"
                         [ngClass]="query.resCode && query.resCode >= 200 && query.resCode <= 299? 'text-success' : 'text-danger'">

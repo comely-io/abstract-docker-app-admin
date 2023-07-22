@@ -12,7 +12,7 @@
         <div class="alert alert-warning mb-3 py-2" *ngFor="let error of userAccountLoadErrors">
           <i class="fal fa-exclamation-circle me-2"></i>{{error}}
         </div>
-        <div class="alert alert-danger mb-3 py-2" *ngIf="!user.checksumVerified">
+        <div class="alert alert-danger mb-3 py-2" *ngIf="!user._checksumValidated">
           <i class="fal fa-exclamation-circle me-2"></i>Checksum validation FAILS for this user account
         </div>
         <div class="alert alert-warning mb-3 py-2" *ngIf="user.archived !== 0">

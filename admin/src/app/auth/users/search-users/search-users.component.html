@@ -114,9 +114,9 @@
                     <td class="text-end">
                       <a routerLink="/auth/users/manage" [queryParams]="{id: user.id}">{{user.id}}</a></td>
                     <td class="text-center">
-                      <span class="text-success" mdbTooltip="Verified" *ngIf="this.user.checksumVerified"><i
+                      <span class="text-success" mdbTooltip="Verified" *ngIf="this.user._checksumValidated"><i
                         class="fal fa-check-circle"></i></span>
-                      <span class="text-danger" mdbTooltip="Error" *ngIf="!this.user.checksumVerified"><i
+                      <span class="text-danger" mdbTooltip="Error" *ngIf="!this.user._checksumValidated"><i
                         class="fal fa-bug"></i></span>
                     </td>
                     <td class="text-center">

@@ -31,7 +31,7 @@ export interface userAccount {
   updatedOn: number,
   referrerUsername?: string | null,
   referralsCount?: number | null,
-  checksumVerified?: boolean | null
+  _checksumValidated?: boolean | null
 }
 
 export interface userProfileDob {
@@ -53,7 +53,7 @@ export interface userProfile {
   city?: string | null,
   state?: string | null,
   isRegistered?: boolean | null,
-  checksumValidated?: boolean | null,
+  _checksumValidated?: boolean | null,
   dobTs?: number | null,
   dobDate?: userProfileDob | null
 }
@@ -596,7 +596,7 @@ export class ManageUserComponent implements OnInit, OnDestroy {
       if (success.result.hasOwnProperty("success") && typeof success.result.success === "string" && success.result.success.length) {
         this.resetActionSuccess = success.result.success;
         if (action === "checksum") { // Assume that CHECKSUM is now good
-          this.user.checksumVerified = true;
+          this.user._checksumValidated = true;
         }
       }
     }).catch((error: ApiQueryFail) => {
